@@ -5,6 +5,58 @@ body {
   overflow-x: hidden;
 }
 
+.tarjetas-contenedor {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 20px;
+}
+
+.tarjetas-contenedor .tarjeta {
+  width: 220px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.tarjetas-contenedor .tarjeta img {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.tarjetas-contenedor .tarjeta h3 {
+  margin: 10px 0 5px;
+  font-size: 16px;
+}
+
+.tarjetas-contenedor .tarjeta p {
+  margin: 5px 0 10px;
+  font-size: 15px;
+  color: #333;
+}
+
+.tarjetas-contenedor .tarjeta button {
+  padding: 8px 12px;
+  background-color: pink;
+  color: #000;
+  border: none;
+  border-radius: 5px;
+  font-family: Arial, sans-serif;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.tarjetas-contenedor .tarjeta button:hover {
+  background-color: #ff90b3;
+}
+
 .layout_padding {
   padding: 90px 0;
 }
