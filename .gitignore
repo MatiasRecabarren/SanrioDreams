@@ -1,0 +1,4 @@
+#Aquí hay que anotar lo que no queremos que se suba por contener información sensible como Las claves API, contraseñas, etc
+
+node_modules/
+.vscode/
