@@ -5,6 +5,26 @@ body {
   overflow-x: hidden;
 }
 
+.carousel-item {
+  transition: transform 0.5s ease;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+  width: 50px;
+  height: 50px;
+  background-color: #000;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+  background-color: #333;
+}
+
 .tarjetas-contenedor {
   display: flex;
   gap: 20px;

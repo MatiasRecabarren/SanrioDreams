@@ -38,7 +38,6 @@
             <a class="navbar-brand" href="index.html">
               SanrioDreams 
             </a>
-            </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
               <span class=""> </span>
             </button>
@@ -60,7 +59,8 @@
               </ul>
               <div class="quote_btn-container">
                 <form class="form-inline">
-                  <button class="btn  my-2 my-sm-0 nav_search-btn" type="submit">
+                  <input type="text" class="form-control" placeholder="Buscar..." />
+                  <button class="btn nav_search-btn" type="submit">
                     <i class="fa fa-search" aria-hidden="true"></i>
                   </button>
                 </form>
@@ -259,117 +259,119 @@
     </section>
     <!-- Termino Info Tienda -->
 
-    <!-- Lo más vendido Inicio -->
-    <section class="chocolate_section ">
-      <div class="container">
-        <div class="heading_container">
-          <h2>
-            Lo más vendido
-          </h2>
+<!-- Lo más vendido Inicio - Carrusel con 3 productos por slide -->
+<section class="chocolate_section layout_padding">
+  <div class="container">
+    <div class="heading_container text-center mb-5">
+      <h2>Lo más vendido</h2>
+    </div>
+
+    <!-- Contenedor del carrusel -->
+    <div class="d-flex align-items-center">
+      <!-- Flecha izquierda -->
+      <a class="btn btn-dark btn-lg rounded-circle mx-2" href="#productCarousel" role="button" data-slide="prev">
+        <i class="fa fa-chevron-left"></i>
+      </a>
+
+      <!-- Carrusel -->
+      <div id="productCarousel" class="carousel slide w-100" data-ride="carousel">
+        <div class="carousel-inner">
+
+          <!-- Slide 1 -->
+          <div class="carousel-item active">
+            <div class="row justify-content-center">
+              <div class="col-md-4">
+                <div class="box text-center">
+                  <div class="img-box">
+                    <img src="../static/images/Peluche_HelloKitty.png" alt="" class="img-fluid">
+                  </div>
+                  <div class="detail-box mt-3">
+                    <h6>Peluche <span>Hello Kitty</span></h6>
+                    <h5>$xx.xxx CLP</h5>
+                    <a href="#">Agregar al Carrito</a>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="box text-center">
+                  <div class="img-box">
+                    <img src="../static/images/Peluche_Kuromi.png" alt="" class="img-fluid">
+                  </div>
+                  <div class="detail-box mt-3">
+                    <h6>Peluche <span>Kuromi</span></h6>
+                    <h5>$xx.xxx CLP</h5>
+                    <a href="#">Agregar al Carrito</a>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="box text-center">
+                  <div class="img-box">
+                    <img src="../static/images/Peluche_MyMelody.png" alt="" class="img-fluid">
+                  </div>
+                  <div class="detail-box mt-3">
+                    <h6>Peluche <span>My Melody</span></h6>
+                    <h5>$xx.xxx CLP</h5>
+                    <a href="#">Agregar al Carrito</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 2 -->
+          <div class="carousel-item">
+            <div class="row justify-content-center">
+              <div class="col-md-4">
+                <div class="box text-center">
+                  <div class="img-box">
+                    <img src="../static/images/Peluche_Pompompurin.png" alt="" class="img-fluid">
+                  </div>
+                  <div class="detail-box mt-3">
+                    <h6>Peluche <span>Pompompurin</span></h6>
+                    <h5>$xx.xxx CLP</h5>
+                    <a href="#">Agregar al Carrito</a>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="box text-center">
+                  <div class="img-box">
+                    <img src="../static/images/Peluche_Cinnamoroll.png" alt="" class="img-fluid">
+                  </div>
+                  <div class="detail-box mt-3">
+                    <h6>Peluche <span>Cinnamoroll</span></h6>
+                    <h5>$xx.xxx CLP</h5>
+                    <a href="#">Agregar al Carrito</a>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="box text-center">
+                  <div class="img-box">
+                    <img src="../static/images/Peluche_Pochacco.png" alt="" class="img-fluid">
+                  </div>
+                  <div class="detail-box mt-3">
+                    <h6>Peluche <span>Pochacco</span></h6>
+                    <h5>$xx.xxx CLP</h5>
+                    <a href="#">Agregar al Carrito</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
-      <div class="container">
-        <div class="chocolate_container">
-          <div class="box">
-            <div class="img-box">
-              <img src="../static/images/Peluche_HelloKitty.png" alt="">
-            </div>
-            <div class="detail-box">
-              <h6>
-                Peluche <span>Hello Kitty</span>
-              </h6>
-              <h5>
-                $xx.xxx CLP
-              </h5>
-              <a href="">
-                Agregar al Carrito
-              </a>
-            </div>
-          </div>
-          <div class="box">
-            <div class="img-box">
-              <img src="../static/images/Peluche_Kuromi.png" alt="">
-            </div>
-            <div class="detail-box">
-              <h6>
-                Peluche <span>Kuromi</span>
-              </h6>
-              <h5>
-                $xx.xxx CLP
-              </h5>
-              <a href="">
-                Agregar al Carrito
-              </a>
-            </div>
-          </div>
-          <div class="box">
-            <div class="img-box">
-              <img src="../static/images/Peluche_MyMelody.png" alt="">
-            </div>
-            <div class="detail-box">
-              <h6>
-                Peluche <span>My Melody</span>
-              </h6>
-              <h5>
-                $xx.xxx CLP
-              </h5>
-              <a href="">
-                Agregar al Carrito
-              </a>
-            </div>
-          </div>
-          <div class="box">
-            <div class="img-box">
-              <img src="../static/images/Peluche_Pompompurin.png" alt="">
-            </div>
-            <div class="detail-box">
-              <h6>
-                Peluche <span>Pompompurin</span>
-              </h6>
-              <h5>
-                $xx.xxx CLP
-              </h5>
-              <a href="">
-                Agregar al Carrito
-              </a>
-            </div>
-          </div>
-          <div class="box">
-            <div class="img-box">
-              <img src="../static/images/Peluche_Cinnamoroll.png" alt="">
-            </div>
-            <div class="detail-box">
-              <h6>
-                Peluche <span>Cinnamoroll</span>
-              </h6>
-              <h5>
-                $xx.xxx CLP
-              </h5>
-              <a href="">
-                Agregar al Carrito
-              </a>
-            </div>
-          </div>
-          <div class="box">
-            <div class="img-box">
-              <img src="../static/images/Peluche_Pochacco.png" alt="">
-            </div>
-            <div class="detail-box">
-              <h6>
-                Peluche <span>Pochacco</span>
-              </h6>
-              <h5>
-                $xx.xxx CLP
-              </h5>
-              <a href="">
-                Agregar al Carrito
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- Lo más vendido Fin -->
+
+      <!-- Flecha derecha -->
+      <a class="btn btn-dark btn-lg rounded-circle mx-2" href="#productCarousel" role="button" data-slide="next">
+        <i class="fa fa-chevron-right"></i>
+      </a>
+    </div>
+  </div>
+</section>
+<!-- Lo más vendido Fin -->
 
     <!-- Inicio Ofertas -->
 
@@ -513,13 +515,12 @@
   <!-- footer section -->
 
   <!-- jQery -->
-  <script  src="../static/js/jquery-3.4.1.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <!-- bootstrap js -->
   <script  src="../static/js/bootstrap.js"></script>
-  <!-- slick slider -->
-  <script  src="../https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.9/slick.min.js"></script>
   <!-- custom js -->
   <script  src="../static/js/custom.js"></script> 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 
