@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cargando...</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .loader-container {
+      text-align: center;
+      opacity: 1;
+      transition: opacity 1s ease-out;
+    }
+    .loader-container.fade-out {
+      opacity: 0;
+    }
+    img {
+      width: 800px; 
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="loader-container" id="loader">
+    <img src="../static/images/Bienvenido.gif" alt="Cargando...">
+  </div>
+
+  <script>
+    // Después de 3 segundos, inicia el fade out
+    setTimeout(function () {
+      document.getElementById('loader').classList.add('fade-out');
+    }, 2500); // Inicia animación 0.5s antes del redireccionamiento
+
+    // Redirige después de que termine la animación
+    setTimeout(function () {
+      window.location.href = "index.html";
+    }, 3000); // 3 segundos totales
+  </script>
+</body>
+</html>

@@ -539,6 +539,17 @@
 
   </div>
 
+  <script>
+  // Verifica si ya se mostró la pantalla de carga
+  if (!localStorage.getItem("hasShownLoading")) {
+    // Si no se ha mostrado, redirige a loading.html
+    window.location.href = "loading.html";
+  }
+  
+  </script>
+
+
+
   <!-- footer section -->
   <footer class="container-fluid footer_section">
     <div class="container">
