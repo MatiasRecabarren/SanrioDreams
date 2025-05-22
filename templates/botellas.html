@@ -14,14 +14,14 @@
 
   <title>SanrioDreams - Tienda de artículos</title>
 
-  <link rel="stylesheet" type="text/css" href="../static/css/bootstrap.css" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' }" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.9/slick.min.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.9/slick-theme.min.css" />
   <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../static/css/slick-theme.css" />
-  <link href="../static/css/font-awesome.min.css" rel="stylesheet" />
-  <link href="../static/css/style.css" rel="stylesheet" />
-  <link href="../static/css/responsive.css" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'css/slick-theme.css' }" />
+  <link href="{% static 'css/font-awesome.min.css' }" rel="stylesheet" />
+  <link href="{% static 'css/style.css' }" rel="stylesheet" />
+  <link href="{% static 'static/css/responsive.css' }" rel="stylesheet" />
 
 </head>
 
@@ -89,7 +89,7 @@
     <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Botellas</h3>
      <div class="tarjetas-contenedor">
         <div class="tarjeta">
-            <img src="../static/images/Botella_520ml_Pompompurin.png" alt="Botella Pompompurin">
+            <img src="{% static 'images/Botella_520ml_Pompompurin.png' }" alt="Botella Pompompurin">
             <h3>Botella 520ml Pompompurin</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -97,7 +97,7 @@
         </div>
 
         <div class="tarjeta">
-            <img src="../static/images/Botella_520ml_Pochacco.png" alt="Botella Pochacco">
+            <img src="{% static 'images/Botella_520ml_Pochacco.png' }" alt="Botella Pochacco">
             <h3>Botella 520ml Pochacco</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -105,7 +105,7 @@
          </div>
 
         <div class="tarjeta">
-            <img src="../static/images/Botella_520ml_HelloKitty.png" alt="Botella HelloKitty">
+            <img src="{% static 'images/Botella_520ml_HelloKitty.png' }" alt="Botella HelloKitty">
             <h3>Botella 520ml Hello Kitty</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -113,7 +113,7 @@
          </div>
 
         <div class="tarjeta">
-            <img src="../static/images/Botella_520ml_MyMelody.png" alt="Botella MyMelody">
+            <img src="{% static 'images/Botella_520ml_MyMelody.png' }" alt="Botella MyMelody">
             <h3>Botella 520ml My Melody</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -121,7 +121,7 @@
         </div>
 
         <div class="tarjeta">
-            <img src="../static/images/Botella_520ml_ Hangyodon.png" alt="Botella Hangyodon">
+            <img src="{% static 'images/Botella_520ml_ Hangyodon.png' }" alt="Botella Hangyodon">
             <h3>Botella 520ml Hangyodon</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -206,11 +206,11 @@
  
 
   <!-- jQery -->
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js' }"></script>
   <!-- bootstrap js -->
-  <script  src="../static/js/bootstrap.js"></script>
+  <script  src="{% static 'js/bootstrap.js' }"></script>
   <!-- custom js -->
-  <script  src="../static/js/custom.js"></script> 
+  <script  src="{% static 'js/custom.js' }"></script> 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
