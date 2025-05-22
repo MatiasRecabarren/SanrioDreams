@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 
@@ -13,15 +14,14 @@
   <meta name="author" content="" />
 
   <title>SanrioDreams - Tienda de artículos</title>
-
-  <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' }" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.9/slick.min.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.9/slick-theme.min.css" />
   <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="{% static 'css/slick-theme.css' }" />
-  <link href="{% static 'css/font-awesome.min.css' }" rel="stylesheet" />
-  <link href="{% static 'css/style.css' }" rel="stylesheet" />
-  <link href="{% static 'static/css/responsive.css' }" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'css/slick-theme.css' %}" />
+  <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" />
+  <link href="{% static 'css/style.css' %}" rel="stylesheet" />
+  <link href="{% static 'static/css/responsive.css' %}" rel="stylesheet" />
 
 </head>
 
@@ -31,13 +31,12 @@
 
     <div class="hero_area">
 
-      <!-- Header Inicio -->
+<<!-- Header Inicio -->
       <header class="header_section">
         <div class="container-fluid">
           <nav class="navbar navbar-expand-lg custom_nav-container ">
             <a class="navbar-brand" href="index.html">
               SanrioDreams 
-            </a>
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
               <span class=""> </span>
@@ -46,36 +45,43 @@
             <div class="collapse navbar-collapse " id="navbarSupportedContent">
               <ul class="navbar-nav ml-auto">
                 <li class="nav-item active">
-                  <a class="nav-link" href="index.html">Inicio <span class="sr-only">(current)</span></a>
+                  <a class="nav-link" href="{% url 'index' %}">Inicio <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link" href="about.html"> Acerca de Nosotros</a>
                 </li>
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProductos" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Productos
-                  </a>
-                  <div class="dropdown-menu" aria-labelledby="navbarDropdownProductos">
-                    <a class="dropdown-item" href="productos.html">Todos los productos</a>
-                    <a class="dropdown-item" href="peluches.html">Peluches</a>
-                    <a class="dropdown-item" href="botellas.html">Botellas</a>
-                    <a class="dropdown-item" href="termos.html">Termos</a>
-                    <a class="dropdown-item" href="pines.html">Pines</a>
-                    <a class="dropdown-item" href="llaveros.html">Llaveros</a>
-                   <a class="dropdown-item" href="lamparas.html">Lámparas</a>
-                  </div>
-                </li>
+                <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                   <div class="collapse navbar-collapse">
+                   <ul class="navbar-nav ml-auto">
+                     <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProductos" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                         Productos
+                       </a>
+                       <div class="dropdown-menu" aria-labelledby="navbarDropdownProductos">
+                          <a class="dropdown-item" href="{% url 'productos' %}">Todos los productos</a>
+                         <a class="dropdown-item" href="{% url 'peluches' %}">Peluches</a>
+                         <a class="dropdown-item" href="{% url 'botellas' %}">Botellas</a>
+                          <a class="dropdown-item" href="{% url 'termos' %}">Termos</a>
+                         <a class="dropdown-item" href="{% url 'pines' %}">Pines</a>
+                          <a class="dropdown-item" href="{% url 'llaveros' %}">Llaveros</a>
+                         <a class="dropdown-item" href="{% url 'lamparas' %}">Lámparas</a>
+                      </div>
+                     </li>
+                    </ul>
+                 </div>
+                </nav>
                 <li class="nav-item">
                   <a class="nav-link" href="contact.html">Contacta con Nosotros</a>
                 </li>
               </ul>
               <div class="quote_btn-container">
                 <form class="form-inline">
-                  <button class="btn  my-2 my-sm-0 nav_search-btn" type="submit">
+                  <input type="text" class="form-control" placeholder="Buscar..." />
+                  <button class="btn nav_search-btn" type="submit">
                     <i class="fa fa-search" aria-hidden="true"></i>
                   </button>
                 </form>
-                <a href="login.html">
+                <a href="{% url 'login' %}">
                   <i class="fa fa-user" aria-hidden="true"></i>
                 </a>
               </div>
@@ -89,7 +95,7 @@
     <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Peluches</h3>
       <div class="tarjetas-contenedor">
         <div class="tarjeta" >
-            <img src="{% static 'images/Peluche_HelloKitty.png' }" alt="Peluche Hello Kitty">
+            <img src="{% static 'images/Peluche_HelloKitty.png' %}" alt="Peluche Hello Kitty">
             <h3>Peluche Hello Kitty</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -97,7 +103,7 @@
         </div>
 
         <div class="tarjeta">
-            <img src="{% static 'images/Peluche_MyMelody.png' }" alt="Peluche My Melody">
+            <img src="{% static 'images/Peluche_MyMelody.png' %}" alt="Peluche My Melody">
             <h3>Peluche My Melody</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -105,7 +111,7 @@
          </div>
 
         <div class="tarjeta">
-            <img src="{% static 'images/Peluche_Cinnamoroll.png' }" alt="Peluche Cinnamoroll">
+            <img src="{% static 'images/Peluche_Cinnamoroll.png' %}" alt="Peluche Cinnamoroll">
             <h3>Peluche Cinnamoroll</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -113,14 +119,14 @@
          </div>
 
         <div class="tarjeta">
-            <img src="{% static 'images/Peluche_Kuromi.png' }" alt="Peluche Kuromi">
+            <img src="{% static 'images/Peluche_Kuromi.png' %}" alt="Peluche Kuromi">
             <h3>Peluche Kuromi</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
             <p>Cantidad : 1</p>
         </div>
         <div class="tarjeta">
-            <img src="{% static 'images/Peluche_Pompompurin.png' }" alt="Peluche Pompompurin">
+            <img src="{% static 'images/Peluche_Pompompurin.png' %}" alt="Peluche Pompompurin">
             <h3>Peluche Pompompurin</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -128,7 +134,7 @@
         </div>
 
         <div class="tarjeta">
-            <img src="{% static 'images/Peluche_Pochacco.png' }" alt="Peluche Pochacco">
+            <img src="{% static 'images/Peluche_Pochacco.png' %}" alt="Peluche Pochacco">
             <h3>Peluche Pochacco</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -136,7 +142,7 @@
          </div>
 
         <div class="tarjeta">
-            <img src="{% static 'images/Peluche_MySweetPiano.png' }" alt="Peluche My Sweet Piano">
+            <img src="{% static 'images/Peluche_MySweetPiano.png' %}" alt="Peluche My Sweet Piano">
             <h3>Peluche My Sweet Piano</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -144,14 +150,14 @@
          </div>
 
         <div class="tarjeta">
-            <img src="{% static 'images/Peluche_Marumofubiyori.png' }" alt="Peluche Marumofubiyori">
+            <img src="{% static 'images/Peluche_Marumofubiyori.png' %}" alt="Peluche Marumofubiyori">
             <h3>Peluche Marumofubiyori</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
             <p>Cantidad : 1</p>
         </div>
          <div class="tarjeta">
-            <img src="{% static 'images/Peluche_Chococat.png' }" alt="Peluche Chococat">
+            <img src="{% static 'images/Peluche_Chococat.png' %}" alt="Peluche Chococat">
             <h3>Peluche Chococat</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -159,7 +165,7 @@
          </div>
 
         <div class="tarjeta">
-            <img src="{% static 'images/Peluche_Keropi.png' }" alt="Peluche Keropi">
+            <img src="{% static 'images/Peluche_Keropi.png' %}" alt="Peluche Keropi">
             <h3>Peluche Keropi</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -167,7 +173,7 @@
         </div>
 
         <div class="tarjeta">
-            <img src="{% static 'images/Peluche_Retsuko.png' }" alt="Peluche Retsuko">
+            <img src="{% static 'images/Peluche_Retsuko.png' %}" alt="Peluche Retsuko">
             <h3>Peluche Retsuko</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -175,7 +181,7 @@
         </div>
 
         <div class="tarjeta">
-            <img src="{% static 'images/Peluche_BadtzMaru.png' }" alt="Peluche BadtzMaru">
+            <img src="{% static 'images/Peluche_BadtzMaru.png' %}" alt="Peluche BadtzMaru">
             <h3>Peluche Badtz Maru</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -183,7 +189,7 @@
         </div>
 
         <div class="tarjeta">
-            <img src="{% static 'images/Peluche_Kuririn.png' }" alt="Peluche Kuririn">
+            <img src="{% static 'images/Peluche_Kuririn.png' %}" alt="Peluche Kuririn">
             <h3>Peluche Kuririn</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -191,7 +197,7 @@
         </div>
 
         <div class="tarjeta">
-            <img src="{% static 'images/Peluche_Gudetama.png' }" alt="Peluche Gudetama">
+            <img src="{% static 'images/Peluche_Gudetama.png' %}" alt="Peluche Gudetama">
             <h3>Peluche Gudetama</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -204,7 +210,7 @@
     <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Botellas</h3>
      <div class="tarjetas-contenedor">
         <div class="tarjeta">
-            <img src="{% static 'images/Botella_520ml_Pompompurin.png' }" alt="Botella Pompompurin">
+            <img src="{% static 'images/Botella_520ml_Pompompurin.png' %}" alt="Botella Pompompurin">
             <h3>Botella 520ml Pompompurin</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -212,7 +218,7 @@
         </div>
 
         <div class="tarjeta">
-            <img src="{% static 'images/Botella_520ml_Pochacco.png' }" alt="Botella Pochacco">
+            <img src="{% static 'images/Botella_520ml_Pochacco.png' %}" alt="Botella Pochacco">
             <h3>Botella 520ml Pochacco</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -220,7 +226,7 @@
          </div>
 
         <div class="tarjeta">
-            <img src="{% static 'images/Botella_520ml_HelloKitty.png' }" alt="Botella HelloKitty">
+            <img src="{% static 'images/Botella_520ml_HelloKitty.png' %}" alt="Botella HelloKitty">
             <h3>Botella 520ml Hello Kitty</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -228,7 +234,7 @@
          </div>
 
         <div class="tarjeta">
-            <img src="{% static 'images/Botella_520ml_MyMelody.png' }" alt="Botella MyMelody">
+            <img src="{% static 'images/Botella_520ml_MyMelody.png' %}" alt="Botella MyMelody">
             <h3>Botella 520ml My Melody</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -236,7 +242,7 @@
         </div>
 
         <div class="tarjeta">
-            <img src="{% static 'images/Botella_520ml_ Hangyodon.png' }" alt="Botella Hangyodon">
+            <img src="{% static 'images/Botella_520ml_ Hangyodon.png' %}" alt="Botella Hangyodon">
             <h3>Botella 520ml Hangyodon</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -249,7 +255,7 @@
     <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Termos</h3>
      <div class="tarjetas-contenedor">
         <div class="tarjeta">
-            <img src="{% static 'images/Termo_200ml_Cinnamoroll.png' }" alt="Termo Cinnamoroll">
+            <img src="{% static 'images/Termo_200ml_Cinnamoroll.png' %}" alt="Termo Cinnamoroll">
             <h3>Termo 200ml Cinnamoroll</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -257,7 +263,7 @@
         </div>
 
         <div class="tarjeta">
-            <img src="{% static 'images/Termo_200ml_Pompompurin.png' }" alt="Termo Pompompurin">
+            <img src="{% static 'images/Termo_200ml_Pompompurin.png' %}" alt="Termo Pompompurin">
             <h3>Termo 200ml Cinnamoroll</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -265,7 +271,7 @@
          </div>
 
         <div class="tarjeta">
-            <img src="{% static 'images/Termo_200ml_Pochacco.png' }" alt="Termo Pochacco">
+            <img src="{% static 'images/Termo_200ml_Pochacco.png' %}" alt="Termo Pochacco">
             <h3>Termo 200ml Cinnamoroll</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -273,7 +279,7 @@
          </div>
 
         <div class="tarjeta">
-            <img src="{% static 'images/Termo_200ml_Kuromi.png' }" alt="Termo Kuromi">
+            <img src="{% static 'images/Termo_200ml_Kuromi.png' %}" alt="Termo Kuromi">
             <h3>Termo 200ml Cinnamoroll</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -281,7 +287,7 @@
         </div>
 
         <div class="tarjeta">
-            <img src="{% static 'images/Termo_200ml_MyMelody.png' }" alt="Termo My Melody">
+            <img src="{% static 'images/Termo_200ml_MyMelody.png' %}" alt="Termo My Melody">
             <h3>Termo 200ml Cinnamoroll</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -291,7 +297,7 @@
         <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Pines</h3>
      <div class="tarjetas-contenedor">
         <div class="tarjeta">
-            <img src="{% static 'images/Pin_Cinnamoroll.png' }" alt="Pin Cinnamoroll">
+            <img src="{% static 'images/Pin_Cinnamoroll.png' %}" alt="Pin Cinnamoroll">
             <h3>Pin Cinnamoroll</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -299,7 +305,7 @@
         </div>
 
         <div class="tarjeta">
-            <img src="{% static 'images/Pin_Kuromi.png' }" alt="Pin Kuromi">
+            <img src="{% static 'images/Pin_Kuromi.png' %}" alt="Pin Kuromi">
             <h3>Pin Kuromi</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -307,7 +313,7 @@
          </div>
 
         <div class="tarjeta">
-            <img src="{% static 'images/Pin_Pompompurin.png' }" alt="Pin Pompompurin">
+            <img src="{% static 'images/Pin_Pompompurin.png' %}" alt="Pin Pompompurin">
             <h3>Pin Pompompurin</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -315,7 +321,7 @@
          </div>
 
         <div class="tarjeta">
-            <img src="{% static 'images/Pin_HelloKitty.png' }" alt="Pin Hello Kitty">
+            <img src="{% static 'images/Pin_HelloKitty.png' %}" alt="Pin Hello Kitty">
             <h3>Pin Hello Kitty</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -323,7 +329,7 @@
         </div>
 
         <div class="tarjeta">
-            <img src="{% static 'images/Pin_Pochacco.png' }" alt="Pin Pochacco">
+            <img src="{% static 'images/Pin_Pochacco.png' %}" alt="Pin Pochacco">
             <h3>Pin Pochacco</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -335,7 +341,7 @@
         <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Llaveros</h3>
      <div class="tarjetas-contenedor">
         <div class="tarjeta">
-            <img src="{% static 'images/Llavero_Cinnamoroll.png' }" alt="Llavero Cinnamoroll">
+            <img src="{% static 'images/Llavero_Cinnamoroll.png' %}" alt="Llavero Cinnamoroll">
             <h3>Llavero Cinnamoroll</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -343,7 +349,7 @@
         </div>
 
         <div class="tarjeta">
-            <img src="{% static 'images/Llavero_Pompompurin.png' }" alt="Llavero Pompompurin">
+            <img src="{% static 'images/Llavero_Pompompurin.png' %}" alt="Llavero Pompompurin">
             <h3>Llavero Pompompurin</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -351,7 +357,7 @@
          </div>
 
         <div class="tarjeta">
-            <img src="{% static 'images/Llavero_Kuromi.png' }" alt="Llavero Kuromi">
+            <img src="{% static 'images/Llavero_Kuromi.png' %}" alt="Llavero Kuromi">
             <h3>Llavero Kuromi</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -359,7 +365,7 @@
          </div>
 
          <div class="tarjeta">
-            <img src="{% static 'images/Llavero_MyMelody.png' }" alt="Llavero MyMelody">
+            <img src="{% static 'images/Llavero_MyMelody.png' %}" alt="Llavero MyMelody">
             <h3>Llavero My Melody</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -367,7 +373,7 @@
          </div>
 
          <div class="tarjeta">
-            <img src="{% static 'images/Llavero_HelloKitty.png' }" alt="Llavero Hello Kitty">
+            <img src="{% static 'images/Llavero_HelloKitty.png' %}" alt="Llavero Hello Kitty">
             <h3>Llavero Hello Kitty</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -379,7 +385,7 @@
         <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestras Lamparas</h3>
      <div class="tarjetas-contenedor">
         <div class="tarjeta">
-            <img src="{% static 'images/Lampara_LittleTwinStars.png' }" alt="Lampara Little Twin Stars">
+            <img src="{% static 'images/Lampara_LittleTwinStars.png' %}" alt="Lampara Little Twin Stars">
             <h3>Lámpara Little Twin Stars</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -387,7 +393,7 @@
         </div>
         
         <div class="tarjeta">
-            <img src="{% static 'images/Lampara_Cinnamoroll.png' }" alt="Lampara Cinnamoroll">
+            <img src="{% static 'images/Lampara_Cinnamoroll.png' %}" alt="Lampara Cinnamoroll">
             <h3>Lámpara Cinnamoroll</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -395,7 +401,7 @@
         </div>
         
         <div class="tarjeta">
-            <img src="{% static 'images/Lampara_MyMelody.png' }" alt="Lampara MyMelody">
+            <img src="{% static 'images/Lampara_MyMelody.png' %}" alt="Lampara MyMelody">
             <h3>Lámpara My Melody</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -403,7 +409,7 @@
         </div>
 
         <div class="tarjeta">
-            <img src="{% static 'images/Lampara_HelloKitty.png' }" alt="Lampara Hello Kitty">
+            <img src="{% static 'images/Lampara_HelloKitty.png' %}" alt="Lampara Hello Kitty">
             <h3>Lámpara Hello Kitty</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -411,7 +417,7 @@
          </div>
 
         <div class="tarjeta">
-            <img src="{% static 'images/Lampara_Kuromi.png' }" alt="Lampara Kuromi">
+            <img src="{% static 'images/Lampara_Kuromi.png' %}" alt="Lampara Kuromi">
             <h3>Lámpara Kuromi</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -420,7 +426,7 @@
     </div>
       <!-- Fin Productos --> 
 
-    <!-- info section -->
+     <!-- info section -->
     <section class="info_section layout_padding2">
       <div class="container">
         <div class="row info_main_row">
@@ -430,13 +436,13 @@
                 Menú
               </h4>
               <div class="info_links_menu">
-                <a href="index.html">
+                <a href="{% url 'index' %}">
                   Inicio
                 </a>
                 <a href="about.html">
                   Acerca de Nosotros
                 </a>
-                <a href="chocolate.html">
+                <a href="{% url 'productos' %}">
                   Productos
                 </a>
                 <a href="testimonial.html">
@@ -477,8 +483,8 @@
         </div>
       </div>
     </section>
-
     <!-- end info_section -->
+
  <!-- footer section -->
      <footer class="container-fluid footer_section">
   <div class="container">
@@ -493,15 +499,11 @@
   <!-- footer section -->
   </div>
 
- 
-
-  <!-- jQery -->
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js' }"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <!-- bootstrap js -->
-  <script  src="{% static 'js/bootstrap.js' }"></script>
-  <!-- custom js -->
-  <script  src="{% static 'js/custom.js' }"></script> 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- custom js -->
+  <script  src="{% static 'js/custom.js' %}"></script> 
 
 </body>
 

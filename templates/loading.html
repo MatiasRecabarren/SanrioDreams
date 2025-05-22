@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -30,7 +31,7 @@
 </head>
 <body>
   <div class="loader-container" id="loader">
-    <img src="{% static 'images/Bienvenido.gif' }" alt="Cargando...">
+    <img src="{% static 'images/Bienvenido.gif' %}" alt="Cargando...">
   </div>
 
   <script>
@@ -41,7 +42,7 @@
 
     // Redirige después de que termine la animación
     setTimeout(function () {
-      window.location.href = "index.html";
+      window.location.href = "{% url 'index' %}";
     }, 3000); // 3 segundos totales
   </script>
 </body>

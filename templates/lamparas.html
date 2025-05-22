@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 
@@ -14,14 +15,14 @@
 
   <title>SanrioDreams - Tienda de artículos</title>
 
-  <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' }" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.9/slick.min.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.9/slick-theme.min.css" />
   <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="{% static 'css/slick-theme.css' }" />
-  <link href="{% static 'css/font-awesome.min.css' }" rel="stylesheet" />
-  <link href="{% static 'css/style.css' }" rel="stylesheet" />
-  <link href="{% static 'static/css/responsive.css' }" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'css/slick-theme.css' %}" />
+  <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" />
+  <link href="{% static 'css/style.css' %}" rel="stylesheet" />
+  <link href="{% static 'static/css/responsive.css' %}" rel="stylesheet" />
 
 </head>
 
@@ -38,7 +39,6 @@
             <a class="navbar-brand" href="index.html">
               SanrioDreams 
             </a>
-            </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
               <span class=""> </span>
             </button>
@@ -46,36 +46,43 @@
             <div class="collapse navbar-collapse " id="navbarSupportedContent">
               <ul class="navbar-nav ml-auto">
                 <li class="nav-item active">
-                  <a class="nav-link" href="index.html">Inicio <span class="sr-only">(current)</span></a>
+                  <a class="nav-link" href="{% url 'index' %}">Inicio <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link" href="about.html"> Acerca de Nosotros</a>
                 </li>
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProductos" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Productos
-                  </a>
-                  <div class="dropdown-menu" aria-labelledby="navbarDropdownProductos">
-                    <a class="dropdown-item" href="productos.html">Todos los productos</a>
-                    <a class="dropdown-item" href="peluches.html">Peluches</a>
-                    <a class="dropdown-item" href="botellas.html">Botellas</a>
-                    <a class="dropdown-item" href="termos.html">Termos</a>
-                    <a class="dropdown-item" href="pines.html">Pines</a>
-                    <a class="dropdown-item" href="llaveros.html">Llaveros</a>
-                   <a class="dropdown-item" href="lamparas.html">Lámparas</a>
-                  </div>
-                </li>
+                <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                   <div class="collapse navbar-collapse">
+                   <ul class="navbar-nav ml-auto">
+                     <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProductos" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                         Productos
+                       </a>
+                       <div class="dropdown-menu" aria-labelledby="navbarDropdownProductos">
+                          <a class="dropdown-item" href="{% url 'productos' %}">Todos los productos</a>
+                         <a class="dropdown-item" href="{% url 'peluches' %}">Peluches</a>
+                         <a class="dropdown-item" href="{% url 'botellas' %}">Botellas</a>
+                          <a class="dropdown-item" href="{% url 'termos' %}">Termos</a>
+                         <a class="dropdown-item" href="{% url 'pines' %}">Pines</a>
+                          <a class="dropdown-item" href="{% url 'llaveros' %}">Llaveros</a>
+                         <a class="dropdown-item" href="{% url 'lamparas' %}">Lámparas</a>
+                      </div>
+                     </li>
+                    </ul>
+                 </div>
+                </nav>
                 <li class="nav-item">
                   <a class="nav-link" href="contact.html">Contacta con Nosotros</a>
                 </li>
               </ul>
               <div class="quote_btn-container">
                 <form class="form-inline">
-                  <button class="btn  my-2 my-sm-0 nav_search-btn" type="submit">
+                  <input type="text" class="form-control" placeholder="Buscar..." />
+                  <button class="btn nav_search-btn" type="submit">
                     <i class="fa fa-search" aria-hidden="true"></i>
                   </button>
                 </form>
-                <a href="login.html">
+                <a href="{% url 'login' %}">
                   <i class="fa fa-user" aria-hidden="true"></i>
                 </a>
               </div>
@@ -89,7 +96,7 @@
         <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestras Lamparas</h3>
      <div class="tarjetas-contenedor">
         <div class="tarjeta">
-            <img src="{% static 'images/Lampara_LittleTwinStars.png' }" alt="Lampara Little Twin Stars">
+            <img src="{% static 'images/Lampara_LittleTwinStars.png' %}" alt="Lampara Little Twin Stars">
             <h3>Lámpara Little Twin Stars</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -97,7 +104,7 @@
         </div>
         
         <div class="tarjeta">
-            <img src="{% static 'images/Lampara_Cinnamoroll.png' }" alt="Lampara Cinnamoroll">
+            <img src="{% static 'images/Lampara_Cinnamoroll.png' %}" alt="Lampara Cinnamoroll">
             <h3>Lámpara Cinnamoroll</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -105,7 +112,7 @@
         </div>
         
         <div class="tarjeta">
-            <img src="{% static 'images/Lampara_MyMelody.png' }" alt="Lampara MyMelody">
+            <img src="{% static 'images/Lampara_MyMelody.png' %}" alt="Lampara MyMelody">
             <h3>Lámpara My Melody</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -113,7 +120,7 @@
         </div>
 
         <div class="tarjeta">
-            <img src="{% static 'images/Lampara_HelloKitty.png' }" alt="Lampara Hello Kitty">
+            <img src="{% static 'images/Lampara_HelloKitty.png' %}" alt="Lampara Hello Kitty">
             <h3>Lámpara Hello Kitty</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -121,7 +128,7 @@
          </div>
 
         <div class="tarjeta">
-            <img src="{% static 'images/Lampara_Kuromi.png' }" alt="Lampara Kuromi">
+            <img src="{% static 'images/Lampara_Kuromi.png' %}" alt="Lampara Kuromi">
             <h3>Lámpara Kuromi</h3>
             <p>$xx.xxx</p>
             <button>Agregar al carrito</button>
@@ -140,13 +147,13 @@
                 Menú
               </h4>
               <div class="info_links_menu">
-                <a href="index.html">
+                <a href="{% url 'index' %}">
                   Inicio
                 </a>
                 <a href="about.html">
                   Acerca de Nosotros
                 </a>
-                <a href="chocolate.html">
+                <a href="{% url 'productos' %}">
                   Productos
                 </a>
                 <a href="testimonial.html">
@@ -187,8 +194,8 @@
         </div>
       </div>
     </section>
-
     <!-- end info_section -->
+
  <!-- footer section -->
      <footer class="container-fluid footer_section">
   <div class="container">
@@ -206,12 +213,12 @@
  
 
   <!-- jQery -->
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js' }"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <!-- bootstrap js -->
-  <script  src="{% static 'js/bootstrap.js' }"></script>
-  <!-- custom js -->
-  <script  src="{% static 'js/custom.js' }"></script> 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- custom js -->
+  <script  src="{% static 'js/custom.js' %}"></script> 
+
 
 </body>
 
