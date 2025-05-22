@@ -1,4 +1,7 @@
 from django.shortcuts import render
+from django.contrib.auth import authenticate, login as auth_login
+from django.contrib import messages
+from django.http import HttpResponseRedirect
 
 def loading(request):
     return render(request, 'loading.html')
@@ -16,6 +19,15 @@ def llaveros(request):
     return render(request, 'llaveros.html')
 
 def login(request):
+    if request.method == 'POST':
+        user = request.POST.get('user')
+        password = request.POST.get('password')
+
+        if not user or not password:
+            messages.error(request, 'Por favor completa todos los campos.')
+        else:
+            messages.error(request, 'Nombre de usuario o contraseña incorrectos.')
+
     return render(request, 'login.html')
 
 def peluches(request):
