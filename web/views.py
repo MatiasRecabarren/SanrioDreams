@@ -3,6 +3,9 @@ from django.contrib import messages
 from .models import Usuario
 from django.contrib.auth.hashers import check_password, make_password
 import re
+from django.contrib import messages
+from django.core.mail import send_mail
+from django.conf import settings
 
 # Vistas generales
 def loading(request):
@@ -143,3 +146,4 @@ def login(request):
         return redirect('index')
 
     return render(request, 'login.html')
+

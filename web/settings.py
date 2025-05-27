@@ -1,10 +1,7 @@
 from pathlib import Path
 import os
 from django.contrib.messages import constants as messages_constants
-#from dotenv import load_dotenv
 
-# Cargar variables de entorno desde un archivo .env
-#load_dotenv() #Esto no me deja tirar runserver 🗿
 
 # Base Directory
 BASE_DIR = Path(__file__).resolve().parent.parent
