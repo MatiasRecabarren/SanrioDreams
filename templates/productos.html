@@ -58,13 +58,12 @@
                          Productos
                        </a>
                        <div class="dropdown-menu" aria-labelledby="navbarDropdownProductos">
-                          <a class="dropdown-item" href="{% url 'productos' %}">Todos los productos</a>
-                         <a class="dropdown-item" href="{% url 'peluches' %}">Peluches</a>
-                         <a class="dropdown-item" href="{% url 'botellas' %}">Botellas</a>
-                          <a class="dropdown-item" href="{% url 'termos' %}">Termos</a>
-                         <a class="dropdown-item" href="{% url 'pines' %}">Pines</a>
-                          <a class="dropdown-item" href="{% url 'llaveros' %}">Llaveros</a>
-                         <a class="dropdown-item" href="{% url 'lamparas' %}">Lámparas</a>
+                         <a class="dropdown-item" href="#peluches">Peluches</a>
+                         <a class="dropdown-item" href="#botellas">Botellas</a>
+                          <a class="dropdown-item" href="#termos">Termos</a>
+                         <a class="dropdown-item" href="#pines">Pines</a>
+                          <a class="dropdown-item" href="#llaveros">Llaveros</a>
+                         <a class="dropdown-item" href="#lamparas">Lámparas</a>
                       </div>
                      </li>
                     </ul>
@@ -75,12 +74,12 @@
                 </li>
               </ul>
               <div class="quote_btn-container">
-                <form class="form-inline">
-                  <input type="text" class="form-control" placeholder="Buscar..." />
-                  <button class="btn nav_search-btn" type="submit">
-                    <i class="fa fa-search" aria-hidden="true"></i>
-                  </button>
-                </form>
+                 <form class="form-inline" id="searchForm">
+                    <input type="text" class="form-control" placeholder="Buscar..." id="searchInput" />
+                    <button class="btn nav_search-btn" type="submit">
+                      <i class="fa fa-search" aria-hidden="true"></i>
+                    </button>
+                  </form>
                 <a href="{% url 'login' %}">
                   <i class="fa fa-user" aria-hidden="true"></i>
                 </a>
@@ -92,7 +91,7 @@
       <!-- Fin de Header -->
 
       <!-- Inicio Productos -->
-       <section class="peluches">
+       <section id="peluches" class="peluches" >
     <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Peluches</h3>
       <div class="tarjetas-contenedor">
         <div class="tarjeta" >
@@ -207,7 +206,7 @@
     </div>
     </section>
      <br>
-    <section class="botellas">
+    <section id="botellas" class="botellas">
     <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Botellas</h3>
      <div class="tarjetas-contenedor">
         <div class="tarjeta">
@@ -253,7 +252,7 @@
       </section>
 
        <br>
-      <section class="termos">
+      <section id="termos" class="termos">
     <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Termos</h3>
      <div class="tarjetas-contenedor">
         <div class="tarjeta">
@@ -299,7 +298,7 @@
 
          <br>
 
-         <section class="pines">
+         <section id="pines" class="pines">
         <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Pines</h3>
      <div class="tarjetas-contenedor">
         <div class="tarjeta">
@@ -345,7 +344,7 @@
 
          <br>
 
-         <section class="llaveros">
+         <section id="llaveros" class="llaveros">
         <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Llaveros</h3>
      <div class="tarjetas-contenedor">
         <div class="tarjeta">
@@ -391,7 +390,7 @@
            
           <br>
 
-          <section class="lamparas">
+          <section id="lamparas" class="lamparas">
         <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestras Lamparas</h3>
      <div class="tarjetas-contenedor">
         <div class="tarjeta">
@@ -509,6 +508,41 @@
     </footer>
   <!-- footer section -->
   </div>
+
+  <script>
+  document.getElementById('searchForm').addEventListener('submit', function(e) {
+    e.preventDefault(); // Evita recargar la página
+
+    const searchInput = document.getElementById('searchInput');
+    const searchTerm = searchInput.value.trim().toLowerCase();
+
+    // Mapeo de términos a IDs de secciones
+    const sectionMap = {
+      'todos': 'productos',
+      'peluche': 'peluches',
+      'botella': 'botellas',
+      'termo': 'termos',
+      'pin': 'pines',
+      'llavero': 'llaveros',
+      'lampara': 'lamparas'
+    };
+
+    // Buscar coincidencia insensible a mayúsculas/minúsculas
+    for (const [key, value] of Object.entries(sectionMap)) {
+      if (searchTerm.includes(key)) {
+        const targetElement = document.getElementById(value);
+
+        if (targetElement) {
+          // Scroll suave hasta la sección
+          targetElement.scrollIntoView({ behavior: 'smooth' });
+          return;
+        }
+      }
+    }
+
+    alert("No se encontró la categoría.");
+  });
+</script>
 
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <!-- bootstrap js -->

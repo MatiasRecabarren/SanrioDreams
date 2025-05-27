@@ -13,6 +13,10 @@ body {
   
 }
 
+html {
+  scroll-behavior: smooth;
+  transition: scroll 0.5s ease;
+}
 .carousel-item {
   transition: transform 0.5s ease;
 }
@@ -1117,3 +1121,4 @@ a:focus {
   color: inherit;
 }
 /*# sourceMappingURL=style.css.map */
+

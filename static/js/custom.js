@@ -7,38 +7,47 @@ function getYear() {
 
 getYear();
 
+// Smooth scroll para anclajes (#)
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+    
+    const targetId = this.getAttribute('href');
+    const targetElement = document.querySelector(targetId);
 
-
-// slick slider
-$('.chocolate_container').slick({
-    infinite: true,
-    center: true,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    responsive: [{
-            breakpoint: 991,
-            settings: {
-                slidesToShow: 2,
-                slidesToScroll: 1
-            }
-        },
-        {
-            breakpoint: 576,
-            settings: {
-                slidesToShow: 1,
-                slidesToScroll: 1
-            }
-        }
-
-    ]
+    if (targetElement) {
+      targetElement.scrollIntoView({
+        behavior: 'smooth'
+      });
+    }
+  });
 });
 
-/** google_map js **/
+document.addEventListener('DOMContentLoaded', function () {
+  const searchInput = document.querySelector('.form-inline input[type="text"]');
+  const searchForm = document.querySelector('.form-inline');
 
-function myMap() {
-    var mapProp = {
-        center: new google.maps.LatLng(40.712775, -74.005973),
-        zoom: 18,
+  searchForm.addEventListener('submit', function (e) {
+    e.preventDefault(); // Evitar el comportamiento predeterminado del formulario
+
+    const searchTerm = searchInput.value.toLowerCase().trim(); // Convertir a minúsculas y eliminar espacios
+
+    // Mapeo de términos de búsqueda a IDs de secciones
+    const sectionMap = {
+      'peluches': '#peluches',
+      'botellas': '#botellas',
+      'termos': '#termos',
+      'pines': '#pines',
+      'llaveros': '#llaveros',
+      'lamparas': '#lamparas'
     };
-    var map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
-}
+
+    // Verificar si el término de búsqueda coincide con alguna sección
+    if (sectionMap[searchTerm]) {
+      // Redirige al usuario a la URL correcta
+      window.location.href = '/productos/' + sectionMap[searchTerm];
+    } else {
+      alert('No se encontró la categoría solicitada.');
+    }
+  });
+});

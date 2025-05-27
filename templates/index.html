@@ -60,12 +60,12 @@
                        </a>
                        <div class="dropdown-menu" aria-labelledby="navbarDropdownProductos">
                           <a class="dropdown-item" href="{% url 'productos' %}">Todos los productos</a>
-                         <a class="dropdown-item" href="{% url 'peluches' %}">Peluches</a>
-                         <a class="dropdown-item" href="{% url 'botellas' %}">Botellas</a>
-                          <a class="dropdown-item" href="{% url 'termos' %}">Termos</a>
-                         <a class="dropdown-item" href="{% url 'pines' %}">Pines</a>
-                          <a class="dropdown-item" href="{% url 'llaveros' %}">Llaveros</a>
-                         <a class="dropdown-item" href="{% url 'lamparas' %}">Lámparas</a>
+                         <a class="dropdown-item" href="{% url 'productos' %}#peluches">Peluches</a>
+                         <a class="dropdown-item" href="{% url 'productos' %}#botellas">Botellas</a>
+                          <a class="dropdown-item" href="{% url 'productos' %}#termos">Termos</a>
+                         <a class="dropdown-item" href="{% url 'productos' %}#pines">Pines</a>
+                          <a class="dropdown-item" href="{% url 'productos' %}#llaveros">Llaveros</a>
+                         <a class="dropdown-item" href="{% url 'productos' %}#lamparas">Lámparas</a>
                       </div>
                      </li>
                     </ul>
@@ -76,8 +76,8 @@
                 </li>
               </ul>
               <div class="quote_btn-container">
-                <form class="form-inline">
-                  <input type="text" class="form-control" placeholder="Buscar..." />
+                 <form class="form-inline" id="searchForm">
+                  <input type="text" class="form-control" placeholder="Buscar..." id="searchInput" />
                   <button class="btn nav_search-btn" type="submit">
                     <i class="fa fa-search" aria-hidden="true"></i>
                   </button>
@@ -85,6 +85,10 @@
                 <a href="{% url 'login' %}">
                   <i class="fa fa-user" aria-hidden="true"></i>
                 </a>
+                <a href="{% url 'carrito' %}" style="margin-left: 15px;" title="Carrito">
+                   <i class="bi bi-cart4" style="color:black"></i>
+                </a>
+                
               </div>
             </div>
           </nav>
@@ -107,7 +111,7 @@
                           Chococat
                         </span>
                       </h1>
-                      <a href="{% url 'peluches' %}">
+                      <a href="{% url 'productos' %}#peluches">
                         <span style="color:black ; margin-top: -80px;">
                           Más Información
                         </span>
@@ -134,7 +138,7 @@
                           Pompompurin
                         </span>
                       </h1>
-                      <a href="{% url 'botellas' %}">
+                      <a href="{% url 'productos' %}#botellas">
                         <span style="color:black; margin-top: -80px;">
                           Más Información
                         </span>
@@ -161,7 +165,7 @@
                           Cinnamoroll
                         </span>
                       </h1>
-                      <a href="{% url 'termos' %}">
+                      <a href="{% url 'productos' %}#termos">
                         <span style="color:black; margin-top: -80px;">
                           Más Información
                         </span>
@@ -188,7 +192,7 @@
                           Pompompurin
                         </span>
                       </h1 style="color:black ;"> 
-                      <a href="{% url 'pines' %}">
+                      <a href="{% url 'productos' %}#pines">
                         <span style="color:black; margin-top: -80px;">
                           Más Información
                         </span>
@@ -215,7 +219,7 @@
                           Cinnamoroll
                         </span>
                       </h1>
-                      <a href="{% url 'llaveros' %}">
+                      <a href="{% url 'productos' %}#llaveros">
                         <span style="color:black ; margin-top: -80px;">
                           Más Información
                         </span>
@@ -242,7 +246,7 @@
                         Twin Stars
                         </span>
                       </h1>
-                      <a href="{% url 'lamparas' %}">
+                      <a href="{% url 'productos' %}#lamparas">
                         <span style="color:black ; margin-top: -80px;">
                           Más Información
                         </span>
@@ -558,6 +562,41 @@
     </div>
   </footer>
   <!-- footer section -->
+
+  <script>
+  document.getElementById('searchForm').addEventListener('submit', function(e) {
+    e.preventDefault(); // Evita recargar la página
+
+    const searchInput = document.getElementById('searchInput');
+    const searchTerm = searchInput.value.trim().toLowerCase();
+
+    // Mapeo de términos a IDs de secciones
+    const sectionMap = {
+      'todos': 'productos',
+      'peluche': 'peluches',
+      'botella': 'botellas',
+      'termo': 'termos',
+      'pin': 'pines',
+      'llavero': 'llaveros',
+      'lampara': 'lamparas'
+    };
+
+    // Buscar coincidencia insensible a mayúsculas/minúsculas
+    for (const [key, value] of Object.entries(sectionMap)) {
+      if (searchTerm.includes(key)) {
+        const targetElement = document.getElementById(value);
+
+        if (targetElement) {
+          // Scroll suave hasta la sección
+          targetElement.scrollIntoView({ behavior: 'smooth' });
+          return;
+        }
+      }
+    }
+
+    alert("No se encontró la categoría.");
+  });
+</script>
 
   <!-- jQery -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
