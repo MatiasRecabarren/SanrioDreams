@@ -76,11 +76,11 @@
                 </li>
               </ul>
               <div class="quote_btn-container">
-                 <form class="form-inline" id="searchForm">
-                  <input type="text" class="form-control" placeholder="Buscar..." id="searchInput" />
-                  <button class="btn nav_search-btn" type="submit">
-                    <i class="fa fa-search" aria-hidden="true"></i>
-                  </button>
+                 <form class="form-inline" id="searchFormIndex"> <!-- ✅ ID añadido -->
+                  <input type="text" id="searchInputIndex" class="form-control" placeholder="Buscar..." />
+                    <button class="btn nav_search-btn" type="submit">
+                      <i class="fa fa-search" aria-hidden="true"></i>
+                   </button>
                 </form>
                 <a href="{% url 'login' %}">
                   <i class="fa fa-user" aria-hidden="true"></i>
@@ -563,41 +563,59 @@
   </footer>
   <!-- footer section -->
 
-  <script>
-  document.getElementById('searchForm').addEventListener('submit', function(e) {
-    e.preventDefault(); // Evita recargar la página
+<script>
+  // Solo ejecutar si estamos en index.html (si existe el formulario)
+  const searchForm = document.getElementById('searchFormIndex');
+  if (searchForm) {
+    searchForm.addEventListener('submit', function(e) {
+      e.preventDefault(); // Evita recargar la página
 
-    const searchInput = document.getElementById('searchInput');
-    const searchTerm = searchInput.value.trim().toLowerCase();
+      const searchTerm = document.getElementById('searchInputIndex').value.trim().toLowerCase();
 
-    // Mapeo de términos a IDs de secciones
-    const sectionMap = {
-      'todos': 'productos',
-      'peluche': 'peluches',
-      'botella': 'botellas',
-      'termo': 'termos',
-      'pin': 'pines',
-      'llavero': 'llaveros',
-      'lampara': 'lamparas'
-    };
+      // Mapeo de palabras clave a IDs de productos
+      const sectionMap = {
+        'todos': 'productos',
+        'peluche': 'peluches',
+        'muñeco': 'peluches',
+        'figura': 'peluches',
+        'botella': 'botellas',
+        'vaso': 'botellas',
+        'taza': 'botellas',
+        'termo': 'termos',
+        'thermos': 'termos',
+        'pin': 'pines',
+        'sticker': 'pines',
+        'pegatina': 'pines',
+        'llavero': 'llaveros',
+        'keychain': 'llaveros',
+        'lampara': 'lamparas',
+        'luz': 'lamparas',
+        'luminaria': 'lamparas'
+      };
 
-    // Buscar coincidencia insensible a mayúsculas/minúsculas
-    for (const [key, value] of Object.entries(sectionMap)) {
-      if (searchTerm.includes(key)) {
-        const targetElement = document.getElementById(value);
+      let targetId = null;
 
-        if (targetElement) {
-          // Scroll suave hasta la sección
-          targetElement.scrollIntoView({ behavior: 'smooth' });
-          return;
+      for (const key in sectionMap) {
+        if (searchTerm.includes(key)) {
+          targetId = sectionMap[key];
+          break;
         }
       }
-    }
 
-    alert("No se encontró la categoría.");
-  });
+      if (targetId) {
+        window.location.href = "{% url 'productos' %}#" + targetId;
+      } else {
+        alert("No encontramos esa categoría. Inténtalo de nuevo.");
+      }
+    });
+  }
 </script>
 
+<style>
+  html {
+  scroll-behavior: smooth;
+}
+</style>
   <!-- jQery -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <!-- bootstrap js -->

@@ -518,14 +518,24 @@
 
     // Mapeo de términos a IDs de secciones
     const sectionMap = {
-      'todos': 'productos',
-      'peluche': 'peluches',
-      'botella': 'botellas',
-      'termo': 'termos',
-      'pin': 'pines',
-      'llavero': 'llaveros',
-      'lampara': 'lamparas'
-    };
+  'todos': 'productos',
+  'peluche': 'peluches',
+  'muñeco': 'peluches',      
+  'figura': 'peluches',
+  'botella': 'botellas',
+  'vaso': 'botellas',
+  'taza': 'botellas',
+  'termo': 'termos',
+  'thermos': 'termos',
+  'pin': 'pines',
+  'sticker': 'pines',
+  'pegatina': 'pines',
+  'llavero': 'llaveros',
+  'keychain': 'llaveros',
+  'lampara': 'lamparas',
+  'luz': 'lamparas',
+  'luminaria': 'lamparas'
+};
 
     // Buscar coincidencia insensible a mayúsculas/minúsculas
     for (const [key, value] of Object.entries(sectionMap)) {
