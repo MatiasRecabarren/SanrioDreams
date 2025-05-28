@@ -3,56 +3,36 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <title>SanrioDreams - Tienda de artículos</title>
+  <title>SanrioDreams | Registro</title>
 
   <!-- Estilos -->
-  <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.9/slick.min.css " />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.9/slick-theme.min.css " />
-  <link href="https://fonts.googleapis.com/css?family=Poppins :400,600,700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="{% static 'css/slick-theme.css' %}" />
-  <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" />
+  <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins :wght@400;600;700&display=swap" rel="stylesheet" />
   <link href="{% static 'css/style.css' %}" rel="stylesheet" />
-  <link href="{% static 'css/responsive.css' %}" rel="stylesheet" />
 
   <style>
     body {
       background-color: #fff0f5;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Poppins', sans-serif;
     }
 
     .login-container {
-      max-width: 400px;
-      margin: 120px auto;
-      padding: 30px;
       background: #ffffff;
       border-radius: 15px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 25px;
-      color: #ff69b4;
+      padding: 40px 30px;
+      margin-top: 100px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     }
 
     .form-group label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
+      font-weight: 600;
+      color: #555;
     }
 
-    input[type="text"],
-    input[type="email"],
-    input[type="password"],
-    input[type="tel"] {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
+    input.form-control {
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      padding: 10px 15px;
     }
 
     .btn-login {
@@ -63,43 +43,27 @@
       padding: 10px;
       font-size: 16px;
       border-radius: 5px;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .btn-login.active {
       cursor: pointer;
-    }
-
-    .btn-login:hover {
       background-color: #ff1493;
+      opacity: 1;
     }
 
-    .navbar {
-      background-color: #fff0f5;
-      padding: 10px 20px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .navbar-brand {
-      color: #ff69b4;
-      font-weight: bold;
-    }
-
-    .nav-link {
-      color: #333 !important;
-    }
-
-    .nav-link:hover {
-      color: #ff69b4 !important;
-    }
-
-    .footer-section {
-      text-align: center;
-      padding: 20px 0;
-      background-color: #fff0f5;
+    .error-message {
+      color: red;
+      font-size: 0.85rem;
+      display: none;
+      margin-top: -8px;
+      margin-bottom: 10px;
     }
   </style>
 </head>
 
-<body>
-
-  <!-- Menú de navegación -->
+<!-- Menú de navegación -->
   <nav class="navbar navbar-expand-lg navbar-light fixed-top">
     <a class="navbar-brand" href="{% url 'index' %}">SanrioDreams</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
@@ -109,99 +73,190 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ml-auto">
         <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Inicio</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Acerca de Nosotros</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Tienda</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Contacto</a></li>
+        <li class="nav-item"><a class="nav-link" href="nosotros.html">Acerca de Nosotros</a></li>
+        <li class="nav-item"><a class="nav-link" href="tienda.html">Tienda</a></li>
+        <li class="nav-item"><a class="nav-link" href="contacto.html">Contacto</a></li>
       </ul>
     </div>
   </nav>
 
-  <!-- Contenedor del Formulario -->
+<body>
+
   <div class="container mt-5">
     <div class="row justify-content-center">
       <div class="col-md-6">
         <div class="login-container">
 
-          <h2>Registro</h2>
+          <h2 class="text-center mb-4">Registro</h2>
 
-          <!-- Mostrar mensajes -->
           {% if messages %}
             {% for message in messages %}
               <div class="alert alert-danger">{{ message }}</div>
             {% endfor %}
           {% endif %}
 
-          <!-- Formulario -->
-          <form action="{% url 'registro' %}" method="POST">
+          <form id="registroForm" method="POST" action="{% url 'registro' %}">
             {% csrf_token %}
 
-            <div class="form-group">
+            <div class="form-group position-relative">
+              <label for="id_usuario">RUT</label>
+              <input type="text" class="form-control" id="id_usuario" name="id_usuario"
+                     placeholder="Ej: 12345678-9" required>
+              <small class="error-message" data-for="id_usuario">Este campo es obligatorio.</small>
+            </div>
+
+            <div class="form-group position-relative">
               <label for="nombre">Nombre</label>
               <input type="text" class="form-control" id="nombre" name="nombre"
-                     value="{{ nombre|default:'' }}" placeholder="Ingresa tu Nombre" required>
+                     placeholder="Ingresa tu nombre" required>
+              <small class="error-message" data-for="nombre">Este campo es obligatorio.</small>
             </div>
 
-            <div class="form-group">
+            <div class="form-group position-relative">
               <label for="apellido">Apellido</label>
               <input type="text" class="form-control" id="apellido" name="apellido"
-                     value="{{ apellido|default:'' }}" placeholder="Ingresa tu Apellido" required>
+                     placeholder="Ingresa tu apellido" required>
+              <small class="error-message" data-for="apellido">Este campo es obligatorio.</small>
             </div>
 
-            <div class="form-group">
-              <label for="rut">RUT</label>
-              <input type="text" class="form-control" id="rut" name="id_usuario"
-                     value="{{ id_usuario|default:'' }}"
-                     pattern="\d{7,8}-[0-9kK]"
-                     title="Ejemplo: 12345678-9"
-                     placeholder="12345678-9" required>
+            <div class="form-group position-relative">
+              <label for="correo">Correo electrónico</label>
+              <input type="email" class="form-control" id="correo" name="correo"
+                     placeholder="ejemplo@correo.com" required>
+              <small class="error-message" data-for="correo">Correo inválido o incompleto.</small>
             </div>
 
-            <div class="form-group">
-              <label for="email">Correo electrónico</label>
-              <input type="email" class="form-control" id="email" name="correo"
-                     value="{{ correo|default:'' }}" placeholder="Sanrio@gmail.com" required>
+            <div class="form-group position-relative">
+              <label for="contrasenna">Contraseña</label>
+              <input type="password" class="form-control" id="contrasenna" name="contrasenna"
+                     placeholder="Mínimo 8 caracteres, una mayúscula y un símbolo" required>
+              <small class="error-message" data-for="contrasenna">Este campo es obligatorio.</small>
             </div>
 
-            <div class="form-group">
-              <label for="password">Contraseña</label>
-              <input type="password" class="form-control" id="password" name="contrasenna"
-                     placeholder="Ingresa tu contraseña" required>
+            <div class="form-group position-relative">
+              <label for="confirm-contra">Confirmar Contraseña</label>
+              <input type="password" class="form-control" id="confirm-contra" name="confirm-contra"
+                     placeholder="Repite tu contraseña" required>
+              <small class="error-message" data-for="confirm-contra">Este campo es obligatorio.</small>
             </div>
 
-            <div class="form-group">
-              <label for="confirm-password">Confirmar Contraseña</label>
-              <input type="password" class="form-control" id="confirm-password" name="confirm-contra"
-                     placeholder="Confirma tu contraseña" required>
-            </div>
-
-            <div class="form-group">
+            <div class="form-group position-relative">
               <label for="direccion">Dirección</label>
               <input type="text" class="form-control" id="direccion" name="direccion"
-                     value="{{ direccion|default:'' }}" placeholder="Dirección" required>
+                     placeholder="Ingresa tu dirección" required>
+              <small class="error-message" data-for="direccion">Este campo es obligatorio.</small>
             </div>
 
-            <div class="form-group">
+            <div class="form-group position-relative">
               <label for="telefono">Teléfono</label>
-              <input type="tel" class="form-control" id="telefono" name="telefono"
-                     value="{{ telefono|default:'' }}" placeholder="9 XXXX XXXX" required>
+              <input type="text" class="form-control" id="telefono" name="telefono"
+                     placeholder="Ej: 912345678" required>
+              <small class="error-message" data-for="telefono">Teléfono inválido.</small>
             </div>
 
-            <button type="submit" class="btn btn-login btn-block">Registrarme</button>
-
-            <div class="login-links">
-              <a href="{% url 'login' %}">¿Ya tienes cuenta? Inicia sesión aquí</a>
-            </div>
-
+            <button type="submit" class="btn btn-login" id="registroBtn" disabled>Registrarme</button>
           </form>
+
+          <div class="login-links text-center mt-3">
+            <a href="{% url 'login' %}">¿Ya tienes cuenta? Inicia sesión aquí</a>
+          </div>
 
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Footer -->
-  <footer class="footer-section">
-    <p>© 2023 Todos los derechos reservados a SanrioDreams <3</p>
+  <!-- Scripts -->
+  <script>
+    const form = document.getElementById('registroForm');
+    const inputs = form.querySelectorAll('input[required]');
+    const submitBtn = document.getElementById('registroBtn');
+
+    // Validación al enviar el formulario
+    form.addEventListener('submit', function(e) {
+      let isValid = true;
+
+      inputs.forEach(input => {
+        const errorEl = document.querySelector(`.error-message[data-for='${input.id}']`);
+        if (!input.value.trim()) {
+          errorEl.style.display = 'block';
+          isValid = false;
+        } else {
+          errorEl.style.display = 'none';
+        }
+      });
+
+      // Validación extra: teléfono chileno (9 dígitos y empieza con 9)
+      const telefono = document.getElementById('telefono').value.trim();
+      if (!/^[9]\d{8}$/.test(telefono)) {
+        const telError = document.querySelector('.error-message[data-for="telefono"]');
+        telError.textContent = "El teléfono debe tener 9 dígitos y comenzar con 9.";
+        telError.style.display = 'block';
+        isValid = false;
+      }
+
+      // Validación de contraseñas
+      const pass = document.getElementById('contrasenna').value;
+      const confirmPass = document.getElementById('confirm-contra').value;
+      const passError = document.querySelector('.error-message[data-for="contrasenna"]');
+      const confirmPassError = document.querySelector('.error-message[data-for="confirm-contra"]');
+
+      if (pass.length < 8 && pass !== '') {
+        passError.textContent = "La contraseña debe tener al menos 8 caracteres.";
+        passError.style.display = 'block';
+        isValid = false;
+      } else {
+        passError.style.display = 'none';
+      }
+
+      if (pass !== confirmPass && confirmPass !== '') {
+        confirmPassError.textContent = "Las contraseñas no coinciden.";
+        confirmPassError.style.display = 'block';
+        isValid = false;
+      } else {
+        confirmPassError.style.display = 'none';
+      }
+
+      if (!isValid) e.preventDefault();
+    });
+
+    // Habilitar botón si todos los campos están llenos
+    function validateForm() {
+      let allFilled = true;
+
+      inputs.forEach(input => {
+        if (!input.value.trim()) {
+          allFilled = false;
+        }
+      });
+
+      if (allFilled) {
+        submitBtn.classList.add('active');
+        submitBtn.disabled = false;
+      } else {
+        submitBtn.classList.remove('active');
+        submitBtn.disabled = true;
+      }
+    }
+
+    window.onload = validateForm;
+    inputs.forEach(input => input.addEventListener('input', validateForm));
+  </script>
+
+ 
+
+</body>
+
+<!-- Footer -->
+  <footer class="container-fluid footer_section">
+    <div class="container">
+      <div class="col-md-11 col-lg-8 mx-auto">
+        <p>
+          &copy; <span id="displayYear"></span> Todos los derechos reservados a
+          <a href="https://html.design/ ">SanrioDreams <3</a>
+        </p>
+      </div>
+    </div>
   </footer>
 
   <!-- Scripts -->
@@ -209,5 +264,5 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap @4.6.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="{% static 'js/custom.js' %}"></script>
 
-</body>
+
 </html>

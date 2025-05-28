@@ -15,6 +15,7 @@
 
   <title>SanrioDreams - Tienda de artículos</title>
 
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/icofont @1.0.0/dist/css/icofont.min.css">
   <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.9/slick.min.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.9/slick-theme.min.css" />
@@ -33,68 +34,73 @@
     <div class="hero_area">
 
       <!-- Header Inicio -->
-      <header class="header_section">
-        <div class="container-fluid">
-          <nav class="navbar navbar-expand-lg custom_nav-container ">
-            <a class="navbar-brand" href="index.html">
-              SanrioDreams 
-            </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-              <span class=""> </span>
-            </button>
+<header class="header_section">
+  <div class="container-fluid">
+    <nav class="navbar navbar-expand-lg custom_nav-container">
+      <a class="navbar-brand" href="index.html">
+        SanrioDreams 
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse"
+        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class=""></span>
+      </button>
 
-            <div class="collapse navbar-collapse " id="navbarSupportedContent">
-              <ul class="navbar-nav ml-auto">
-                <li class="nav-item active">
-                  <a class="nav-link" href="{% url 'index' %}">Inicio <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="about.html"> Acerca de Nosotros</a>
-                </li>
-                <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                   <div class="collapse navbar-collapse">
-                   <ul class="navbar-nav ml-auto">
-                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProductos" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                         Productos
-                       </a>
-                       <div class="dropdown-menu" aria-labelledby="navbarDropdownProductos">
-                          <a class="dropdown-item" href="{% url 'productos' %}">Todos los productos</a>
-                         <a class="dropdown-item" href="{% url 'productos' %}#peluches">Peluches</a>
-                         <a class="dropdown-item" href="{% url 'productos' %}#botellas">Botellas</a>
-                          <a class="dropdown-item" href="{% url 'productos' %}#termos">Termos</a>
-                         <a class="dropdown-item" href="{% url 'productos' %}#pines">Pines</a>
-                          <a class="dropdown-item" href="{% url 'productos' %}#llaveros">Llaveros</a>
-                         <a class="dropdown-item" href="{% url 'productos' %}#lamparas">Lámparas</a>
-                      </div>
-                     </li>
-                    </ul>
-                 </div>
-                </nav>
-                <li class="nav-item">
-                  <a class="nav-link" href="contact.html">Contacta con Nosotros</a>
-                </li>
-              </ul>
-              <div class="quote_btn-container">
-                 <form class="form-inline" id="searchFormIndex"> <!-- ✅ ID añadido -->
-                  <input type="text" id="searchInputIndex" class="form-control" placeholder="Buscar..." />
-                    <button class="btn nav_search-btn" type="submit">
-                      <i class="fa fa-search" aria-hidden="true"></i>
-                   </button>
-                </form>
-                <a href="{% url 'login' %}">
-                  <i class="fa fa-user" aria-hidden="true"></i>
-                </a>
-                <a href="{% url 'carrito' %}" style="margin-left: 15px;" title="Carrito">
-                   <i class="bi bi-cart4" style="color:black"></i>
-                </a>
-                
-              </div>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto d-flex align-items-center">
+          <li class="nav-item active">
+            <a class="nav-link" href="{% url 'index' %}">Inicio <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+           <a href="{% url 'nosotros' %}" class="btn btn-primary">Sobre Nosotros</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProductos" role="button"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Productos
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownProductos">
+              <a class="dropdown-item" href="{% url 'productos' %}">Todos los productos</a>
+              <a class="dropdown-item" href="{% url 'productos' %}#peluches">Peluches</a>
+              <a class="dropdown-item" href="{% url 'productos' %}#botellas">Botellas</a>
+              <a class="dropdown-item" href="{% url 'productos' %}#termos">Termos</a>
+              <a class="dropdown-item" href="{% url 'productos' %}#pines">Pines</a>
+              <a class="dropdown-item" href="{% url 'productos' %}#llaveros">Llaveros</a>
+              <a class="dropdown-item" href="{% url 'productos' %}#lamparas">Lámparas</a>
             </div>
-          </nav>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="contact.html">Contacta con Nosotros</a>
+          </li>
+        </ul>
+
+        <div class="quote_btn-container d-flex align-items-center ml-3">
+          <form class="form-inline d-flex" id="searchFormIndex">
+            <input type="text" id="searchInputIndex" class="form-control form-control-sm mr-2" placeholder="Buscar..." />
+            <button class="btn btn-sm nav_search-btn" type="submit">
+              <i class="fa fa-search" aria-hidden="true"></i>
+            </button>
+          </form>
+          <a href="{% url 'login' %}" class="ml-3" title="Iniciar sesión">
+            <i class="fa fa-user" aria-hidden="true" style="font-size: 1.3rem;"></i>
+          </a>
+          <a href="{% url 'carrito' %}" class="ml-3 position-relative" style="text-decoration: none; color: black;" title="Ver carrito">
+            <i class="bi bi-cart4" style="font-size: 1.5rem;"></i>
+            {% with request.session.carrito|length as cart_count %}
+              {% if cart_count > 0 %}
+                <span style="position: absolute; top: -5px; right: -10px; background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem;">
+                  {{ cart_count }}
+                </span>
+              {% endif %}
+            {% endwith %}
+          </a>
         </div>
-      </header>
-      <!-- Fin de Header -->
+      </div>
+    </nav>
+  </div>
+</header>
+<!-- Fin de Header -->
+
 
       <!-- Inicio carrusel -->
       <section class="slider_section ">
@@ -337,7 +343,7 @@
                   <div class="detail-box mt-3">
                     <h6>Peluche <span>Hello Kitty</span></h6>
                     <h5>$xx.xxx CLP</h5>
-                    <a href="#">Agregar al Carrito</a>
+                     <button class="btn-agregar-carrito" data-nombre="Peluche Hello Kitty" data-precio="15000">Agregar al carrito</button>
                   </div>
                 </div>
               </div>
@@ -641,6 +647,36 @@
   <!-- custom js -->
   <script  src="{% static 'js/custom.js' %}"></script> 
 
+  <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const botones = document.querySelectorAll(".btn-agregar-carrito");
+
+    botones.forEach(boton => {
+        boton.addEventListener("click", function () {
+            const nombre = this.getAttribute("data-nombre");
+            const precio = this.getAttribute("data-precio");
+
+            fetch("{% url 'agregar_al_carrito' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: `nombre=${encodeURIComponent(nombre)}&precio=${encodeURIComponent(precio)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Actualiza el contador del carrito
+                    const cartCount = document.getElementById("cart-count");
+                    cartCount.textContent = data.cart_count;
+                    cartCount.style.display = "inline-block";
+                }
+            });
+        });
+    });
+});
+</script>
 
 </body>
 

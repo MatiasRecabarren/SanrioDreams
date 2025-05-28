@@ -10,21 +10,38 @@ ROL_OPCIONES = (
 )
 
 class Usuario(models.Model):
-    id_usuario = models.CharField(max_length=12, primary_key=True)  # RUT
+    id_usuario = models.CharField(max_length=12, primary_key=True)  # RUT como identificador
     nombre = models.CharField(max_length=50)
     apellido = models.CharField(max_length=50)
     correo = models.EmailField(unique=True)
-    contrasenna = models.CharField(max_length=100)
+    contrasenna = models.CharField(max_length=128)  # Guardamos el hash
     direccion = models.CharField(max_length=255)
-    telefono = models.CharField(max_length=15)
-    rol = models.CharField(max_length=20, choices=ROL_OPCIONES, default='cliente')
+    telefono = models.CharField(max_length=9)
+    reset_token = models.CharField(max_length=100, null=True, blank=True)
+    reset_token_expira = models.DateTimeField(null=True, blank=True)
+    rol = models.CharField(max_length=20,choices=[
+            ('cliente', 'Cliente'),
+            ('admin', 'Administrador'),
+            ('vendedor', 'Vendedor'),
+            ('bodeguero', 'Bodeguero'),
+            ('contador', 'Contador')
+        ],
+        default='cliente'
+    )
+    def __str__(self):
+        return f"{self.nombre} {self.apellido} - {self.correo}"
+
+
+    def __str__(self):
+        return self.correo
 
     def save(self, *args, **kwargs):
-        self.contrasenna = make_password(self.contrasenna)
+        if not self.pk or 'contrasenna' in kwargs.get('update_fields', []):
+            self.contrasenna = make_password(self.contrasenna)
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.nombre} {self.apellido} ({self.rol})"
+        return f"{self.nombre} {self.apellido} - {self.correo}"
 
     @staticmethod
     def validar_rut(rut):

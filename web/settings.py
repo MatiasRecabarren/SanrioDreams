@@ -105,3 +105,11 @@ SESSION_SAVE_EVERY_REQUEST = True
 
 # Primary Key por defecto
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'tuemail@gmail.com'  # Tu correo
+EMAIL_HOST_PASSWORD = 'tu_app_password'  # Contraseña de aplicación de Google
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

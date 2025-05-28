@@ -1,0 +1,157 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sobre Nosotros - SanrioDreams</title>
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+  <style>
+    /* Contenedor principal */
+    main.nosotros {
+      max-width: 900px;
+      margin: 3rem auto 5rem;
+      padding: 0 1.2rem;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #4b3f72; /* morado suave */
+      background: #fff0f6; /* rosa pastel muy suave */
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(203, 113, 151, 0.15);
+    }
+
+    /* Título principal */
+    main.nosotros h2 {
+      font-size: 3rem;
+      color: #d6336c; /* rosa vibrante */
+      font-weight: 700;
+      margin-bottom: 2rem;
+      text-align: center;
+      letter-spacing: 2px;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      text-shadow: 1px 1px 2px #f8bbd0;
+    }
+
+    /* Secciones con imagen a la izquierda */
+    main.nosotros section {
+      display: flex;
+      align-items: center;
+      gap: 1.6rem;
+      margin-bottom: 2.8rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px dotted #d6336c44;
+    }
+
+    /* Imagen con bordes redondeados y sombra */
+    main.nosotros section img {
+      width: 180px;
+      height: 180px;
+      border-radius: 20px;
+      object-fit: cover;
+      box-shadow: 0 4px 10px rgba(214, 51, 108, 0.3);
+      flex-shrink: 0;
+    }
+
+    /* Texto dentro de la sección */
+    main.nosotros section div.texto {
+      flex: 1;
+      font-size: 1.1rem;
+      line-height: 1.5;
+      color: #5a4e78;
+    }
+
+    /* Subtítulos dentro de la sección */
+    main.nosotros section div.texto h3 {
+      margin-top: 0;
+      margin-bottom: 0.8rem;
+      font-weight: 600;
+      color: #b32454;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* Lista kawaii con iconos */
+    main.nosotros ul.kawaii-list {
+      padding-left: 1.3rem;
+      list-style: none;
+      margin-top: 1rem;
+      color: #a23662;
+      font-weight: 600;
+    }
+
+    main.nosotros ul.kawaii-list li {
+      position: relative;
+      margin-bottom: 0.7rem;
+      padding-left: 28px;
+      font-size: 1.1rem;
+    }
+
+    /* Icono kawaii de estrella al inicio de cada li */
+    main.nosotros ul.kawaii-list li::before {
+      content: "⭐";
+      position: absolute;
+      left: 0;
+      top: 0;
+      font-size: 1.2rem;
+      color: #ff69b4; /* rosa fuerte */
+      text-shadow: 0 0 2px #ffa6c9;
+    }
+
+    /* Responsive: apila las secciones en móvil */
+    @media (max-width: 700px) {
+      main.nosotros section {
+        flex-direction: column;
+        text-align: center;
+      }
+      main.nosotros section img {
+        margin-bottom: 1rem;
+        width: 140px;
+        height: 140px;
+      }
+      main.nosotros section div.texto {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  
+
+
+  <main class="nosotros">
+    <h2>SanrioDreams</h2>
+
+    <section>
+      <img src="{% static 'images/Kitty.png' %}" alt="Hello Kitty Linda" />
+      <div class="texto">
+        <p>Sanrio, fundada en 1960, es reconocida mundialmente por sus icónicos personajes como Hello Kitty. Nuestra misión es llevar alegría y ternura a personas de todas las edades a través de nuestros productos únicos y de alta calidad.</p>
+      </div>
+    </section>
+
+    <section>
+      <img src="{% static 'images/hello_kitty_historia.jpg' %}" alt="Historia Hello Kitty" />
+      <div class="texto">
+        <h3>Historia de Hello Kitty</h3>
+        <p>Creada en 1974 por Yuko Shimizu, Hello Kitty ha trascendido fronteras para convertirse en un símbolo de cultura pop y moda global. Con su diseño simple pero encantador, ha inspirado generaciones alrededor del mundo.</p>
+      </div>
+    </section>
+
+    <section>
+      <img src="{% static 'images/pandemia_2019.jpg' %}" alt="Pandemia 2019" />
+      <div class="texto">
+        <h3>Crisis y Adaptación en 2019</h3>
+        <p>La pandemia del COVID-19 impactó fuertemente a muchas industrias, incluyendo Sanrio. Para adaptarnos, implementamos diversas estrategias que nos permitieron seguir conectados con nuestros fans:</p>
+        <ul class="kawaii-list">
+          <li>Fortalecimos nuestra tienda online para facilitar el acceso a nuestros productos.</li>
+          <li>Lanzamos colecciones especiales que celebran la esperanza y resiliencia.</li>
+          <li>Colaboramos con artistas y creadores para apoyar la comunidad local.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer style="text-align:center; padding:1.5rem 0; background:#fff0f6; color:#a23662; font-size:0.9rem; font-weight:600;">
+    &copy; {{ year|default:2025 }} SanrioDreams - Todos los derechos reservados.
+  </footer>
+
+</body>
+</html>
+

@@ -12,6 +12,10 @@ urlpatterns = [
     path('login/', views.login, name='login'),
     path('registro/', views.registro, name='registro'),
     path('carrito/', views.carrito, name='carrito'),
+    path('agregar-al-carrito/', views.agregar_al_carrito, name='agregar_al_carrito'),
+    path('eliminar-del-carrito/', views.eliminar_del_carrito, name='eliminar_del_carrito'),
+    path('nosotros/', views.nosotros, name='nosotros'),
+
  
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
