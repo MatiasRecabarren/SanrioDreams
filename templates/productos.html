@@ -33,63 +33,71 @@
 
 
 
-<<!-- Header Inicio -->
+<!-- Header Inicio -->
       <header class="header_section">
-        <div class="container-fluid">
-          <nav class="navbar navbar-expand-lg custom_nav-container ">
-            <a class="navbar-brand" href="index.html">
-              SanrioDreams 
-            </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-              <span class=""> </span>
-            </button>
+  <div class="container-fluid">
+    <nav class="navbar navbar-expand-lg custom_nav-container">
+      <a class="navbar-brand" href="index.html">
+        SanrioDreams 
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse"
+        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class=""></span>
+      </button>
 
-            <div class="collapse navbar-collapse " id="navbarSupportedContent">
-              <ul class="navbar-nav ml-auto">
-                <li class="nav-item active">
-                  <a class="nav-link" href="{% url 'index' %}">Inicio <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="about.html"> Acerca de Nosotros</a>
-                </li>
-                <nav class="navbar navbar-expand-lg navbar-light bg-light" style="color: rgb(255,255,255)">
-                   <div class="collapse navbar-collapse">
-                   <ul class="navbar-nav ml-auto">
-                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProductos" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background-color: rgb(255,255,255)">
-                         Productos
-                       </a>
-                       <div class="dropdown-menu" aria-labelledby="navbarDropdownProductos">
-                         <a class="dropdown-item" href="#peluches">Peluches</a>
-                         <a class="dropdown-item" href="#botellas">Botellas</a>
-                          <a class="dropdown-item" href="#termos">Termos</a>
-                         <a class="dropdown-item" href="#pines">Pines</a>
-                          <a class="dropdown-item" href="#llaveros">Llaveros</a>
-                         <a class="dropdown-item" href="#lamparas">Lámparas</a>
-                      </div>
-                     </li>
-                    </ul>
-                 </div>
-                </nav>
-                <li class="nav-item">
-                  <a class="nav-link" href="contact.html">Contacta con Nosotros</a>
-                </li>
-              </ul>
-              <div class="quote_btn-container">
-                 <form class="form-inline" id="searchForm">
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto d-flex align-items-center">
+          <li class="nav-item active">
+            <a class="nav-link" href="{% url 'index' %}">Inicio <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'nosotros' %}">Sobre Nosotros</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProductos" role="button"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Productos
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownProductos">
+              <a class="dropdown-item" href="#peluches">Peluches</a>
+              <a class="dropdown-item" href="#botellas">Botellas</a>
+              <a class="dropdown-item" href="#termos">Termos</a>
+              <a class="dropdown-item" href="#pines">Pines</a>
+              <a class="dropdown-item" href="#llaveros">Llaveros</a>
+              <a class="dropdown-item" href="#lamparas">Lámparas</a>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="contact.html">Contacta con Nosotros</a>
+          </li>
+        </ul>
+
+        <div class="quote_btn-container d-flex align-items-center ml-3">
+          <form class="form-inline" id="searchForm">
                     <input type="text" class="form-control" placeholder="Buscar..." id="searchInput" />
                     <button class="btn nav_search-btn" type="submit">
                       <i class="fa fa-search" aria-hidden="true"></i>
                     </button>
                   </form>
-                <a href="{% url 'login' %}">
-                  <i class="fa fa-user" aria-hidden="true"></i>
-                </a>
-              </div>
-            </div>
-          </nav>
+          <a href="{% url 'login' %}" class="ml-3" title="Iniciar sesión">
+            <i class="fa fa-user" aria-hidden="true" style="font-size: 1.3rem;"></i>
+          </a>
+          <a href="{% url 'carrito' %}" class="ml-3 position-relative" style="text-decoration: none; color: black;" title="Ver carrito">
+            <i class="fas fa-shopping-cart" style="font-size: 1.5rem; margin-left: -25px;color: black;"></i>
+            {% with request.session.carrito|length as cart_count %}
+              {% if cart_count > 0 %}
+                <span style="position: absolute; top: -5px; right: -10px; background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem;">
+                  {{ cart_count }}
+                </span>
+              {% endif %}
+            {% endwith %}
+          </a>
         </div>
-      </header>
+      </div>
+    </nav>
+  </div>
+</header>
       <!-- Fin de Header -->
 
       <!-- Inicio Productos -->
@@ -579,6 +587,8 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
   <!-- custom js -->
   <script  src="{% static 'js/custom.js' %}"></script> 
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons @1.11.1/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css ">
 
 </body>
 

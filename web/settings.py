@@ -60,10 +60,16 @@ TEMPLATES = [
 # Base de datos (usar PostgreSQL en producción)
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.oracle',
+        'NAME': 'XE',  # Nombre del servicio Oracle
+        'USER': 'SanrioDreams',  # Usuario en Oracle
+        'PASSWORD': '12345',
+        'HOST': 'localhost',
+        'PORT': '1521',
     }
 }
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Validación de contraseñas
 AUTH_PASSWORD_VALIDATORS = [
@@ -102,9 +108,6 @@ MESSAGE_TAGS = {
 # Sesiones
 SESSION_COOKIE_AGE = 3600  # 1 hora
 SESSION_SAVE_EVERY_REQUEST = True
-
-# Primary Key por defecto
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'

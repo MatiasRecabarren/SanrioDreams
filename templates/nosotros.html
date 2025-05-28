@@ -4,7 +4,14 @@
 <head>
   <meta charset="UTF-8" />
   <title>Sobre Nosotros - SanrioDreams</title>
-  <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.9/slick.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.9/slick-theme.min.css" />
+  <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'css/slick-theme.css' %}" />
+  <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" />
+  <link href="{% static 'css/style.css' %}" rel="stylesheet" />
+  <link href="{% static 'css/responsive.css' %}" rel="stylesheet" />
   <style>
     /* Contenedor principal */
     main.nosotros {
@@ -113,7 +120,69 @@
 </head>
 <body>
 
-  
+<!-- Header Inicio -->
+      <header class="header_section">
+  <div class="container-fluid">
+    <nav class="navbar navbar-expand-lg custom_nav-container">
+      <a class="navbar-brand" href="index.html">
+        SanrioDreams 
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse"
+        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class=""></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto d-flex align-items-center">
+          <li class="nav-item active">
+            <a class="nav-link" href="{% url 'index' %}">Inicio <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProductos" role="button"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Productos
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownProductos">
+              <a class="dropdown-item" href="#peluches">Peluches</a>
+              <a class="dropdown-item" href="#botellas">Botellas</a>
+              <a class="dropdown-item" href="#termos">Termos</a>
+              <a class="dropdown-item" href="#pines">Pines</a>
+              <a class="dropdown-item" href="#llaveros">Llaveros</a>
+              <a class="dropdown-item" href="#lamparas">Lámparas</a>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="contact.html">Contacta con Nosotros</a>
+          </li>
+        </ul>
+
+        <div class="quote_btn-container d-flex align-items-center ml-3">
+          <form class="form-inline d-flex" id="searchFormIndex">
+            <input type="text" id="searchInputIndex" class="form-control form-control-sm mr-2" placeholder="Buscar..." />
+            <button class="btn btn-sm nav_search-btn" type="submit">
+              <i class="fa fa-search" aria-hidden="true"></i>
+            </button>
+          </form>
+          <a href="{% url 'login' %}" class="ml-3" title="Iniciar sesión">
+            <i class="fa fa-user" aria-hidden="true" style="font-size: 1.3rem;"></i>
+          </a>
+          <a href="{% url 'carrito' %}" class="ml-3 position-relative" style="text-decoration: none; color: black;" title="Ver carrito">
+            <i class="fas fa-shopping-cart" style="font-size: 1.5rem; margin-left: -25px;color: black;"></i>
+            {% with request.session.carrito|length as cart_count %}
+              {% if cart_count > 0 %}
+                <span style="position: absolute; top: -5px; right: -10px; background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem;">
+                  {{ cart_count }}
+                </span>
+              {% endif %}
+            {% endwith %}
+          </a>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+      <!-- Fin de Header -->  
 
 
   <main class="nosotros">
@@ -151,6 +220,73 @@
   <footer style="text-align:center; padding:1.5rem 0; background:#fff0f6; color:#a23662; font-size:0.9rem; font-weight:600;">
     &copy; {{ year|default:2025 }} SanrioDreams - Todos los derechos reservados.
   </footer>
+
+  <script>
+  // Solo ejecutar si estamos en index.html (si existe el formulario)
+  const searchForm = document.getElementById('searchFormIndex');
+  if (searchForm) {
+    searchForm.addEventListener('submit', function(e) {
+      e.preventDefault(); // Evita recargar la página
+
+      const searchTerm = document.getElementById('searchInputIndex').value.trim().toLowerCase();
+
+      // Mapeo de palabras clave a IDs de productos
+      const sectionMap = {
+        'todos': 'productos',
+        'peluche': 'peluches',
+        'muñeco': 'peluches',
+        'figura': 'peluches',
+        'stuffed': 'peluches',
+        'peluchito': 'peluches',
+        'juguete': 'peluches','botella': 'botellas',
+        'vaso': 'botellas',
+        'taza': 'botellas',
+        'botellita': 'botellas',
+        'bidón': 'botellas',
+        'cantimplora': 'botellas',
+        'termo': 'termos',
+        'thermos': 'termos',
+        'termico': 'termos',
+        'termo de café': 'termos',
+        'vaso térmico': 'termos',
+        'mug térmico': 'termos',
+        'pin': 'pines',
+        'sticker': 'pines',
+        'pegatina': 'pines',
+        'calcomanía': 'pines',
+        'insignia': 'pines',
+        'chapita': 'pines',
+        'llavero': 'llaveros',
+        'keychain': 'llaveros',
+        'llave': 'llaveros',
+        'adorno de llave': 'llaveros',
+        'colgante': 'llaveros',
+        'lampara': 'lamparas',
+        'luz': 'lamparas',
+        'luminaria': 'lamparas',
+        'foco decorativo': 'lamparas',
+        'led': 'lamparas',
+        'night light': 'lamparas'
+      };
+
+      let targetId = null;
+
+      for (const key in sectionMap) {
+        if (searchTerm.includes(key)) {
+          targetId = sectionMap[key];
+          break;
+        }
+      }
+
+      if (targetId) {
+        window.location.href = "{% url 'productos' %}#" + targetId;
+      } else {
+        alert("No encontramos esa categoría. Inténtalo de nuevo.");
+      }
+    });
+  }
+</script>
+
 
 </body>
 </html>
