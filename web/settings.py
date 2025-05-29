@@ -1,7 +1,20 @@
 from pathlib import Path
 import os
 from django.contrib.messages import constants as messages_constants
+import oracledb
 
+try:
+    connection = oracledb.connect(
+        user='C##SanrioDreams',
+        password='12345',
+        dsn='localhost/XE'
+    )
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT BANNER FROM V$VERSION")
+        version = cursor.fetchone()
+        print("Versión de Oracle:", version[0])
+except Exception as e:
+    print("Error al conectar a Oracle:", str(e))
 
 # Base Directory
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -61,8 +74,8 @@ TEMPLATES = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.oracle',
-        'NAME': 'XE',  # Nombre del servicio Oracle
-        'USER': 'SanrioDreams',  # Usuario en Oracle
+        'NAME': 'XE',  
+        'USER': 'C##SanrioDreams',
         'PASSWORD': '12345',
         'HOST': 'localhost',
         'PORT': '1521',
