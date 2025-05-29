@@ -1,2 +1,4 @@
 pip install django
 pip install cx_oracle
+
+#python manage.py migrate --fake-initial
