@@ -81,9 +81,16 @@
               <i class="fa fa-search" aria-hidden="true"></i>
             </button>
           </form>
-          <a href="{% url 'login' %}" class="ml-3" title="Iniciar sesión">
-            <i class="fa fa-user" aria-hidden="true" style="font-size: 1.3rem;"></i>
-          </a>
+          {% if user.is_authenticated %}
+            <span class="ml-3 text-success" title="Ya has iniciado sesión">
+              <i class="fa fa-check-circle" aria-hidden="true" style="font-size: 1.3rem;"></i>
+              <small>Ya iniciaste sesión</small>
+            </span>
+          {% else %}
+            <a href="{% url 'login' %}" class="ml-3" title="Iniciar sesión">
+              <i class="fa fa-user" aria-hidden="true" style="font-size: 1.3rem;"></i>
+            </a>
+          {% endif %}
           <a href="{% url 'carrito' %}" class="ml-3 position-relative" style="text-decoration: none; color: black;" title="Ver carrito">
             <i class="fas fa-shopping-cart" style="font-size: 1.5rem; margin-left: -25px;color: black;"></i>
             {% with request.session.carrito|length as cart_count %}

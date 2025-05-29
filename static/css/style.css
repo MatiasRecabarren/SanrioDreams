@@ -21,6 +21,11 @@ html {
   transition: transform 0.5s ease;
 }
 
+.text-success {
+  color: green !important;
+  font-size: 0.9rem;
+}
+
 .carousel-control-prev,
 .carousel-control-next {
   width: 50px;

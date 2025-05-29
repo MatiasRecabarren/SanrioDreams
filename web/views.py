@@ -83,7 +83,7 @@ def registro(request):
 
         # Validar si el correo ya existe
         if Usuario.objects.filter(correo=correo).exists():
-            messages.error(request, 'Error al ingresar correo')
+            messages.error(request, 'Correo ya existente')
             return render(request, 'registro.html', context)
 
         # Validar si el RUT ya existe
