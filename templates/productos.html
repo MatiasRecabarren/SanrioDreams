@@ -1,7 +1,7 @@
 {% load static %}
+{% load humanize %} 
 <!DOCTYPE html>
 <html>
-
 <head>
   <!-- Basic -->
   <meta charset="utf-8" />
@@ -12,529 +12,315 @@
   <meta name="keywords" content="" />
   <meta name="description" content="" />
   <meta name="author" content="" />
-
   <title>SanrioDreams - Tienda de artículos</title>
   <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.9/slick.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.9/slick-theme.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.9/slick.min.css"  />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.9/slick-theme.min.css"  />
   <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="{% static 'css/slick-theme.css' %}" />
   <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" />
   <link href="{% static 'css/style.css' %}" rel="stylesheet" />
   <link href="{% static 'css/responsive.css' %}" rel="stylesheet" />
-
 </head>
-
 <body>
-
   <div class="main_body_content">
-
     <div class="hero_area">
-
-
-
-<!-- Header Inicio -->
+      <!-- Header Inicio -->
       <header class="header_section">
-  <div class="container-fluid">
-    <nav class="navbar navbar-expand-lg custom_nav-container">
-      <a class="navbar-brand" href="index.html">
-        SanrioDreams 
-      </a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse"
-        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-        aria-expanded="false" aria-label="Toggle navigation">
-        <span class=""></span>
-      </button>
-
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav ml-auto d-flex align-items-center">
-          <li class="nav-item active">
-            <a class="nav-link" href="{% url 'index' %}">Inicio <span class="sr-only">(current)</span></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'nosotros' %}">Sobre Nosotros</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProductos" role="button"
-              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Productos
+        <div class="container-fluid">
+          <nav class="navbar navbar-expand-lg custom_nav-container">
+            <a class="navbar-brand" href="{% url 'index' %}">
+              SanrioDreams
             </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdownProductos">
-              <a class="dropdown-item" href="#peluches">Peluches</a>
-              <a class="dropdown-item" href="#botellas">Botellas</a>
-              <a class="dropdown-item" href="#termos">Termos</a>
-              <a class="dropdown-item" href="#pines">Pines</a>
-              <a class="dropdown-item" href="#llaveros">Llaveros</a>
-              <a class="dropdown-item" href="#lamparas">Lámparas</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse"
+              data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" 
+              aria-expanded="false" aria-label="Toggle navigation">
+              <span class=""></span>
+            </button>
+
+            <!-- Botón simple y elegante para cambiar moneda -->
+                  <div id="dolar-conversor" class="text-end my-3">
+              <span style="font-weight: 600; color: #333;"> <strong id="dolar-valor"></strong> </span>
+              <button id="toggle-moneda" class="btn btn-dark btn-sm ms-3" style="border-radius: 20px; padding: 6px 16px;">
+                Mostrar en USD
+              </button>
             </div>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="contact.html">Contacta con Nosotros</a>
-          </li>
-        </ul>
 
-        <div class="quote_btn-container d-flex align-items-center ml-3">
-          <form class="form-inline" id="searchForm">
-                    <input type="text" class="form-control" placeholder="Buscar..." id="searchInput" />
-                    <button class="btn nav_search-btn" type="submit">
-                      <i class="fa fa-search" aria-hidden="true"></i>
-                    </button>
-                  </form>
-          <a href="{% url 'login' %}" class="ml-3" title="Iniciar sesión">
-            <i class="fa fa-user" aria-hidden="true" style="font-size: 1.3rem;"></i>
-          </a>
-          <a href="{% url 'carrito' %}" class="ml-3 position-relative" style="text-decoration: none; color: black;" title="Ver carrito">
-            <i class="fas fa-shopping-cart" style="font-size: 1.5rem; margin-left: -25px;color: black;"></i>
-            {% with request.session.carrito|length as cart_count %}
-              {% if cart_count > 0 %}
-                <span style="position: absolute; top: -5px; right: -10px; background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem;">
-                  {{ cart_count }}
-                </span>
-              {% endif %}
-            {% endwith %}
-          </a>
-        </div>
-      </div>
-    </nav>
-  </div>
-</header>
-      <!-- Fin de Header -->
-
-      <!-- Inicio Productos -->
-       <section id="peluches" class="peluches" >
-    <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Peluches</h3>
-      <div class="tarjetas-contenedor">
-        <div class="tarjeta" >
-            <img src="{% static 'images/Peluche_HelloKitty.png' %}" alt="Peluche Hello Kitty">
-            <h3>Peluche Hello Kitty</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-        </div>
-
-        <div class="tarjeta">
-            <img src="{% static 'images/Peluche_MyMelody.png' %}" alt="Peluche My Melody">
-            <h3>Peluche My Melody</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-         </div>
-
-        <div class="tarjeta">
-            <img src="{% static 'images/Peluche_Cinnamoroll.png' %}" alt="Peluche Cinnamoroll">
-            <h3>Peluche Cinnamoroll</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-         </div>
-
-        <div class="tarjeta">
-            <img src="{% static 'images/Peluche_Kuromi.png' %}" alt="Peluche Kuromi">
-            <h3>Peluche Kuromi</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-        </div>
-        <div class="tarjeta">
-            <img src="{% static 'images/Peluche_Pompompurin.png' %}" alt="Peluche Pompompurin">
-            <h3>Peluche Pompompurin</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-        </div>
-
-        <div class="tarjeta">
-            <img src="{% static 'images/Peluche_Pochacco.png' %}" alt="Peluche Pochacco">
-            <h3>Peluche Pochacco</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-         </div>
-
-        <div class="tarjeta">
-            <img src="{% static 'images/Peluche_MySweetPiano.png' %}" alt="Peluche My Sweet Piano">
-            <h3>Peluche My Sweet Piano</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-         </div>
-
-        <div class="tarjeta">
-            <img src="{% static 'images/Peluche_Marumofubiyori.png' %}" alt="Peluche Marumofubiyori">
-            <h3>Peluche Marumofubiyori</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-        </div>
-         <div class="tarjeta">
-            <img src="{% static 'images/Peluche_Chococat.png' %}" alt="Peluche Chococat">
-            <h3>Peluche Chococat</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-         </div>
-
-        <div class="tarjeta">
-            <img src="{% static 'images/Peluche_Keropi.png' %}" alt="Peluche Keropi">
-            <h3>Peluche Keropi</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-        </div>
-
-        <div class="tarjeta">
-            <img src="{% static 'images/Peluche_Retsuko.png' %}" alt="Peluche Retsuko">
-            <h3>Peluche Retsuko</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-        </div>
-
-        <div class="tarjeta">
-            <img src="{% static 'images/Peluche_BadtzMaru.png' %}" alt="Peluche BadtzMaru">
-            <h3>Peluche Badtz Maru</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-        </div>
-
-        <div class="tarjeta">
-            <img src="{% static 'images/Peluche_Kuririn.png' %}" alt="Peluche Kuririn">
-            <h3>Peluche Kuririn</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-        </div>
-
-        <div class="tarjeta">
-            <img src="{% static 'images/Peluche_Gudetama.png' %}" alt="Peluche Gudetama">
-            <h3>Peluche Gudetama</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-        </div>
-    </div>
-    </section>
-     <br>
-    <section id="botellas" class="botellas">
-    <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Botellas</h3>
-     <div class="tarjetas-contenedor">
-        <div class="tarjeta">
-            <img src="{% static 'images/Botella_520ml_Pompompurin.png' %}" alt="Botella Pompompurin">
-            <h3>Botella 520ml Pompompurin</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-        </div>
-
-        <div class="tarjeta">
-            <img src="{% static 'images/Botella_520ml_Pochacco.png' %}" alt="Botella Pochacco">
-            <h3>Botella 520ml Pochacco</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-         </div>
-
-        <div class="tarjeta">
-            <img src="{% static 'images/Botella_520ml_HelloKitty.png' %}" alt="Botella HelloKitty">
-            <h3>Botella 520ml Hello Kitty</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-         </div>
-
-        <div class="tarjeta">
-            <img src="{% static 'images/Botella_520ml_MyMelody.png' %}" alt="Botella MyMelody">
-            <h3>Botella 520ml My Melody</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-        </div>
-
-        <div class="tarjeta">
-            <img src="{% static 'images/Botella_520ml_ Hangyodon.png' %}" alt="Botella Hangyodon">
-            <h3>Botella 520ml Hangyodon</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-        </div>
-      </div>
-      </section>
-
-       <br>
-      <section id="termos" class="termos">
-    <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Termos</h3>
-     <div class="tarjetas-contenedor">
-        <div class="tarjeta">
-            <img src="{% static 'images/Termo_200ml_Cinnamoroll.png' %}" alt="Termo Cinnamoroll">
-            <h3>Termo 200ml Cinnamoroll</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-        </div>
-
-        <div class="tarjeta">
-            <img src="{% static 'images/Termo_200ml_Pompompurin.png' %}" alt="Termo Pompompurin">
-            <h3>Termo 200ml Cinnamoroll</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-         </div>
-
-        <div class="tarjeta">
-            <img src="{% static 'images/Termo_200ml_Pochacco.png' %}" alt="Termo Pochacco">
-            <h3>Termo 200ml Cinnamoroll</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-         </div>
-
-        <div class="tarjeta">
-            <img src="{% static 'images/Termo_200ml_Kuromi.png' %}" alt="Termo Kuromi">
-            <h3>Termo 200ml Cinnamoroll</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-        </div>
-
-        <div class="tarjeta">
-            <img src="{% static 'images/Termo_200ml_MyMelody.png' %}" alt="Termo My Melody">
-            <h3>Termo 200ml Cinnamoroll</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-        </div>
-        </section>
-
-         <br>
-
-         <section id="pines" class="pines">
-        <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Pines</h3>
-     <div class="tarjetas-contenedor">
-        <div class="tarjeta">
-            <img src="{% static 'images/Pin_Cinnamoroll.png' %}" alt="Pin Cinnamoroll">
-            <h3>Pin Cinnamoroll</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-        </div>
-
-        <div class="tarjeta">
-            <img src="{% static 'images/Pin_Kuromi.png' %}" alt="Pin Kuromi">
-            <h3>Pin Kuromi</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-         </div>
-
-        <div class="tarjeta">
-            <img src="{% static 'images/Pin_Pompompurin.png' %}" alt="Pin Pompompurin">
-            <h3>Pin Pompompurin</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-         </div>
-
-        <div class="tarjeta">
-            <img src="{% static 'images/Pin_HelloKitty.png' %}" alt="Pin Hello Kitty">
-            <h3>Pin Hello Kitty</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-        </div>
-
-        <div class="tarjeta">
-            <img src="{% static 'images/Pin_Pochacco.png' %}" alt="Pin Pochacco">
-            <h3>Pin Pochacco</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-        </div>
-        </section>
-
-         <br>
-
-         <section id="llaveros" class="llaveros">
-        <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Llaveros</h3>
-     <div class="tarjetas-contenedor">
-        <div class="tarjeta">
-            <img src="{% static 'images/Llavero_Cinnamoroll.png' %}" alt="Llavero Cinnamoroll">
-            <h3>Llavero Cinnamoroll</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-        </div>
-
-        <div class="tarjeta">
-            <img src="{% static 'images/Llavero_Pompompurin.png' %}" alt="Llavero Pompompurin">
-            <h3>Llavero Pompompurin</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-         </div>
-
-        <div class="tarjeta">
-            <img src="{% static 'images/Llavero_Kuromi.png' %}" alt="Llavero Kuromi">
-            <h3>Llavero Kuromi</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-         </div>
-
-         <div class="tarjeta">
-            <img src="{% static 'images/Llavero_MyMelody.png' %}" alt="Llavero MyMelody">
-            <h3>Llavero My Melody</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-         </div>
-
-         <div class="tarjeta">
-            <img src="{% static 'images/Llavero_HelloKitty.png' %}" alt="Llavero Hello Kitty">
-            <h3>Llavero Hello Kitty</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-          </div>
-          </section>
-           
-          <br>
-
-          <section id="lamparas" class="lamparas">
-        <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestras Lamparas</h3>
-     <div class="tarjetas-contenedor">
-        <div class="tarjeta">
-            <img src="{% static 'images/Lampara_LittleTwinStars.png' %}" alt="Lampara Little Twin Stars">
-            <h3>Lámpara Little Twin Stars</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-        </div>
-        
-        <div class="tarjeta">
-            <img src="{% static 'images/Lampara_Cinnamoroll.png' %}" alt="Lampara Cinnamoroll">
-            <h3>Lámpara Cinnamoroll</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-        </div>
-        
-        <div class="tarjeta">
-            <img src="{% static 'images/Lampara_MyMelody.png' %}" alt="Lampara MyMelody">
-            <h3>Lámpara My Melody</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-        </div>
-
-        <div class="tarjeta">
-            <img src="{% static 'images/Lampara_HelloKitty.png' %}" alt="Lampara Hello Kitty">
-            <h3>Lámpara Hello Kitty</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-         </div>
-
-        <div class="tarjeta">
-            <img src="{% static 'images/Lampara_Kuromi.png' %}" alt="Lampara Kuromi">
-            <h3>Lámpara Kuromi</h3>
-            <p>$xx.xxx</p>
-            <button>Agregar al carrito</button>
-            <p>Cantidad : 1</p>
-         </div>
-    </div>
-    </section>
-      <!-- Fin Productos --> 
-
-     <!-- info section -->
-    <section class="info_section layout_padding2">
-      <div class="container">
-        <div class="row info_main_row">
-          <div class="col-md-6 col-lg-3">
-            <div class="info_links">
-              <h4>
-                Menú
-              </h4>
-              <div class="info_links_menu">
-                <a href="{% url 'index' %}">
-                  Inicio
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav ml-auto d-flex align-items-center">
+                <li class="nav-item active">
+                  <a class="nav-link" href="{% url 'index' %}">Inicio <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'nosotros' %}">Sobre Nosotros</a>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProductos" role="button"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Productos
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdownProductos">
+                    <a class="dropdown-item" href="#peluches">Peluches</a>
+                    <a class="dropdown-item" href="#botellas">Botellas</a>
+                    <a class="dropdown-item" href="#termos">Termos</a>
+                    <a class="dropdown-item" href="#pines">Pines</a>
+                    <a class="dropdown-item" href="#llaveros">Llaveros</a>
+                    <a class="dropdown-item" href="#lamparas">Lámparas</a>
+                  </div>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="contact.html">Contacta con Nosotros</a>
+                </li>
+              </ul>
+              <div class="quote_btn-container d-flex align-items-center ml-3">
+                <form class="form-inline" id="searchForm">
+                  <input type="text" class="form-control" placeholder="Buscar..." id="searchInput" />
+                  <button class="btn nav_search-btn" type="submit">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                  </button>
+                </form>
+                <a href="{% url 'login' %}" class="ml-3" title="Iniciar sesión">
+                  <i class="fa fa-user" aria-hidden="true" style="font-size: 1.3rem;"></i>
                 </a>
-                <a href="about.html">
-                  Acerca de Nosotros
-                </a>
-                <a href="{% url 'productos' %}">
-                  Productos
-                </a>
-                <a href="testimonial.html">
-                  Contacta con Nosotros
+                <a href="{% url 'carrito' %}" class="ml-3 position-relative" style="text-decoration: none; color: black;" title="Ver carrito">
+                  <i class="fas fa-shopping-cart" style="font-size: 1.5rem; margin-left: -25px;color: black;"></i>
+                  {% with request.session.carrito|length as cart_count %}
+                    {% if cart_count > 0 %}
+                      <span style="position: absolute; top: -5px; right: -10px; background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem;">
+                        {{ cart_count }}
+                      </span>
+                    {% endif %}
+                  {% endwith %}
                 </a>
               </div>
             </div>
-          </div>
-          <div class="col-md-6 col-lg-3">
-            <div class="info_detail">
-              <h4>
-                Compañia
-              </h4>
-              <p class="mb-0">
-                SanrioDreams es una tienda online dedicada a ofrecer productos originales de Sanrio a precios accesibles. Buscamos brindar una experiencia de compra segura, rápida y temática, con atención personalizada y envíos a todo Chile.
-              </p>
+          </nav>
+        </div>
+      </header>
+      <!-- Fin de Header -->
+
+      <!-- Sección Peluches -->
+
+<section id="peluches" class="peluches">
+  <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Peluches</h3>
+  <div class="tarjetas-contenedor">
+    {% for producto in peluches %}
+      <div class="tarjeta">
+        <img src="{% static 'images/'|add:producto.imagen %}" alt="{{ producto.nombre }}">
+        <h3>{{ producto.nombre }}</h3>
+        <p>{{ producto.descripcion }}</p>
+        <p>$ {{ producto.precio | intcomma }}</p>
+        <p>Cantidad: {{ producto.stock_set.first.cantidad }}</p>
+        <button onclick="agregarAlCarrito('{{ p.id_producto }}')">Agregar al carrito</button>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+      <br>
+
+      <!-- Sección Botellas -->
+      <section id="botellas" class="botellas">
+        <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestras Botellas</h3>
+        <div class="tarjetas-contenedor">
+           {% for producto in botellas %}
+              <div class="tarjeta">
+                <img src="{% static 'images/'|add:producto.imagen %}" alt="{{ producto.nombre }}">
+                <h3>{{ producto.nombre }}</h3>
+                <p>{{ producto.descripcion }}</p>
+                <p>$ {{ producto.precio | intcomma }}</p>
+                <p>Cantidad: {{ producto.stock_set.first.cantidad }}</p>
+                <button onclick="agregarAlCarrito('{{ producto.id_producto }}')">Agregar al carrito</button>
+              </div>
+          {% endfor %}
+        </div>
+      </section>
+
+      <br>
+
+      <!-- Sección Termos -->
+      <section id="termos" class="termos">
+        <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Termos</h3>
+        <div class="tarjetas-contenedor">
+           {% for producto in termos %}
+              <div class="tarjeta">
+                <img src="{% static 'images/'|add:producto.imagen %}" alt="{{ producto.nombre }}">
+                <h3>{{ producto.nombre }}</h3>
+                <p>{{ producto.descripcion }}</p>
+                <p>$ {{ producto.precio | intcomma }}</p>
+                <p>Cantidad: {{ producto.stock_set.first.cantidad }}</p>
+                <button onclick="agregarAlCarrito('{{ producto.id_producto }}')">Agregar al carrito</button>
+              </div>
+          {% endfor %}
+        </div>
+      </section>
+
+      <br>
+
+      <!-- Sección Pines -->
+      <section id="pines" class="pines">
+        <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Pines</h3>
+        <div class="tarjetas-contenedor">
+             {% for producto in pines %}
+              <div class="tarjeta">
+                <img src="{% static 'images/'|add:producto.imagen %}" alt="{{ producto.nombre }}">
+                <h3>{{ producto.nombre }}</h3>
+                <p>{{ producto.descripcion }}</p>
+                <p>$ {{ producto.precio | intcomma }}</p>
+                <p>Cantidad: {{ producto.stock_set.first.cantidad }}</p>
+                <button onclick="agregarAlCarrito('{{ producto.id_producto }}')">Agregar al carrito</button>
+              </div>
+          {% endfor %}
+        </div>
+      </section>
+
+      <br>
+
+      <!-- Sección Llaveros -->
+      <section id="llaveros" class="llaveros">
+        <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Llaveros</h3>
+        <div class="tarjetas-contenedor">
+           {% for producto in llaveros %}
+              <div class="tarjeta">
+                <img src="{% static 'images/'|add:producto.imagen %}" alt="{{ producto.nombre }}">
+                <h3>{{ producto.nombre }}</h3>
+                <p>{{ producto.descripcion }}</p>
+                <p>$ {{ producto.precio | intcomma }}</p>
+                <p>Cantidad: {{ producto.stock_set.first.cantidad }}</p>
+                <button onclick="agregarAlCarrito('{{ producto.id_producto }}')">Agregar al carrito</button>
+              </div>
+          {% endfor %}
+        </div>
+      </section>
+
+      <br>
+
+      <!-- Sección Lámparas -->
+      <section id="lamparas" class="lamparas">
+        <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestras Lámparas</h3>
+        <div class="tarjetas-contenedor">
+           {% for producto in lamparas %}
+              <div class="tarjeta">
+                <img src="{% static 'images/'|add:producto.imagen %}" alt="{{ producto.nombre }}">
+                <h3>{{ producto.nombre }}</h3>
+                <p>{{ producto.descripcion }}</p>
+                <p>$ {{ producto.precio | intcomma }}</p>
+                <p>Cantidad: {{ producto.stock_set.first.cantidad }}</p>
+                <button onclick="agregarAlCarrito('{{ producto.id_producto }}')">Agregar al carrito</button>
+              </div>
+          {% endfor %}
+        </div>
+      </section>
+
+      <!-- Info Section -->
+      <section class="info_section layout_padding2">
+        <div class="container">
+          <div class="row info_main_row">
+            <div class="col-md-6 col-lg-3">
+              <div class="info_links">
+                <h4>Menú</h4>
+                <div class="info_links_menu">
+                  <a href="{% url 'index' %}">Inicio</a>
+                  <a href="{% url 'nosotros' %}">Acerca de Nosotros</a>
+                  <a href="{% url 'productos' %}">Productos</a>
+                  <a href="testimonial.html">Contáctanos</a>
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="col-md-6 col-lg-3">
-            <h4>
-              Contactanos
-            </h4>
-            <div class="info_contact">
-              <a href="">
-                <i class="fa fa-phone" aria-hidden="true"></i>
-                <span>
-                  Call +56 9 xxxx xxxx
-                </span>
-              </a>
-              <a href="">
-                <i class="fa fa-envelope"></i>
-                <span>
-                  sanriodreams@sanriodreams.cl
-                </span>
-              </a>
+            <div class="col-md-6 col-lg-3">
+              <div class="info_detail">
+                <h4>Compañía</h4>
+                <p class="mb-0">
+                  SanrioDreams es una tienda online dedicada a ofrecer productos originales de Sanrio a precios accesibles.
+                </p>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <h4>Contacto</h4>
+              <div class="info_contact">
+                <a href=""><i class="fa fa-phone"></i><span>+56 9 xxxx xxxx</span></a>
+                <a href=""><i class="fa fa-envelope"></i><span>sanriodreams@sanriodreams.cl</span></a>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
-    <!-- end info_section -->
+      </section>
 
- <!-- footer section -->
-     <footer class="container-fluid footer_section">
-  <div class="container">
-    <div class="col-md-11 col-lg-8 mx-auto">
-      <p>
-        &copy; <span id="displayYear"></span> Todos los derechos reservados a 
-        <a href="https://html.design/">SanrioDreams <3</a>
-      </p>
+      <!-- Footer -->
+      <footer class="container-fluid footer_section">
+        <div class="container">
+          <div class="col-md-11 col-lg-8 mx-auto">
+            <p>&copy; <span id="displayYear"></span> Todos los derechos reservados a <a href="#">SanrioDreams</a></p>
+          </div>
+        </div>
+      </footer>
     </div>
   </div>
-    </footer>
-  <!-- footer section -->
-  </div>
 
+  <style>
+    /* Estilo general para las tarjetas */
+.tarjeta {
+  display: flex;
+  flex-direction: column; /* Alinea los elementos verticalmente */
+  align-items: center; /* Centra horizontalmente los elementos */
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin: 10px;
+  text-align: center;
+}
+
+/* Estilo para la imagen */
+.tarjeta img {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+/* Estilo para el título */
+.tarjeta h3 {
+  margin: 0;
+}
+
+/* Estilo para la descripción */
+.tarjeta p {
+  margin: 5px 0;
+}
+
+/* Estilo para la información (precio y cantidad) */
+.info {
+  display: flex;
+  justify-content: space-between; /* Distribuye los elementos horizontalmente */
+  width: 100%; /* Asegura que ocupe todo el ancho de la tarjeta */
+  margin-bottom: 10px;
+}
+
+/* Estilo para el botón */
+.tarjeta button {
+  background-color: pink;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+  </style>
+
+  <!-- Script para búsqueda -->
   <script>
-  document.getElementById('searchForm').addEventListener('submit', function(e) {
-    e.preventDefault(); // Evita recargar la página
+    document.getElementById('searchForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const searchInput = document.getElementById('searchInput');
+      const searchTerm = searchInput.value.trim().toLowerCase();
 
-    const searchInput = document.getElementById('searchInput');
-    const searchTerm = searchInput.value.trim().toLowerCase();
-
-    // Mapeo de términos a IDs de secciones
-    const sectionMap = {
+      const sectionMap = {
         'todos': 'productos',
         'peluche': 'peluches',
         'muñeco': 'peluches',
         'figura': 'peluches',
         'stuffed': 'peluches',
         'peluchito': 'peluches',
-        'juguete': 'peluches','botella': 'botellas',
+        'juguete': 'peluches',
+        'botella': 'botellas',
         'vaso': 'botellas',
         'taza': 'botellas',
         'botellita': 'botellas',
@@ -565,31 +351,119 @@
         'night light': 'lamparas'
       };
 
-    // Buscar coincidencia insensible a mayúsculas/minúsculas
-    for (const [key, value] of Object.entries(sectionMap)) {
-      if (searchTerm.includes(key)) {
-        const targetElement = document.getElementById(value);
-
-        if (targetElement) {
-          // Scroll suave hasta la sección
-          targetElement.scrollIntoView({ behavior: 'smooth' });
-          return;
+      for (const [key, value] of Object.entries(sectionMap)) {
+        if (searchTerm.includes(key)) {
+          const targetElement = document.getElementById(value);
+          if (targetElement) {
+            targetElement.scrollIntoView({ behavior: 'smooth' });
+            return;
+          }
         }
       }
+      alert("No se encontró la categoría.");
+    });
+
+    let valorDolar = null;
+  let mostrandoDolares = false;
+
+  async function obtenerDolar() {
+    try {
+      const res = await fetch('https://mindicador.cl/api/dolar');
+      const data = await res.json();
+      return data.serie[0].valor;
+    } catch (e) {
+      console.error("No se pudo obtener el valor del dólar:", e);
+      return null;
+    }
+  }
+
+  function formatearCLP(valor) {
+    return '$' + valor.toLocaleString('es-CL') + ' CLP';
+  }
+
+  function formatearUSD(valor) {
+    return '$' + valor.toFixed(2) + ' USD';
+  }
+
+  function actualizarPrecios() {
+    const productos = document.querySelectorAll('.producto');
+    productos.forEach(producto => {
+      const precioCLP = Number(producto.dataset.precio);
+      const precioElem = producto.querySelector('.precio-producto');
+
+      if (mostrandoDolares && valorDolar) {
+        const precioUSD = precioCLP / valorDolar;
+        precioElem.textContent = formatearUSD(precioUSD);
+      } else {
+        precioElem.textContent = formatearCLP(precioCLP);
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    valorDolar = await obtenerDolar();
+    if (valorDolar) {
+      document.getElementById('dolar-valor').textContent = Math.round(valorDolar).toLocaleString('es-CL');
     }
 
-    alert("No se encontró la categoría.");
+    actualizarPrecios();
+
+    document.getElementById('toggle-moneda').addEventListener('click', () => {
+      mostrandoDolares = !mostrandoDolares;
+      document.getElementById('toggle-moneda').textContent = mostrandoDolares ? 'Mostrar en CLP' : 'Mostrar en Dólares';
+      actualizarPrecios();
+    });
   });
-</script>
 
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <!-- bootstrap js -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- custom js -->
-  <script  src="{% static 'js/custom.js' %}"></script> 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons @1.11.1/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css ">
 
+  let mostrarEnUSD = false;
+  let tasaCambio = 1; // Valor por defecto
+
+  // Obtener el valor del dólar
+  async function obtenerTasaCambio() {
+    try {
+      const respuesta = await fetch("https://api.exchangerate.host/latest?base=CLP&symbols=USD");
+      const datos = await respuesta.json();
+      tasaCambio = datos.rates.USD;
+      document.getElementById("dolar-valor").innerText = `1 USD ≈ $${(1 / tasaCambio).toFixed(0)} CLP`;
+    } catch (error) {
+      console.error("Error al obtener tasa de cambio:", error);
+      document.getElementById("dolar-valor").innerText = "Error al cargar USD";
+    }
+  }
+
+  // Convertir todos los precios
+  function convertirPrecios() {
+    const precios = document.querySelectorAll(".precio-producto");
+    precios.forEach(elemento => {
+      const precioCLP = parseInt(elemento.getAttribute("data-precio"));
+      if (mostrarEnUSD) {
+        const precioUSD = precioCLP * tasaCambio;
+        elemento.innerText = `$ ${precioUSD.toFixed(2)} USD`;
+      } else {
+        elemento.innerText = `$ ${precioCLP.toLocaleString()} CLP`;
+      }
+    });
+  }
+
+  // Alternar moneda al presionar botón
+  document.getElementById("toggle-moneda").addEventListener("click", () => {
+    mostrarEnUSD = !mostrarEnUSD;
+    convertirPrecios();
+    document.getElementById("toggle-moneda").innerText = mostrarEnUSD ? "Mostrar en CLP" : "Mostrar en USD";
+  });
+
+  // Ejecutar al inicio
+  obtenerTasaCambio();
+
+  </script>
+
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script> 
+  <script src="{% static 'js/custom.js' %}"></script>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"> 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> 
 </body>
-
 </html>

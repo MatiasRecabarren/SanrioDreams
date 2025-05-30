@@ -7,6 +7,10 @@ from django.core.exceptions import ValidationError
 import re
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+from .models import Producto
+
 
 
 # Vistas generales
@@ -17,7 +21,24 @@ def index(request):
     return render(request, 'index.html')
 
 def productos(request):
-    return render(request, 'productos.html')
+    productos = Producto.objects.all()
+
+    # Filtrar por rangos numéricos del id_producto
+    peluches = [p for p in productos if 1000 <= p.id_producto < 2000]
+    botellas = [p for p in productos if 2000 <= p.id_producto < 3000]
+    termos = [p for p in productos if 3000 <= p.id_producto < 4000]
+    pines = [p for p in productos if 4000 <= p.id_producto < 5000]
+    llaveros = [p for p in productos if 5000 <= p.id_producto < 6000]
+    lamparas = [p for p in productos if 6000 <= p.id_producto < 7000]
+
+    return render(request, 'productos.html', {
+        'peluches': peluches,
+        'botellas': botellas,
+        'termos': termos,
+        'pines': pines,
+        'llaveros': llaveros,
+        'lamparas': lamparas
+    })
 
 def carrito(request):
     return render(request, 'carrito.html')
@@ -256,35 +277,63 @@ def index(request):
         request.session['carrito'] = []
     return render(request, 'index.html')
 
+
+@csrf_exempt
 def agregar_al_carrito(request):
     if request.method == "POST":
-        nombre = request.POST.get('nombre')
-        precio = request.POST.get('precio')
+        try:
+            data = json.loads(request.body)
+            nombre = data.get("nombre")
+            precio = float(data.get("precio"))
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)})
 
-        nuevo_producto = {
-            "nombre": nombre,
-            "precio": precio
-        }
+        carrito = request.session.get("carrito", [])
 
-        carrito = request.session.get('carrito', [])
-        carrito.append(nuevo_producto)
-        request.session['carrito'] = carrito  # Guarda de nuevo en sesión
+        # Verificar si ya existe el producto
+        encontrado = False
+        for item in carrito:
+            if item["nombre"] == nombre:
+                item["cantidad"] += 1  # Incrementa cantidad si existe
+                encontrado = True
+                break
+
+        if not encontrado:
+            carrito.append({"nombre": nombre, "precio": precio, "cantidad": 1})
+
+        request.session["carrito"] = carrito
+        request.session.modified = True
+
+        # Ahora cart_count es la suma total de cantidades
+        cart_count = sum(item["cantidad"] for item in carrito)
+        subtotal = sum(item["precio"] * item["cantidad"] for item in carrito)
 
         return JsonResponse({
             "success": True,
-            "cart_count": len(carrito)
+            "cart_count": cart_count,
+            "subtotal": subtotal,
+            "carrito": carrito  # Devuelve todo el carrito para mostrarlo bien
         })
 
-    return JsonResponse({"success": False}, status=400)
+    return JsonResponse({"success": False})
+
+
 
 def ver_carrito(request):
     carrito = request.session.get('carrito', [])
-    
-    # Calcula el total del carrito
-    total = sum(int(producto['precio']) for producto in carrito)
-    
-    return render(request, 'carrito.html', {'carrito': carrito, 'total': total})
+    subtotal = sum(item['precio'] * item['cantidad'] for item in carrito)
 
+    context = {
+        'carrito': carrito,
+        'subtotal': subtotal,
+    }
+    return render(request, 'carrito.html', context)
+
+def carrito_view(request):
+    carrito = request.session.get('carrito', [])
+    # Pasar carrito al template
+    context = {'carrito': carrito}
+    return render(request, 'carrito.html', context)
 
 def eliminar_del_carrito(request):
     if request.method == "POST":
@@ -298,9 +347,77 @@ def eliminar_del_carrito(request):
                 break
 
         request.session['carrito'] = carrito
+        request.session.modified = True
+
         return JsonResponse({"success": True})
 
     return JsonResponse({"success": False}, status=400)
+
+
+# Aumentar cantidad
+@csrf_exempt
+def aumentar_cantidad(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        nombre = data.get('nombre')
+
+        carrito = request.session.get('carrito', [])
+        for item in carrito:
+            if item['nombre'] == nombre:
+                item['cantidad'] += 1
+                break
+        else:
+            # Si no existe el producto, podrías agregarlo con cantidad 1 (opcional)
+            carrito.append({'nombre': nombre, 'cantidad': 1, 'precio': 0, 'imagen': ''})
+
+        request.session['carrito'] = carrito
+        return JsonResponse(calcular_respuesta_carrito(carrito))
+    return JsonResponse({'success': False, 'error': 'Método no permitido'})
+
+# Disminuir cantidad
+@csrf_exempt
+def disminuir_cantidad(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        nombre = data.get('nombre')
+
+        carrito = request.session.get('carrito', [])
+        for item in carrito:
+            if item['nombre'] == nombre:
+                if item['cantidad'] > 1:
+                    item['cantidad'] -= 1
+                else:
+                    carrito.remove(item)
+                break
+
+        request.session['carrito'] = carrito
+        return JsonResponse(calcular_respuesta_carrito(carrito))
+    return JsonResponse({'success': False, 'error': 'Método no permitido'})
+
+# Eliminar producto
+@csrf_exempt
+def eliminar_producto(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        nombre = data.get('nombre')
+
+        carrito = request.session.get('carrito', [])
+        carrito = [item for item in carrito if item['nombre'] != nombre]
+
+        request.session['carrito'] = carrito
+        return JsonResponse(calcular_respuesta_carrito(carrito))
+    return JsonResponse({'success': False, 'error': 'Método no permitido'})
+
+# Función auxiliar para calcular respuesta JSON
+def calcular_respuesta_carrito(carrito):
+    cart_count = sum(item['cantidad'] for item in carrito)
+    subtotal = sum(item['cantidad'] * item.get('precio', 0) for item in carrito)
+    return {
+        'success': True,
+        'cart_count': cart_count,
+        'subtotal': subtotal,
+        'carrito': carrito
+    }
 
 def nosotros(request):
     return render(request, 'nosotros.html')

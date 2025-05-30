@@ -1,78 +1,303 @@
-<!-- templates/carrito.html -->
-
+{% load static %}
 <!DOCTYPE html>
-<html lang="es">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <title>Mi Carrito</title>
-    <!-- Bootstrap (Opcional para estilo rápido) -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap @5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Iconos de Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons @1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #fff0f6;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        .producto-carrito {
-            background-color: white;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .btn-remove {
-            color: red;
-            cursor: pointer;
-        }
-    </style>
+  <!-- Basic -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Mobile Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!-- Site Metas -->
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+
+  <title>SanrioDreams - Tienda de artículos</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/icofont @1.0.0/dist/css/icofont.min.css">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.9/slick.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.9/slick-theme.min.css" />
+  <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'css/slick-theme.css' %}" />
+  <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" />
+  <link href="{% static 'css/style.css' %}" rel="stylesheet" />
+  <link href="{% static 'css/responsive.css' %}" rel="stylesheet" />
+
+  <style>
+    /* Estilos exclusivos para la página carrito */
+    body.carrito-page {
+      background-color: #fff0f6; /* rosita muy claro */
+      color: #4a4a4a;
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    body.carrito-page .header_section {
+      background-color: #f6e0e9; /* rosa pastel claro */
+      box-shadow: 0 2px 5px rgba(255, 182, 193, 0.3);
+    }
+
+    body.carrito-page .header_section .navbar-brand,
+    body.carrito-page .header_section .nav-link {
+      color: #b03a5b;
+      font-weight: 600;
+    }
+
+    body.carrito-page .header_section .nav-link:hover,
+    body.carrito-page .header_section .nav-link.active {
+      color: #f7dee8;
+    }
+
+    body.carrito-page .footer_section {
+      background-color: #111111;
+      color: #cfcfcf;
+      padding: 20px 0;
+      font-size: 0.9rem;
+      text-align: center;
+      margin-top: auto; /* para empujar footer abajo */
+    }
+
+    body.carrito-page .footer_section a {
+      color: #ff85b8;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    body.carrito-page .footer_section a:hover {
+      text-decoration: underline;
+    }
+
+    body.carrito-page .header_section .fa,
+    body.carrito-page .header_section .bi,
+    body.carrito-page .header_section .navbar-toggler span {
+      color: #b03a5b;
+    }
+
+    body.carrito-page .btn-success {
+      background-color: #ff69b4 !important;
+      border-color: #ff69b4 !important;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+
+    body.carrito-page .btn-success:hover {
+      background-color: #d6336c !important;
+      border-color: #d6336c !important;
+    }
+
+    /* Centrar contenido del carrito vacío */
+    body.carrito-page .empty-cart {
+      height: 60vh; /* altura para centrar verticalmente */
+      text-align: center;
+      justify-content: center;
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      color: #6c757d;
+    }
+
+    body.carrito-page .empty-cart a {
+      color: #ff69b4;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    body.carrito-page .empty-cart a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
-<body>
 
-<div class="container py-5">
-    <h2 class="text-center mb-4">🛒 Mi Carrito de Compras</h2>
+<body class="carrito-page">
 
-    {% if carrito and carrito|length > 0 %}
-        <div id="lista-carrito">
-            {% for producto in carrito %}
-                <div class="producto-carrito d-flex justify-content-between align-items-center">
-                    <span><strong>{{ producto.nombre }}</strong> - ${{ producto.precio }}</span>
-                    <i class="bi bi-trash btn-remove" onclick="eliminarProducto('{{ producto.nombre }}')"></i>
-                </div>
-            {% endfor %}
+  <div class="main_body_content">
+
+    <div class="hero_area">
+
+      <!-- Header Inicio -->
+      <header class="header_section">
+        <div class="container-fluid">
+          <nav class="navbar navbar-expand-lg custom_nav-container">
+            <a class="navbar-brand" href="index.html">
+              SanrioDreams
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse"
+              data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+              aria-expanded="false" aria-label="Toggle navigation">
+              <span class=""></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav ml-auto d-flex align-items-center">
+                <li class="nav-item active">
+                  <a class="nav-link" href="{% url 'index' %}">Inicio <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'nosotros' %}">Sobre Nosotros</a>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProductos" role="button"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Productos
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdownProductos">
+                    <a class="dropdown-item" href="{% url 'productos' %}">Todos los productos</a>
+                    <a class="dropdown-item" href="{% url 'productos' %}#peluches">Peluches</a>
+                    <a class="dropdown-item" href="{% url 'productos' %}#botellas">Botellas</a>
+                    <a class="dropdown-item" href="{% url 'productos' %}#termos">Termos</a>
+                    <a class="dropdown-item" href="{% url 'productos' %}#pines">Pines</a>
+                    <a class="dropdown-item" href="{% url 'productos' %}#llaveros">Llaveros</a>
+                    <a class="dropdown-item" href="{% url 'productos' %}#lamparas">Lámparas</a>
+                  </div>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="contact.html">Contacta con Nosotros</a>
+                </li>
+              </ul>
+
+              <div class="quote_btn-container d-flex align-items-center ml-3">
+                <form class="form-inline d-flex" id="searchFormIndex">
+                  <input type="text" id="searchInputIndex" class="form-control form-control-sm mr-2" placeholder="Buscar..." />
+                  <button class="btn btn-sm nav_search-btn" type="submit">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                  </button>
+                </form>
+                {% if user.is_authenticated %}
+                <span class="ml-3 text-success" title="Ya has iniciado sesión">
+                  <i class="fa fa-check-circle" aria-hidden="true" style="font-size: 1.3rem;"></i>
+                  <small>Ya iniciaste sesión</small>
+                </span>
+                {% else %}
+                <a href="{% url 'login' %}" class="ml-3" title="Iniciar sesión">
+                  <i class="fa fa-user" aria-hidden="true" style="font-size: 1.3rem;"></i>
+                </a>
+                {% endif %}
+              </div>
+            </div>
+          </nav>
+        </div>
+      </header>
+
+      <div class="container py-5">
+        <h2 class="text-center mb-4">CARRITO</h2>
+
+        {% if carrito and carrito|length > 0 %}
+        <div id="lista-carrito" class="list-group">
+          {% for producto in carrito %}
+          <div class="producto-carrito list-group-item d-flex justify-content-between align-items-center">
+            <div>
+              <strong class="fs-5">{{ producto.nombre }}</strong>
+              <div class="text-muted">Precio unitario: ${{ producto.precio }}</div>
+            </div>
+            <div class="d-flex align-items-center">
+              <button class="btn btn-outline-secondary btn-sm me-2" onclick="actualizarCantidad('{{ producto.nombre }}', -1)">
+                <i class="bi bi-dash"></i>
+              </button>
+              <span class="px-3 fs-5">{{ producto.cantidad }}</span>
+              <button class="btn btn-outline-secondary btn-sm ms-2" onclick="actualizarCantidad('{{ producto.nombre }}', 1)">
+                <i class="bi bi-plus"></i>
+              </button>
+              <button class="btn btn-danger btn-sm ms-3" onclick="eliminarProducto('{{ producto.nombre }}')" title="Eliminar producto">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </div>
+          {% endfor %}
         </div>
 
-        <div class="text-end mt-4">
-            <h5>Total: $<span id="total">{{ total }}</span></h5>
-            <a href="#" class="btn btn-success btn-lg"><i class="bi bi-credit-card"></i> Proceder al Pago</a>
+        <div class="total-section text-end mt-4">
+          <h4>Total: <span id="total" class="text-primary">${{ total }}</span></h4>
+          <a href="#" class="btn btn-success btn-lg mt-2">
+            <i class="bi bi-credit-card"></i> Proceder al Pago
+          </a>
         </div>
-    {% else %}
-        <div class="alert alert-info text-center">
-            Tu carrito está vacío 😕
+        {% else %}
+        <div class="empty-cart d-flex flex-column justify-content-center align-items-center">
+          <p class="fs-4 text-secondary mb-3">Parece que tu carrito está vacío :c</p>
+          <p>Continúa navegando <a href="{% url 'productos' %}" class="text-decoration-none">aquí :3</a></p>
         </div>
-    {% endif %}
+        {% endif %}
+      </div>
 
-    <a href="{% url 'productos' %}" class="btn btn-outline-primary mt-3">&larr; Volver a Productos</a>
-</div>
+    </div>
 
-<script>
-    function eliminarProducto(nombre) {
-        fetch('/eliminar-del-carrito/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': '{{ csrf_token }}'
-            },
-            body: 'nombre=' + encodeURIComponent(nombre)
-        })
+    <!-- footer section -->
+   <footer class="container-fluid footer_section" style="background-color: #111; padding: 20px 0;">
+    <div class="container">
+        <div class="col-md-11 col-lg-8 mx-auto">
+        <p style="color: white;">
+            &copy; <span id="displayYear"></span> Todos los derechos reservados a 
+            <a href="https://html.design/" style="color: white;">SanrioDreams &lt;3</a>
+        </p>
+        </div>
+    </div>
+    </footer>
+
+  </div>
+
+  <!-- Optional JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Funciones para modificar carrito
+    function actualizarCantidad(nombre, delta) {
+      fetch(`/carrito/actualizar/?producto=${encodeURIComponent(nombre)}&delta=${delta}`)
         .then(response => response.json())
         .then(data => {
-            if (data.success) {
-                location.reload();
-            }
+          if(data.status === 'ok') {
+            location.reload();
+          }
         });
     }
+    function eliminarProducto(nombre) {
+      fetch(`/carrito/eliminar/?producto=${encodeURIComponent(nombre)}`)
+        .then(response => response.json())
+        .then(data => {
+          if(data.status === 'ok') {
+            location.reload();
+          }
+        });
+    }
+  </script>
+
+
+<script>
+  document.querySelectorAll('.btn-agregar-carrito').forEach(button => {
+    button.addEventListener('click', () => {
+      const nombre = button.getAttribute('data-nombre');
+      const precio = button.getAttribute('data-precio');
+
+      fetch("{% url 'agregar_al_carrito' %}", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({
+          nombre: nombre,
+          precio: precio,
+          cantidad: 1
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        alert(data.mensaje);
+        // Aquí puedes actualizar contador del carrito si quieres
+      });
+    });
+  });
 </script>
 
+
+
 </body>
+
+
+
+
 </html>

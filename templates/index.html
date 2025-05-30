@@ -46,6 +46,16 @@
         <span class=""></span>
       </button>
 
+      <!-- Botón simple y elegante para cambiar moneda -->
+      <div id="dolar-conversor" class="text-end my-3">
+  <span style="font-weight: 600; color: #333;"> <strong id="dolar-valor"></strong> </span>
+  <button id="toggle-moneda" class="btn btn-dark btn-sm ms-3" style="border-radius: 20px; padding: 6px 16px;">
+    Mostrar en USD
+  </button>
+</div>
+
+
+
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ml-auto d-flex align-items-center">
           <li class="nav-item active">
@@ -91,20 +101,52 @@
               <i class="fa fa-user" aria-hidden="true" style="font-size: 1.3rem;"></i>
             </a>
           {% endif %}
-          <a href="{% url 'carrito' %}" class="ml-3 position-relative" style="text-decoration: none; color: black;" title="Ver carrito">
-            <i class="fas fa-shopping-cart" style="font-size: 1.5rem; margin-left: -25px;color: black;"></i>
-            {% with request.session.carrito|length as cart_count %}
-              {% if cart_count > 0 %}
-                <span style="position: absolute; top: -5px; right: -10px; background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem;">
-                  {{ cart_count }}
-                </span>
-              {% endif %}
-            {% endwith %}
-          </a>
+                <button type="button" class="ml-3 position-relative cart-icon" style="background: none; border: none; padding: 0; cursor: pointer;" title="Ver carrito">
+                <i class="fas fa-shopping-cart" style="font-size: 1.5rem; margin-left: -25px;color: black;"></i>
+                {% with request.session.carrito|length as cart_count %}
+                    {% if cart_count > 0 %}
+                        <span class="cart-count-badge" id="cart-count-badge" style="position: absolute; top: -5px; right: -10px; background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem;">
+                            {{ cart_count }}
+                        </span>
+                    {% endif %}
+                {% endwith %}
+              </button>
+
+<!-- Modal del carrito -->
+<div id="cartModal" class="cart-modal">
+    <div class="cart-modal-content">
+        <h2>TU CARRITO</h2>
+        <button class="close-button">&times;</button>
+        <div class="cart-items">
+            {% if request.session.carrito %}
+                {% for item in request.session.carrito %}
+                    <div class="cart-item">
+                        <img src="{{ item.imagen }}" alt="{{ item.nombre }}" class="cart-item-image">
+                        <div class="cart-item-details">
+                            <h3>{{ item.nombre }}</h3>
+                            <p>Precio: ${{ item.precio }}</p>
+                            <p>Cantidad: {{ item.cantidad }}</p>
+                        </div>
+                        <div class="cart-item-actions">
+                            <button class="action-button aumentar" data-nombre="{{ item.nombre }}">+</button>
+                            <button class="action-button disminuir" data-nombre="{{ item.nombre }}">-</button>
+                            <button class="action-button eliminar" data-nombre="{{ item.nombre }}">Eliminar</button>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="empty-cart">El carrito está vacío.</p>
+            {% endif %}
         </div>
-      </div>
-    </nav>
-  </div>
+        <div class="cart-total">
+            <p>SUBTOTAL: <span id="subtotal">$0.00</span></p>
+        </div>
+        <a href="{% url 'carrito' %}" class="view-cart-button">VER CARRITO</a>
+    </div>
+</div>
+
+
+  
 </header>
 <!-- Fin de Header -->
 
@@ -340,20 +382,23 @@
         <div class="carousel-inner">
 
           <!-- Slide 1 -->
-          <div class="carousel-item active">
-            <div class="row justify-content-center">
-              <div class="col-md-4">
-                <div class="box text-center">
-                  <div class="img-box">
-                    <img src="{% static 'images/Peluche_HelloKitty.png' %}" alt="" class="img-fluid">
-                  </div>
-                  <div class="detail-box mt-3">
-                    <h6>Peluche <span>Hello Kitty</span></h6>
-                    <h5>$xx.xxx CLP</h5>
-                     <button class="btn-agregar-carrito" data-nombre="Peluche Hello Kitty" data-precio="15000">Agregar al carrito</button>
+             <div class="carousel-item active">
+                <div class="row justify-content-center">
+                  <div class="col-md-4">
+                    <div class="box text-center producto" data-precio="15000">
+                      <div class="img-box">
+                        <img src="{% static 'images/Peluche_HelloKitty.png' %}" alt="" class="img-fluid">
+                      </div>
+                      <div class="detail-box mt-3">
+                        <h6>Peluche <span>Hello Kitty</span></h6>
+                        <h5 class="precio-producto">$15.000 CLP</h5>
+                        <button class="btn-agregar-carrito" data-nombre="Peluche Hello Kitty" data-precio="15000">Agregar al carrito</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
+
               <div class="col-md-4">
                 <div class="box text-center">
                   <div class="img-box">
@@ -366,6 +411,7 @@
                   </div>
                 </div>
               </div>
+
               <div class="col-md-4">
                 <div class="box text-center">
                   <div class="img-box">
@@ -576,16 +622,36 @@
   </footer>
   <!-- footer section -->
 
+<!-- Estilos -->
+<style>
+  html {
+    scroll-behavior: smooth;
+  }
+</style>
+
+<!-- Fuentes y iconos -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<!-- Librerías JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Scripts personalizados -->
+<script src="{% static 'js/custom.js' %}"></script>
+<script src="{% static 'js/carrito.js' %}"></script>
+
+<!-- Script para búsqueda en index.html -->
 <script>
-  // Solo ejecutar si estamos en index.html (si existe el formulario)
-  const searchForm = document.getElementById('searchFormIndex');
-  if (searchForm) {
+  document.addEventListener("DOMContentLoaded", function () {
+    const searchForm = document.getElementById('searchFormIndex');
+    if (!searchForm) return;
+
     searchForm.addEventListener('submit', function(e) {
-      e.preventDefault(); // Evita recargar la página
+      e.preventDefault();
 
       const searchTerm = document.getElementById('searchInputIndex').value.trim().toLowerCase();
 
-      // Mapeo de palabras clave a IDs de productos
       const sectionMap = {
         'todos': 'productos',
         'peluche': 'peluches',
@@ -593,7 +659,8 @@
         'figura': 'peluches',
         'stuffed': 'peluches',
         'peluchito': 'peluches',
-        'juguete': 'peluches','botella': 'botellas',
+        'juguete': 'peluches',
+        'botella': 'botellas',
         'vaso': 'botellas',
         'taza': 'botellas',
         'botellita': 'botellas',
@@ -625,7 +692,6 @@
       };
 
       let targetId = null;
-
       for (const key in sectionMap) {
         if (searchTerm.includes(key)) {
           targetId = sectionMap[key];
@@ -639,53 +705,163 @@
         alert("No encontramos esa categoría. Inténtalo de nuevo.");
       }
     });
-  }
+  });
 </script>
 
-<style>
-  html {
-  scroll-behavior: smooth;
-}
-</style>
-  <!-- jQery -->
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <!-- bootstrap js -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- custom js -->
-  <script  src="{% static 'js/custom.js' %}"></script> 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons @1.11.1/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css ">
-
-  <script>
-document.addEventListener("DOMContentLoaded", function () {
+<!-- Script para agregar productos al carrito -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
     const botones = document.querySelectorAll(".btn-agregar-carrito");
 
     botones.forEach(boton => {
-        boton.addEventListener("click", function () {
-            const nombre = this.getAttribute("data-nombre");
-            const precio = this.getAttribute("data-precio");
+      boton.addEventListener("click", function () {
+        const nombre = this.getAttribute("data-nombre");
+        const precio = this.getAttribute("data-precio");
 
-            fetch("{% url 'agregar_al_carrito' %}", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    "X-CSRFToken": "{{ csrf_token }}"
-                },
-                body: `nombre=${encodeURIComponent(nombre)}&precio=${encodeURIComponent(precio)}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Actualiza el contador del carrito
-                    const cartCount = document.getElementById("cart-count");
-                    cartCount.textContent = data.cart_count;
-                    cartCount.style.display = "inline-block";
-                }
-            });
+        fetch("{% url 'agregar_al_carrito' %}", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": "{{ csrf_token }}"
+          },
+          body: `nombre=${encodeURIComponent(nombre)}&precio=${encodeURIComponent(precio)}`
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Actualiza el contador del carrito
+            const cartCount = document.getElementById("cart-count");
+            if(cartCount){
+              cartCount.textContent = data.cart_count;
+              cartCount.style.display = "inline-block";
+            }
+          }
         });
+      });
     });
-});
+  });
 </script>
+<!-- Script ppara precios de productos -->
+<script>
+  let valorDolar = null;
+  let mostrandoDolares = false;
+
+  async function obtenerDolar() {
+    try {
+      const res = await fetch('https://mindicador.cl/api/dolar');
+      const data = await res.json();
+      return data.serie[0].valor;
+    } catch (e) {
+      console.error("No se pudo obtener el valor del dólar:", e);
+      return null;
+    }
+  }
+
+  function formatearCLP(valor) {
+    return '$' + valor.toLocaleString('es-CL') + ' CLP';
+  }
+
+  function formatearUSD(valor) {
+    return '$' + valor.toFixed(2) + ' USD';
+  }
+
+  function actualizarPrecios() {
+    const productos = document.querySelectorAll('.producto');
+    productos.forEach(producto => {
+      const precioCLP = Number(producto.dataset.precio);
+      const precioElem = producto.querySelector('.precio-producto');
+
+      if (mostrandoDolares && valorDolar) {
+        const precioUSD = precioCLP / valorDolar;
+        precioElem.textContent = formatearUSD(precioUSD);
+      } else {
+        precioElem.textContent = formatearCLP(precioCLP);
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    valorDolar = await obtenerDolar();
+    if (valorDolar) {
+      document.getElementById('dolar-valor').textContent = Math.round(valorDolar).toLocaleString('es-CL');
+    }
+
+    actualizarPrecios();
+
+    document.getElementById('toggle-moneda').addEventListener('click', () => {
+      mostrandoDolares = !mostrandoDolares;
+      document.getElementById('toggle-moneda').textContent = mostrandoDolares ? 'Mostrar en CLP' : 'Mostrar en Dólares';
+      actualizarPrecios();
+    });
+  });
+</script>
+
+<script>
+  // Función para actualizar el badge del carrito
+  function actualizarBadge(cart_count, subtotal) {
+    let badge = document.getElementById('cart-count-badge');
+    if (cart_count > 0) {
+      if (!badge) {
+        // Crear badge si no existe
+        badge = document.createElement('span');
+        badge.id = 'cart-count-badge';
+        badge.className = 'cart-count-badge';
+        badge.style = "position: absolute; top: -5px; right: -10px; background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem;";
+        document.querySelector('.cart-icon').appendChild(badge);
+      }
+      badge.textContent = cart_count;
+    } else if (badge) {
+      // Si carrito vacío, quitar badge
+      badge.remove();
+    }
+
+    // Actualizar subtotal en el modal
+    const subtotalSpan = document.getElementById('subtotal');
+    if (subtotalSpan) {
+      subtotalSpan.textContent = `$${subtotal.toFixed(2)}`;
+    }
+  }
+
+  // Ejemplo de función para agregar al carrito y actualizar badge
+  function agregarAlCarrito(nombre, precio) {
+    fetch('/ruta/agregar_al_carrito/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken')  // Necesitas esta función para CSRF token si usas Django
+      },
+      body: JSON.stringify({nombre: nombre, precio: precio})
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        actualizarBadge(data.cart_count, data.subtotal);
+      } else {
+        alert('Error al agregar al carrito: ' + (data.error || 'Error desconocido'));
+      }
+    });
+  }
+
+  // Función para obtener la cookie csrf token (útil para Django POST AJAX)
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        // ¿Esta cookie comienza con el nombre que buscamos?
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+</script>
+
+
+
 
 </body>
 

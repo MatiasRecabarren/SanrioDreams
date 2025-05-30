@@ -7,7 +7,7 @@ try:
     connection = oracledb.connect(
         user='C##SanrioDreams',
         password='12345',
-        dsn='localhost/orcl'
+        dsn='localhost/xe'
     )
     with connection.cursor() as cursor:
         cursor.execute("SELECT BANNER FROM V$VERSION")
@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     # Apps personalizadas
     'SitioWeb',
     'web',
@@ -74,7 +75,7 @@ TEMPLATES = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.oracle',
-        'NAME': 'orcl',  
+        'NAME': 'xe',  
         'USER': 'C##SanrioDreams',
         'PASSWORD': '12345',
         'HOST': 'localhost',
@@ -100,7 +101,11 @@ USE_TZ = True
 
 # Archivos estáticos y media
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+
+# Directorios donde Django buscará archivos estáticos
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -129,3 +134,5 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'tuemail@gmail.com'  # Tu correo
 EMAIL_HOST_PASSWORD = 'tu_app_password'  # Contraseña de aplicación de Google
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'

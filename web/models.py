@@ -28,7 +28,6 @@ class Usuario(models.Model):
     def __str__(self):
         return f"{self.nombre} {self.apellido} - {self.correo}"
 
-
     def __str__(self):
         return self.correo
 
@@ -64,27 +63,43 @@ class Usuario(models.Model):
             return "Debe contener al menos un carácter especial (!@#$%^&*(), etc.)."
         return None
 
+
 class TipoEmpleado(models.Model):
     id_tipo_empleado = models.AutoField(primary_key=True)
     descripcion = models.CharField(max_length=100)
 
+    class Meta:
+        managed = False
+        db_table = 'tipoempleado'
+
     def __str__(self):
         return self.descripcion
+
 
 class Empleado(models.Model):
     id_empleado = models.CharField(max_length=12, primary_key=True)  # RUT
     fecha_contratacion = models.DateField()
     tipo = models.ForeignKey(TipoEmpleado, on_delete=models.CASCADE)
 
+    class Meta:
+        managed = False
+        db_table = 'empleado'
+
     def __str__(self):
         return f"{self.id_empleado} ({self.tipo.descripcion})"
+
 
 class MetodoPago(models.Model):
     id_metodo_pago = models.AutoField(primary_key=True)
     tipo = models.CharField(max_length=50)
 
+    class Meta:
+        managed = False
+        db_table = 'metodopago'
+
     def __str__(self):
         return self.tipo
+
 
 class Producto(models.Model):
     id_producto = models.AutoField(primary_key=True)
@@ -94,25 +109,44 @@ class Producto(models.Model):
     imagen = models.CharField(max_length=255)  # O usa ImageField si manejas archivos
     disponible = models.BooleanField(default=True)
 
+    class Meta:
+        db_table = 'producto'
+        managed = False
+
     def __str__(self):
         return self.nombre
 
+
 class Stock(models.Model):
     id_stock = models.AutoField(primary_key=True)
-    cantidad = models.PositiveIntegerField()
+    cantidad = models.DecimalField(max_digits=5, decimal_places=0)
     ubicacion_detalle = models.CharField(max_length=255)
-    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    producto = models.ForeignKey(
+        Producto,
+        on_delete=models.CASCADE,
+        db_column='ID_PRODUCTO'  # ← Nombre exacto en la base de datos
+    )
+
+    class Meta:
+        db_table = 'stock'
+        managed = False
 
     def __str__(self):
         return f"{self.producto.nombre} - {self.cantidad} en {self.ubicacion_detalle}"
+
 
 class Carrito(models.Model):
     id_carrito = models.AutoField(primary_key=True)
     fecha_creacion = models.DateField(auto_now_add=True)
     estado = models.CharField(max_length=20)
 
+    class Meta:
+        db_table = 'carrito'
+        managed = False
+
     def __str__(self):
         return f"Carrito #{self.id_carrito} - {self.estado}"
+
 
 class Pago(models.Model):
     id_pago = models.AutoField(primary_key=True)
@@ -121,8 +155,13 @@ class Pago(models.Model):
     estado = models.CharField(max_length=20)
     metodo_pago = models.ForeignKey(MetodoPago, on_delete=models.CASCADE)
 
+    class Meta:
+        db_table = 'pago'
+        managed = False
+
     def __str__(self):
         return f"Pago #{self.id_pago} - {self.estado}"
+
 
 class Pedido(models.Model):
     id_pedido = models.AutoField(primary_key=True)
@@ -133,8 +172,13 @@ class Pedido(models.Model):
     empleado = models.ForeignKey(Empleado, on_delete=models.SET_NULL, null=True, blank=True)
     pago = models.ForeignKey(Pago, on_delete=models.SET_NULL, null=True, blank=True)
 
+    class Meta:
+        db_table = 'pedido'
+        managed = False
+
     def __str__(self):
         return f"Pedido #{self.id_pedido} - {self.estado}"
+
 
 class DetallePedido(models.Model):
     id_detalle = models.AutoField(primary_key=True)
@@ -144,8 +188,13 @@ class DetallePedido(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
 
+    class Meta:
+        db_table = 'detallepedido'
+        managed = False
+
     def __str__(self):
         return f"Detalle #{self.id_detalle} - Pedido #{self.pedido.id_pedido}"
+
 
 class Notificacion(models.Model):
     id_notificacion = models.AutoField(primary_key=True)
@@ -154,8 +203,13 @@ class Notificacion(models.Model):
     fecha_envio = models.DateField(auto_now_add=True)
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
 
+    class Meta:
+        db_table = 'notificacion'
+        managed = False
+
     def __str__(self):
         return f"{self.titulo} para {self.usuario.nombre}"
+
 
 class Resenna(models.Model):
     id_resenna = models.AutoField(primary_key=True)
@@ -164,6 +218,9 @@ class Resenna(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
 
+    class Meta:
+        db_table = 'resenna'
+        managed = False
+
     def __str__(self):
         return f"Reseña de {self.usuario.nombre} sobre {self.producto.nombre}"
-
