@@ -80,42 +80,74 @@
                   </button>
                 </form>
                 <a href="{% url 'login' %}" class="ml-3" title="Iniciar sesión">
-                  <i class="fa fa-user" aria-hidden="true" style="font-size: 1.3rem;"></i>
-                </a>
-                <a href="{% url 'carrito' %}" class="ml-3 position-relative" style="text-decoration: none; color: black;" title="Ver carrito">
-                  <i class="fas fa-shopping-cart" style="font-size: 1.5rem; margin-left: -25px;color: black;"></i>
-                  {% with request.session.carrito|length as cart_count %}
-                    {% if cart_count > 0 %}
-                      <span style="position: absolute; top: -5px; right: -10px; background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem;">
-                        {{ cart_count }}
-                      </span>
-                    {% endif %}
-                  {% endwith %}
-                </a>
-              </div>
+          <i class="fa fa-user" aria-hidden="true" style="font-size: 1.5rem;"></i>
+      </a>
+
+<!-- Botón del Carrito -->
+<button type="button" class="ml-3 position-relative cart-icon" style="background: none; border: none; padding: 0; cursor: pointer;" title="Ver carrito">
+  <i class="fas fa-shopping-cart" style="font-size: 1.5rem; margin-left: -25px; color: black;"></i>
+  {% with request.session.carrito|length as cart_count %}
+    {% if cart_count > 0 %}
+      <span class="cart-count-badge" id="cart-count-badge" style="position: absolute; top: -5px; right: -10px; background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem;">
+        {{ cart_count }}
+      </span>
+    {% endif %}
+  {% endwith %}
+</button>
+
+
+<!-- Modal del carrito -->
+<div id="cartModal" class="cart-modal">
+  <div class="cart-modal-content">
+    <h2>TU CARRITO</h2>
+    <button class="close-button">&times;</button>
+    <div class="cart-items">
+      {% if request.session.carrito %}
+        {% for item in request.session.carrito %}
+          <div class="cart-item">
+            <img src="{% static 'images/'|add:item.imagen %}" alt="{{ item.nombre }}" class="cart-item-image">
+            <div class="cart-item-details">
+              <h3>{{ item.nombre }}</h3>
+              <p>Precio: ${{ item.precio }}</p>
+              <p>Cantidad: {{ item.cantidad }}</p>
             </div>
-          </nav>
-        </div>
+            <div class="cart-item-actions">
+              <button class="action-button aumentar" data-id="{{ item.id }}">+</button>
+              <button class="action-button disminuir" data-id="{{ item.id }}">-</button>
+              <button class="action-button eliminar" data-id="{{ item.id }}">Eliminar</button>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="empty-cart">El carrito está vacío.</p>
+      {% endif %}
+    </div>
+    <div class="cart-total">
+      <p>SUBTOTAL: <span id="subtotal">$0.00</span></p>
+    </div>
+    <a href="{% url 'carrito' %}" class="view-cart-button">VER CARRITO</a>
+  </div>
+</div>
       </header>
       <!-- Fin de Header -->
 
       <!-- Sección Peluches -->
 
-<section id="peluches" class="peluches">
-  <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Peluches</h3>
-  <div class="tarjetas-contenedor">
-    {% for producto in peluches %}
-      <div class="tarjeta">
-        <img src="{% static 'images/'|add:producto.imagen %}" alt="{{ producto.nombre }}">
-        <h3>{{ producto.nombre }}</h3>
-        <p>{{ producto.descripcion }}</p>
-        <p>$ {{ producto.precio | intcomma }}</p>
-        <p>Cantidad: {{ producto.stock_set.first.cantidad }}</p>
-        <button onclick="agregarAlCarrito('{{ p.id_producto }}')">Agregar al carrito</button>
-      </div>
-    {% endfor %}
-  </div>
-</section>
+      <section id="peluches" class="peluches">
+        <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Peluches</h3>
+        <div class="tarjetas-contenedor">
+           {% for producto in peluches %}
+              <div class="tarjeta">
+                <img src="{% static 'images/'|add:producto.imagen %}" alt="{{ producto.nombre }}">
+                <h3>{{ producto.nombre }}</h3>
+                <p>{{ producto.descripcion }}</p>
+                <p>$ {{ producto.precio | intcomma }}</p>
+                <p>Cantidad: {{ producto.stock_set.first.cantidad }}</p>
+               <button onclick="agregarAlCarrito('{{ producto.id_producto }}')">Agregar al carrito</button>
+              </div>
+          {% endfor %}
+        </div>
+      </section>
 
       <br>
 
@@ -465,5 +497,102 @@
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"> 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> 
+  
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const cartIcon = document.querySelector(".cart-icon");
+    const cartModal = document.getElementById("cartModal");
+    const closeButton = document.querySelector(".close-button");
+
+    // Abrir modal
+    if (cartIcon && cartModal) {
+      cartIcon.addEventListener("click", function () {
+        cartModal.classList.add("open");
+        updateSubtotal(); // Calcula el subtotal cuando se abre
+      });
+    }
+
+    // Cerrar con la X
+    if (closeButton && cartModal) {
+      closeButton.addEventListener("click", function () {
+        cartModal.classList.remove("open");
+      });
+    }
+
+    // Cerrar al hacer clic fuera del contenido
+    window.addEventListener("click", function (event) {
+      if (event.target === cartModal) {
+        cartModal.classList.remove("open");
+      }
+    });
+
+    // Calcular subtotal
+    function updateSubtotal() {
+      const items = document.querySelectorAll(".cart-item");
+      let subtotal = 0;
+
+      items.forEach(item => {
+        const precioText = item.querySelector("p:nth-child(2)").textContent;
+        const cantidadText = item.querySelector("p:nth-child(3)").textContent;
+
+        const precio = parseFloat(precioText.replace("Precio: $", ""));
+        const cantidad = parseInt(cantidadText.replace("Cantidad: ", ""));
+
+        if (!isNaN(precio) && !isNaN(cantidad)) {
+          subtotal += precio * cantidad;
+        }
+      });
+
+      const subtotalElement = document.getElementById("subtotal");
+      if (subtotalElement) {
+        subtotalElement.textContent = `$${subtotal.toFixed(2)}`;
+      }
+    }
+  });
+</script>
+<script src="{% static 'js/carrito.js' %}"></script>
+
+<script>
+ function agregarAlCarrito(id_producto) {
+    fetch(`/agregar-al-carrito/${id_producto}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            alert('✅ Producto agregado');
+            document.getElementById('cartModal').classList.add('open');
+            actualizarCarritoModal(); // Aquí actualizas el contenido del modal
+        } else {
+            alert('❌ Error: ' + data.error);
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert('🚨 Hubo un error al conectar con el servidor');
+    });
+}
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+</script>
+
+
 </body>
-</html>
+</html> 
+

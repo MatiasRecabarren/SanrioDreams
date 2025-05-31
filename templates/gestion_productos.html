@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestionar Productos</title>
+</head>
+<body>
+    <h1>Gestión de Productos</h1>
+    <button onclick="obtenerProductos()">Obtener Productos</button>
+    <div id="productos"></div>
+
+    <script>
+        function obtenerProductos() {
+            fetch('/api/productos/')  // Tu API local o externa
+                .then(response => response.json())
+                .then(data => {
+                    const contenedor = document.getElementById('productos');
+                    contenedor.innerHTML = '<ul>' +
+                        data.map(p => `<li>${p.nombre} - $${p.precio}</li>`).join('') +
+                        '</ul>';
+                });
+        }
+    </script>
+</body>
+</html>

@@ -50,6 +50,7 @@ class Usuario(models.Model):
         resto = suma % 11
         digito = 'k' if 11 - resto == 10 else str(11 - resto)
         return digito.lower() == dv.lower()
+    
 
     @staticmethod
     def validar_contrasenna(contrasenna):
@@ -64,13 +65,14 @@ class Usuario(models.Model):
         return None
 
 
+
 class TipoEmpleado(models.Model):
     id_tipo_empleado = models.AutoField(primary_key=True)
     descripcion = models.CharField(max_length=100)
 
     class Meta:
         managed = False
-        db_table = 'tipoempleado'
+        db_table = 'TIPOEMPLEADO'
 
     def __str__(self):
         return self.descripcion
@@ -83,7 +85,7 @@ class Empleado(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'empleado'
+        db_table = 'EMPLEADO'
 
     def __str__(self):
         return f"{self.id_empleado} ({self.tipo.descripcion})"
@@ -95,22 +97,22 @@ class MetodoPago(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'metodopago'
+        db_table = 'METODOPAGO'
 
     def __str__(self):
         return self.tipo
 
 
-class Producto(models.Model):
+class producto(models.Model):
     id_producto = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField()
     precio = models.DecimalField(max_digits=10, decimal_places=0)
-    imagen = models.CharField(max_length=255)  # O usa ImageField si manejas archivos
-    disponible = models.BooleanField(default=True)
+    imagen = models.CharField(max_length=255)
+    disponible = models.CharField(max_length=2)
 
     class Meta:
-        db_table = 'producto'
+        db_table = 'PRODUCTO'
         managed = False
 
     def __str__(self):
@@ -122,13 +124,13 @@ class Stock(models.Model):
     cantidad = models.DecimalField(max_digits=5, decimal_places=0)
     ubicacion_detalle = models.CharField(max_length=255)
     producto = models.ForeignKey(
-        Producto,
+        producto,
         on_delete=models.CASCADE,
         db_column='ID_PRODUCTO'  # ← Nombre exacto en la base de datos
     )
 
     class Meta:
-        db_table = 'stock'
+        db_table = 'STOCK'
         managed = False
 
     def __str__(self):
@@ -141,7 +143,7 @@ class Carrito(models.Model):
     estado = models.CharField(max_length=20)
 
     class Meta:
-        db_table = 'carrito'
+        db_table = 'CARRITO'
         managed = False
 
     def __str__(self):
@@ -156,7 +158,7 @@ class Pago(models.Model):
     metodo_pago = models.ForeignKey(MetodoPago, on_delete=models.CASCADE)
 
     class Meta:
-        db_table = 'pago'
+        db_table = 'PAGO'
         managed = False
 
     def __str__(self):
@@ -173,7 +175,7 @@ class Pedido(models.Model):
     pago = models.ForeignKey(Pago, on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:
-        db_table = 'pedido'
+        db_table = 'PEDIDO'
         managed = False
 
     def __str__(self):
@@ -186,10 +188,10 @@ class DetallePedido(models.Model):
     productos = models.TextField()
     total = models.DecimalField(max_digits=10, decimal_places=2)
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
-    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    producto = models.ForeignKey(producto, on_delete=models.CASCADE)
 
     class Meta:
-        db_table = 'detallepedido'
+        db_table = 'DETALLEPEDIDO'
         managed = False
 
     def __str__(self):
@@ -204,7 +206,7 @@ class Notificacion(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
 
     class Meta:
-        db_table = 'notificacion'
+        db_table = 'NOTIFICACION'
         managed = False
 
     def __str__(self):
@@ -216,10 +218,10 @@ class Resenna(models.Model):
     comentario = models.TextField(blank=True, null=True)
     valoracion = models.PositiveSmallIntegerField()
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    producto = models.ForeignKey(producto, on_delete=models.CASCADE)
 
     class Meta:
-        db_table = 'resenna'
+        db_table = 'RESENNA'
         managed = False
 
     def __str__(self):

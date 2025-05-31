@@ -12,12 +12,14 @@ urlpatterns = [
     path('login/', views.login, name='login'),
     path('registro/', views.registro, name='registro'),
     path('carrito/', views.carrito, name='carrito'),
-    path('agregar-al-carrito/', views.agregar_al_carrito, name='agregar_al_carrito'),
+    path('agregar-al-carrito/<int:id_producto>/', views.agregar_al_carrito, name='agregar_al_carrito'),
     path('eliminar-del-carrito/', views.eliminar_del_carrito, name='eliminar_del_carrito'),
     path('nosotros/', views.nosotros, name='nosotros'),
-    path('aumentar_cantidad/', views.aumentar_cantidad, name='aumentar_cantidad'),
-    path('disminuir_cantidad/', views.disminuir_cantidad, name='disminuir_cantidad'),
-    path('eliminar_producto/', views.eliminar_producto, name='eliminar_producto'),
+    path('aumentar-cantidad/<int:id_producto>/', views.aumentar_cantidad, name='aumentar_cantidad'),
+    path('disminuir-cantidad/<int:id_producto>/', views.disminuir_cantidad, name='disminuir_cantidad'),
+    path('eliminar-producto/<int:id_producto>/', views.eliminar_producto, name='eliminar_producto'),
+    path('obtener-cantidad-carrito/', views.obtener_cantidad_carrito, name='obtener_cantidad_carrito'),
+
 
 
  

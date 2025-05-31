@@ -7,7 +7,7 @@ try:
     connection = oracledb.connect(
         user='C##SanrioDreams',
         password='12345',
-        dsn='localhost/xe'
+        dsn='localhost/XE'
     )
     with connection.cursor() as cursor:
         cursor.execute("SELECT BANNER FROM V$VERSION")
@@ -75,7 +75,7 @@ TEMPLATES = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.oracle',
-        'NAME': 'xe',  
+        'NAME': 'XE',  # Nombre del SID
         'USER': 'C##SanrioDreams',
         'PASSWORD': '12345',
         'HOST': 'localhost',
@@ -101,8 +101,6 @@ USE_TZ = True
 
 # Archivos estáticos y media
 STATIC_URL = '/static/'
-
-# Directorios donde Django buscará archivos estáticos
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
@@ -136,3 +134,4 @@ EMAIL_HOST_PASSWORD = 'tu_app_password'  # Contraseña de aplicación de Google
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
