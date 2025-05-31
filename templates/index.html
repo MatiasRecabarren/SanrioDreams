@@ -718,7 +718,7 @@
         const nombre = this.getAttribute("data-nombre");
         const precio = this.getAttribute("data-precio");
 
-        fetch("{% url 'agregar_al_carrito' %}", {
+        fetch("{% url 'carrito' %}", { <!--Le puse carrito mientras porque agregar_al_carrito no es un html existente-->
           method: "POST",
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",

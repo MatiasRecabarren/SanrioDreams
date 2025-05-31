@@ -103,7 +103,7 @@ class MetodoPago(models.Model):
         return self.tipo
 
 
-class producto(models.Model):
+class Producto(models.Model):
     id_producto = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField()
@@ -124,7 +124,7 @@ class Stock(models.Model):
     cantidad = models.DecimalField(max_digits=5, decimal_places=0)
     ubicacion_detalle = models.CharField(max_length=255)
     producto = models.ForeignKey(
-        producto,
+        Producto,
         on_delete=models.CASCADE,
         db_column='ID_PRODUCTO'  # ← Nombre exacto en la base de datos
     )
@@ -188,7 +188,7 @@ class DetallePedido(models.Model):
     productos = models.TextField()
     total = models.DecimalField(max_digits=10, decimal_places=2)
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
-    producto = models.ForeignKey(producto, on_delete=models.CASCADE)
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'DETALLEPEDIDO'
@@ -218,7 +218,7 @@ class Resenna(models.Model):
     comentario = models.TextField(blank=True, null=True)
     valoracion = models.PositiveSmallIntegerField()
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    producto = models.ForeignKey(producto, on_delete=models.CASCADE)
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'RESENNA'
@@ -226,3 +226,12 @@ class Resenna(models.Model):
 
     def __str__(self):
         return f"Reseña de {self.usuario.nombre} sobre {self.producto.nombre}"
+    
+class AlertaStock(models.Model):
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    stock_actual = models.PositiveIntegerField()
+    ubicacion_detalle = models.CharField(max_length=255)
+    fecha_alerta = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.producto.nombre} - {self.stock_actual}"

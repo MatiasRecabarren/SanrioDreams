@@ -1,73 +1,49 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const cartIcon = document.querySelector(".cart-icon");
-  const cartModal = document.getElementById("cartModal");
-  const closeButton = document.querySelector(".close-button");
+document.addEventListener('DOMContentLoaded', () => {
+    const cartIcon = document.querySelector('.cart-icon');
+    const cartModal = document.getElementById('cartModal');
+    const closeButton = document.querySelector('.close-button');
 
-  // Abrir carrito
-  if (cartIcon && cartModal) {
-    cartIcon.addEventListener("click", function () {
-      cartModal.classList.add("open");
+    cartIcon?.addEventListener('click', () => {
+        cartModal.classList.add('open');
+        actualizarCarritoModal();
     });
-  }
 
-  // Cerrar carrito
-  if (closeButton && cartModal) {
-    closeButton.addEventListener("click", function () {
-      cartModal.classList.remove("open");
+    closeButton?.addEventListener('click', () => {
+        cartModal.classList.remove('open');
     });
-  }
 
-  // Cerrar haciendo clic fuera del contenido
-  window.addEventListener("click", function (event) {
-    if (event.target === cartModal) {
-      cartModal.classList.remove("open");
-    }
-  });
+    window.addEventListener('click', e => {
+        if (e.target === cartModal) {
+            cartModal.classList.remove('open');
+        }
+    });
 
-  // Agregar al carrito
-  document.querySelectorAll('.btn-agregar-carrito').forEach(button => {
-    button.addEventListener('click', () => {
-      const nombre = button.getAttribute('data-nombre');
-      const precio = button.getAttribute('data-precio');
 
-      fetch('/agregar-al-carrito/', {
+function agregarAlCarrito(id_producto) {
+    fetch(`/agregar-al-carrito/${id_producto}/`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': getCookie('csrftoken'),  // <-- función para token CSRF (ver más abajo)
-        },
-        body: JSON.stringify({ nombre, precio })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if(data.success){
-          alert('Producto agregado al carrito');
-
-          // Aquí actualiza tu modal o contador, si quieres.
-          // Por simplicidad, recarga la página para ver cambios
-          location.reload();
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            alert('✅ Producto agregado');
+            document.getElementById('cartModal').classList.add('open');
+            actualizarCarritoModal();
+            actualizarContadorCarrito();
         } else {
-          alert('Error: ' + (data.error || 'No se pudo agregar'));
+            alert('❌ Error: ' + (data.error || 'No se pudo agregar'));
         }
-      });
+    })
+    .catch(err => {
+        alert('🚨 Hubo un error: ' + err.message);
     });
-  });
+}
 
-  // Función para obtener cookie CSRF
-  function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        // Verifica si la cookie coincide con el nombre
-        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
-        }
-      }
-    }
-    return cookieValue;
-  }
-});
 
+
+
+
+    

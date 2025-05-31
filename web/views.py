@@ -7,10 +7,10 @@ from django.core.exceptions import ValidationError
 import re
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.http import require_POST
 import json
-from .models import producto
-
+from .models import Producto, Stock, AlertaStock
+from django.shortcuts import get_object_or_404
 
 def productos(request):
     return render(request, 'dj/productos.html')
@@ -22,8 +22,8 @@ def index(request):
     return render(request, 'index.html')
 
 def productos(request):
-    productos = producto.objects.all()
-    print(f"Consulta SQL generada: {producto.objects.all().query}")  # Ver consulta SQL
+    productos = Producto.objects.all()
+    print(f"Consulta SQL generada: {Producto.objects.all().query}")  # Ver consulta SQL
     print(f"Todos los productos: {productos}")  # Depuración
 
     peluches = [p for p in productos if 1000 <= p.id_producto < 2000]
@@ -324,141 +324,120 @@ def index(request):
     return render(request, 'index.html')
 
 
-@csrf_protect
+
+
+@require_POST
 def agregar_al_carrito(request, id_producto):
     try:
-        prod = producto.objects.get(id_producto=id_producto)
+        # Obtener el producto o devolver 404 si no existe
+        producto = get_object_or_404(Producto, pk=id_producto)
 
+        # Obtener el carrito de la sesión o iniciar uno vacío
         carrito = request.session.get('carrito', [])
 
-        encontrado = False
+        # Buscar si el producto ya está en el carrito para aumentar cantidad
         for item in carrito:
-            if item['id'] == id_producto:
+            if item['id'] == producto.id_producto:
                 item['cantidad'] += 1
-                encontrado = True
                 break
-
-        if not encontrado:
+        else:
+            # Si no está, agregarlo como nuevo con cantidad 1
             carrito.append({
-                'id': prod.id_producto,
-                'nombre': prod.nombre,
-                'imagen': prod.imagen,
-                'precio': float(prod.precio),
-                'cantidad': 1
+                'id': producto.id_producto,
+                'nombre': producto.nombre,
+                'precio': float(producto.precio or 0),
+                'cantidad': 1,
+                'imagen': producto.imagen.url if producto.imagen else ''
             })
 
+        # Guardar el carrito actualizado en la sesión
         request.session['carrito'] = carrito
         request.session.modified = True
 
         return JsonResponse({'success': True})
-    except producto.DoesNotExist:
-        return JsonResponse({'success': False, 'error': 'Producto no encontrado'})
     
-def ver_carrito(request):
-    carrito = request.session.get('carrito', [])
-    subtotal = sum(item['precio'] * item['cantidad'] for item in carrito)
-
-    context = {
-        'carrito': carrito,
-        'subtotal': subtotal,
-    }
-    return render(request, 'carrito.html', context)
-
-def carrito_view(request):
-    carrito = request.session.get('carrito', [])
-    # Pasar carrito al template
-    context = {'carrito': carrito}
-    return render(request, 'carrito.html', context)
-
-def eliminar_del_carrito(request):
-    if request.method == "POST":
-        nombre_producto = request.POST.get("nombre")
-        carrito = request.session.get("carrito", [])
-
-        # Filtrar y eliminar solo el primer coincidente
-        for i, producto in enumerate(carrito):
-            if producto["nombre"] == nombre_producto:
-                carrito.pop(i)
-                break
-
-        request.session['carrito'] = carrito
-        request.session.modified = True
-
-        return JsonResponse({"success": True})
-
-    return JsonResponse({"success": False}, status=400)
+    except Producto.DoesNotExist:
+        # En caso que no se encuentre el producto
+        return JsonResponse({'success': False, 'error': 'Producto no encontrado.'}, status=404)
+    
+    except Exception as e:
+        # Cualquier otro error inesperado
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
 def obtener_carrito(request):
     carrito = request.session.get('carrito', [])
     return JsonResponse({'carrito': carrito})
 
-@csrf_protect
-def aumentar_cantidad(request, id_producto):
-    try:
-        carrito = request.session.get('carrito', [])
-
-        for item in carrito:
-            if item['id'] == id_producto:
-                item['cantidad'] += 1
-                break
-
-        request.session['carrito'] = carrito
-        request.session.modified = True
-
-        return JsonResponse({'success': True})
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)})
-
-@csrf_protect
-def disminuir_cantidad(request, id_producto):
-    try:
-        carrito = request.session.get('carrito', [])
-
-        for item in carrito:
-            if item['id'] == id_producto:
-                if item['cantidad'] > 1:
-                    item['cantidad'] -= 1
-                else:
-                    # Si la cantidad es 1, elimina el producto
-                    carrito = [i for i in carrito if i['id'] != id_producto]
-                break
-
-        request.session['carrito'] = carrito
-        request.session.modified = True
-
-        return JsonResponse({'success': True})
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)})
-
-@csrf_protect
-def eliminar_producto(request, id_producto):
-    try:
-        carrito = request.session.get('carrito', [])
-
-        carrito = [item for item in carrito if item['id'] != id_producto]
-
-        request.session['carrito'] = carrito
-        request.session.modified = True
-
-        return JsonResponse({'success': True})
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)})
-    
-# Función auxiliar para calcular respuesta JSON
-def calcular_respuesta_carrito(carrito):
-    cart_count = sum(item['cantidad'] for item in carrito)
-    subtotal = sum(item['cantidad'] * item.get('precio', 0) for item in carrito)
-    return {
-        'success': True,
-        'cart_count': cart_count,
-        'subtotal': subtotal,
-        'carrito': carrito
-    }
-def obtener_cantidad_carrito(request):
+def ver_carrito(request):
+    # Obtener el carrito de la sesión, por defecto una lista vacía
     carrito = request.session.get('carrito', [])
-    total = sum(item['cantidad'] for item in carrito)
-    return JsonResponse({'count': total})
+
+    # Validar que sea una lista y tenga items con estructura correcta
+    if not isinstance(carrito, list):
+        carrito = []
+
+    try:
+        subtotal = sum(float(item['precio']) * int(item['cantidad']) for item in carrito if
+                       isinstance(item, dict) and 'precio' in item and 'cantidad' in item)
+    except (TypeError, ValueError):
+        subtotal = 0
+
+    context = {
+        'carrito': carrito,
+        'subtotal': subtotal,
+    }
+
+    return render(request, 'carrito.html', context)
+
+#-------------------------------------------------------------------------------------#
 
 def nosotros(request):
     return render(request, 'nosotros.html')
 
+def informes_stock(request):
+    productos = Producto.objects.all()
+    alertas = []
+
+    for producto in productos:
+        stock_obj = producto.stock_set.first()
+
+        if stock_obj:
+            stock_actual = int(stock_obj.cantidad)  # Asegura que sea un entero
+            ubicacion = stock_obj.ubicacion_detalle
+
+            # Actualizar o crear AlertaStock
+            alerta, created = AlertaStock.objects.get_or_create(
+                producto=producto,
+                defaults={
+                    'stock_actual': stock_actual,
+                    'ubicacion_detalle': ubicacion
+                }
+            )
+
+            if not created:
+                alerta.stock_actual = stock_actual
+                alerta.save()
+
+            print(f"Producto: {producto.nombre}, Stock Actual: {stock_actual}")  # Depuración
+            alertas.append(alerta)
+
+    return render(request, 'informes_stock.html', {'alertas': alertas})
+
+def actualizar_stock(request, alerta_id):
+    if request.method == 'POST':
+        try:
+            cantidad_a_agregar = int(request.POST.get('cantidad'))
+            alerta = AlertaStock.objects.get_or_create(producto_id=Producto.id_producto)
+            stock = alerta.producto.stock_set.first()
+
+            if stock:
+                stock.cantidad += cantidad_a_agregar
+                stock.save()
+                alerta.stock_actual = stock.cantidad
+                alerta.save()
+                return JsonResponse({'success': True})
+            else:
+                return JsonResponse({'success': False, 'error': 'No hay stock asociado.'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    return JsonResponse({'success': False, 'error': 'Método no permitido.'})
