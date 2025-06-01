@@ -96,36 +96,48 @@
 </button>
 
 
-<!-- Modal del carrito -->
+<!-- Modal del Carrito -->
 <div id="cartModal" class="cart-modal">
   <div class="cart-modal-content">
     <h2>TU CARRITO</h2>
     <button class="close-button">&times;</button>
-    <div class="cart-items">
+
+    <!-- Lista de productos en el carrito -->
+    <div class="cart-items" id="cartItemsContainer">
       {% if request.session.carrito %}
-        {% for item in request.session.carrito %}
-          <div class="cart-item">
+        {% for item in request.session.carrito.values %}
+          <div class="cart-item" data-id="{{ item.id }}">
             <img src="{% static 'images/'|add:item.imagen %}" alt="{{ item.nombre }}" class="cart-item-image">
             <div class="cart-item-details">
               <h3>{{ item.nombre }}</h3>
-              <p>Precio: ${{ item.precio }}</p>
-              <p>Cantidad: {{ item.cantidad }}</p>
+              <p>Precio: $<span class="item-precio">{{ item.precio }}</span></p>
+              <p>Cantidad: 
+                <span class="item-cantidad">{{ item.cantidad }}</span>
+              </p>
+              <p>Subtotal: $<span class="item-subtotal">{{ item.subtotal }}</span></p>
             </div>
             <div class="cart-item-actions">
-              <button class="action-button aumentar" data-id="{{ item.id }}">+</button>
-              <button class="action-button disminuir" data-id="{{ item.id }}">-</button>
-              <button class="action-button eliminar" data-id="{{ item.id }}">Eliminar</button>
+              <button class="action-button aumentar">+</button>
+              <button class="action-button disminuir">-</button>
+              <button class="action-button eliminar">Eliminar</button>
             </div>
           </div>
         {% endfor %}
       {% else %}
-        <p class="empty-cart">El carrito está vacío.</p>
+        <p class="empty-cart" id="emptyCartMessage">El carrito está vacío.</p>
       {% endif %}
     </div>
+
+    <!-- Total -->
     <div class="cart-total">
-      <p>SUBTOTAL: <span id="subtotal">$0.00</span></p>
+      <p>SUBTOTAL: $<span id="subtotal">0.00</span></p>
     </div>
-    <a href="{% url 'carrito' %}" class="view-cart-button">VER CARRITO</a>
+
+    <!-- Botones de acción -->
+    <div class="cart-footer">
+      <a href="{% url 'carrito' %}" class="view-cart-button">VER CARRITO</a>
+      <button class="checkout-button" id="checkoutButton">REALIZAR COMPRA</button>
+    </div>
   </div>
 </div>
       </header>
@@ -495,7 +507,208 @@ document.getElementById('toggle-moneda').addEventListener('click', () => {
 
 // Ejecutar al inicio
 obtenerTasaCambio();
+ 
 
+
+// Función para obtener el token CSRF
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Función para abrir el modal del carrito
+    function abrirModalCarrito() {
+        const cartModal = document.getElementById('cartModal');
+        if (cartModal) {
+            cartModal.classList.add('open');
+        }
+    }
+
+    // Función para actualizar el contador del carrito
+    function actualizarContadorCarrito(contador) {
+        const cartCountBadge = document.getElementById('cart-count-badge');
+        if (cartCountBadge) {
+            cartCountBadge.textContent = contador;
+        }
+    }
+
+    // Función para actualizar el contenido del modal del carrito
+    function actualizarCarritoModal(carrito) {
+        const cartItemsContainer = document.getElementById('cartItemsContainer');
+        if (!cartItemsContainer) return;
+
+        // Limpiar el contenido actual
+        cartItemsContainer.innerHTML = '';
+
+        // Verificar si el carrito está vacío
+        if (carrito.length === 0) {
+            const emptyMessage = document.createElement('p');
+            emptyMessage.className = 'empty-cart';
+            emptyMessage.id = 'emptyCartMessage';
+            emptyMessage.textContent = 'El carrito está vacío.';
+            cartItemsContainer.appendChild(emptyMessage);
+            return;
+        }
+
+        // Mostrar cada producto del carrito
+        carrito.forEach(item => {
+            const cartItem = document.createElement('div');
+            cartItem.className = 'cart-item';
+            cartItem.dataset.id = item.id;
+
+            cartItem.innerHTML = `
+                <img src="${item.imagen}" alt="${item.nombre}" class="cart-item-image">
+                <div class="cart-item-details">
+                    <h3>${item.nombre}</h3>
+                    <p>Precio: $<span class="item-precio">${item.precio}</span></p>
+                    <p>Cantidad: 
+                        <span class="item-cantidad">${item.cantidad}</span>
+                    </p>
+                    <p>Subtotal: $<span class="item-subtotal">${item.subtotal}</span></p>
+                </div>
+                <div class="cart-item-actions">
+                    <button class="action-button aumentar">+</button>
+                    <button class="action-button disminuir">-</button>
+                    <button class="action-button eliminar">Eliminar</button>
+                </div>
+            `;
+
+            cartItemsContainer.appendChild(cartItem);
+        });
+    }
+
+    // Función para agregar un producto al carrito
+    function agregarAlCarrito(id_producto) {
+        const url = `/agregar-al-carrito/${id_producto}/`;
+        const csrftoken = getCookie('csrftoken');
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            }
+        })
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(`Error del servidor: ${res.status}`);
+            }
+            return res.json();
+        })
+        .then(data => {
+            if (data.success) {
+                alert('✅ Producto agregado al carrito');
+
+                // Actualizar el contador del carrito
+                const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+                const nuevoContador = carrito.length + 1;
+                actualizarContadorCarrito(nuevoContador);
+
+                // Abrir el modal del carrito
+                abrirModalCarrito();
+
+                // Actualizar el contenido del modal
+                obtenerYMostrarCarrito();
+            } else {
+                alert('❌ Error: ' + data.error);
+            }
+        })
+        .catch(err => {
+            console.error('🚨 Hubo un error:', err);
+            alert('Hubo un problema al agregar el producto. Revisa la consola.');
+        });
+    }
+
+    // Función para obtener y mostrar el carrito
+    function obtenerYMostrarCarrito() {
+        fetch('/obtener-carrito/', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(`Error del servidor: ${res.status}`);
+            }
+            return res.json();
+        })
+        .then(data => {
+            if (data.carrito) {
+                const carrito = data.carrito;
+                localStorage.setItem('carrito', JSON.stringify(carrito)); // Guardar en localStorage
+                actualizarCarritoModal(carrito);
+                actualizarContadorCarrito(carrito.length);
+            }
+        })
+        .catch(err => {
+            console.error('🚨 Error al obtener el carrito:', err);
+        });
+    }
+
+    // Cargar el carrito al cargar la página
+    window.onload = function () {
+        obtenerYMostrarCarrito();
+    };
+
+    function actualizarCarritoModal(carrito) {
+    const cartItemsContainer = document.getElementById('cartItemsContainer');
+    if (!cartItemsContainer) return;
+
+    // Limpiar contenido anterior
+    cartItemsContainer.innerHTML = '';
+
+    if (carrito.length === 0) {
+        const emptyMessage = document.createElement('p');
+        emptyMessage.className = 'empty-cart';
+        emptyMessage.textContent = 'El carrito está vacío.';
+        cartItemsContainer.appendChild(emptyMessage);
+        return;
+    }
+
+    // Mostrar cada producto con subtotal
+    carrito.forEach(item => {
+        const cartItem = document.createElement('div');
+        cartItem.className = 'cart-item';
+        cartItem.dataset.id = item.id;
+
+        cartItem.innerHTML = `
+            <img src="${item.imagen}" alt="${item.nombre}" class="cart-item-image">
+            <div class="cart-item-details">
+                <h3>${item.nombre}</h3>
+                <p>Precio: $<span class="item-precio">${item.precio}</span></p>
+                <p>Cantidad: 
+                    <span class="item-cantidad">${item.cantidad}</span>
+                </p>
+                <p>Subtotal: $<span class="item-subtotal">${item.subtotal.toFixed(2)}</span></p>
+            </div>
+            <div class="cart-item-actions">
+                <button class="action-button aumentar">+</button>
+                <button class="action-button disminuir">-</button>
+                <button class="action-button eliminar">Eliminar</button>
+            </div>
+        `;
+
+        cartItemsContainer.appendChild(cartItem);
+    });
+
+    // Actualizar total
+    const subtotalTotal = carrito.reduce((acc, item) => acc + item.subtotal, 0);
+    const totalElement = document.getElementById('subtotal');
+    if (totalElement) {
+        totalElement.textContent = subtotalTotal.toFixed(2);
+    }
+}
   </script>
 
   <!-- Scripts -->
@@ -506,88 +719,13 @@ obtenerTasaCambio();
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"> 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> 
-  
-  <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const cartIcon = document.querySelector(".cart-icon");
-    const cartModal = document.getElementById("cartModal");
-    const closeButton = document.querySelector(".close-button");
-
-    // Abrir modal
-    if (cartIcon && cartModal) {
-      cartIcon.addEventListener("click", function () {
-        cartModal.classList.add("open");
-        updateSubtotal(); // Calcula el subtotal cuando se abre
-      });
-    }
-
-    // Cerrar con la X
-    if (closeButton && cartModal) {
-      closeButton.addEventListener("click", function () {
-        cartModal.classList.remove("open");
-      });
-    }
-
-    // Cerrar al hacer clic fuera del contenido
-    window.addEventListener("click", function (event) {
-      if (event.target === cartModal) {
-        cartModal.classList.remove("open");
-      }
-    });
-
-    
-</script>
-
-
-
-
-<script>
-function agregarAlCarrito(id_producto) {
-    fetch(`/agregar-al-carrito/${id_producto}/`, {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': getCookie('csrftoken')
-        }
-    })
-    .then(res => {
-        if (!res.ok) {
-            throw new Error(`Error del servidor: ${res.status}`);
-        }
-        return res.json();
-    })
-    .then(data => {
-        if (data.success) {
-            alert('✅ Producto agregado');
-            document.getElementById('cartModal').classList.add('open');
-            actualizarCarritoModal();
-            actualizarContadorCarrito();
-        } else {
-            alert('❌ Error: ' + data.error);
-        }
-    })
-    .catch(err => {
-        console.error(err);
-        alert('🚨 Hubo un error: ' + err.message);
-    });
-}
-
-
-  function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
-        }
-      }
-    }
-    return cookieValue;
-  }
-</script>
-
   <script src="{% static 'js/carrito.js' %}"></script>
+
+
+
+  <script>
+</script>
+
+
 </body>
 </html>

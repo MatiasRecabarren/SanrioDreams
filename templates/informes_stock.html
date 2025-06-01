@@ -24,12 +24,6 @@
     table {
       background-color: white;
     }
-    tr.verde {
-      background-color: #d4edda;
-    }
-    tr.amarillo {
-      background-color: #fff3cd;
-    }
     tr.rojo {
       background-color: #f8d7da;
     }
@@ -103,9 +97,7 @@
       <tbody>
         {% for alerta in alertas %}
           <tr class="
-            {% if alerta.stock_actual >= 15 %}verde
-            {% elif alerta.stock_actual >= 5 %}amarillo
-            {% else %}rojo
+            {% if alerta.stock_actual <= 5 %}rojo
             {% endif %}
           ">
             <td>{{ alerta.producto.nombre }}</td>

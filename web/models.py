@@ -1,11 +1,15 @@
+from django.utils import timezone
 from django.db import models
 from django.contrib.auth.hashers import make_password
 import re
+from django.core.exceptions import ValidationError
 
 # Opciones para el campo rol
 ROL_OPCIONES = (
     ('cliente', 'Cliente'),
     ('empleado', 'Empleado'),
+    ('bodeguero', 'Bodeguero'),
+    ('contador', 'Contador'),
     ('admin', 'Administrador'),
 )
 
@@ -138,16 +142,16 @@ class Stock(models.Model):
 
 
 class Carrito(models.Model):
-    id_carrito = models.AutoField(primary_key=True)
-    fecha_creacion = models.DateField(auto_now_add=True)
-    estado = models.CharField(max_length=20)
-
-    class Meta:
-        db_table = 'CARRITO'
-        managed = False
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    creado_en = models.DateTimeField(default=timezone.now)
+    pedido_aprobado = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Carrito #{self.id_carrito} - {self.estado}"
+        return f"{self.usuario} - {self.creado_en}"
+
+    def clean(self):
+        if not self.usuario_id:  # Usar usuario_id para evitar acceder al objeto
+            raise ValidationError('Debe especificar un usuario para crear un carrito.')
 
 
 class Pago(models.Model):
@@ -235,3 +239,24 @@ class AlertaStock(models.Model):
 
     def __str__(self):
         return f"{self.producto.nombre} - {self.stock_actual}"
+
+
+
+from django.db import models
+from django.contrib.auth import get_user_model
+from .models import Producto
+User = get_user_model()
+
+
+
+class CarritoItem(models.Model):
+    carrito = models.ForeignKey(Carrito, on_delete=models.CASCADE)
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField(default=1)
+    precio = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def subtotal(self):
+        return self.precio * self.cantidad
+
+    def __str__(self):
+        return f"{self.producto.nombre} x {self.cantidad}"

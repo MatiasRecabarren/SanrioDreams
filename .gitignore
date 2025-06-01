@@ -1,4 +1,40 @@
-#Aquí hay que anotar lo que no queremos que se suba por contener información sensible como Las claves API, contraseñas, etc
+# Archivos y carpetas generados automáticamente
+*.py[cod]
+__pycache__/
+*.sqlite3
 
+# Entorno virtual
+venv/
+
+# Archivos estáticos generados
+staticfiles/
+
+# Archivos de Node.js
 node_modules/
+package-lock.json
+
+# Archivos de Visual Studio Code
 .vscode/
+*.code-workspace
+
+# Archivos temporales
+.DS_Store
+Thumbs.db
+
+# Otros archivos sensibles
+.env
+secrets.py
+local_settings.py
+
+# Archivos de depuración
+*.log
+*.pdb
+*.prof
+*.pyd
+*.so
+*.dll
+*.exe
+*.class
+
+# Archivos de caché de Docker
+docker-compose.cache

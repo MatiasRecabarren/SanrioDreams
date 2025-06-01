@@ -5,12 +5,15 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 import re
+from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 import json
-from .models import Producto, Stock, AlertaStock
+from django.contrib.auth import authenticate, login
+from .models import Producto, Stock, AlertaStock, Carrito
 from django.shortcuts import get_object_or_404
+
 
 def productos(request):
     return render(request, 'dj/productos.html')
@@ -19,7 +22,13 @@ def loading(request):
     return render(request, 'loading.html')
 
 def index(request):
-    return render(request, 'index.html')
+    # Filtrar productos destacados por ID
+    destacados = Producto.objects.filter(id_producto__in=['1001', '1002', '1003', '1004', '1005', '1006'])
+    
+    context = {
+        'productos': destacados,
+    }
+    return render(request, 'index.html', context)
 
 def productos(request):
     productos = Producto.objects.all()
@@ -160,36 +169,23 @@ def registro(request):
 
 # Login
 def login(request):
-    # Redirigir si el usuario ya está logueado
-    if 'usuario_id' in request.session:
-        return redirect('index')
-
     if request.method == 'POST':
-        email = request.POST.get('email', '').strip()
-        password = request.POST.get('password', '').strip()
+        email = request.POST.get('email')
+        password = request.POST.get('password')
 
-        # Validar que ambos campos estén llenos
-        if not email or not password:
-            messages.error(request, 'Por favor ingresa correo y contraseña.')
-            return render(request, 'login.html', {'email': email})
+        # Autenticar al usuario usando el backend personalizado
+        user = authenticate(request, email=email, password=password)
 
-        try:
-            usuario = Usuario.objects.get(correo=email)
-        except Usuario.DoesNotExist:
-            messages.error(request, 'Correo o contraseña incorrectos.')
-            return render(request, 'login.html', {'email': email})
+        if user is not None:
+            # Iniciar sesión si las credenciales son válidas
+            login(request, user)
+            return redirect('index')  # Redirigir a la página principal después del login
+        else:
+            # Mostrar mensaje de error si las credenciales son inválidas
+            messages.error(request, 'Correo electrónico o contraseña incorrectos.')
+            return redirect('login')  # Redirigir de nuevo al formulario de login
 
-        # Verificar contraseña
-        if not check_password(password, usuario.contrasenna):
-            messages.error(request, 'Correo o contraseña incorrectos.')
-            return render(request, 'login.html', {'email': email})
-
-        # Iniciar sesión
-        request.session['usuario_id'] = usuario.id_usuario
-        messages.success(request, 'Inicio de sesión exitoso.')
-        return redirect('index')
-    
-    return render(request, 'login.html')
+    return render(request, 'login.html')  # Renderizar el formulario de login
 
 def validar_rut_chileno(rut):
     """
@@ -325,29 +321,39 @@ def index(request):
 
 
 
+#-------------CARRITO--------------#
+from django.views.decorators.http import require_POST
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from .models import Producto
+@require_POST
+
 
 @require_POST
 def agregar_al_carrito(request, id_producto):
     try:
-        # Obtener el producto o devolver 404 si no existe
+        # Obtener el producto o lanzar 404
         producto = get_object_or_404(Producto, pk=id_producto)
 
-        # Obtener el carrito de la sesión o iniciar uno vacío
+        # Obtener o inicializar el carrito
         carrito = request.session.get('carrito', [])
 
-        # Buscar si el producto ya está en el carrito para aumentar cantidad
+        # Buscar si ya está el producto en el carrito
         for item in carrito:
             if item['id'] == producto.id_producto:
                 item['cantidad'] += 1
+                # Recalcula el subtotal
+                item['subtotal'] = float(producto.precio or 0) * item['cantidad']
                 break
         else:
-            # Si no está, agregarlo como nuevo con cantidad 1
+            # Si no existe en el carrito, agregarlo
             carrito.append({
                 'id': producto.id_producto,
                 'nombre': producto.nombre,
                 'precio': float(producto.precio or 0),
                 'cantidad': 1,
-                'imagen': producto.imagen.url if producto.imagen else ''
+                'imagen': producto.imagen,
+                'subtotal': float(producto.precio or 0),  # Calcula el subtotal inicial
             })
 
         # Guardar el carrito actualizado en la sesión
@@ -355,39 +361,78 @@ def agregar_al_carrito(request, id_producto):
         request.session.modified = True
 
         return JsonResponse({'success': True})
-    
-    except Producto.DoesNotExist:
-        # En caso que no se encuentre el producto
-        return JsonResponse({'success': False, 'error': 'Producto no encontrado.'}, status=404)
-    
+
     except Exception as e:
-        # Cualquier otro error inesperado
-        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+        return JsonResponse({'success': False, 'error': str(e)})
+
 
 def obtener_carrito(request):
     carrito = request.session.get('carrito', [])
+    
+    # Asegúrate de que cada ítem tenga un subtotal
+    for item in carrito:
+        if 'subtotal' not in item:
+            item['subtotal'] = float(item['precio']) * item['cantidad']
+
     return JsonResponse({'carrito': carrito})
 
 def ver_carrito(request):
-    # Obtener el carrito de la sesión, por defecto una lista vacía
     carrito = request.session.get('carrito', [])
+    envio = request.GET.get('envio') == '1'
+    total_productos = sum(item['cantidad'] for item in carrito)
 
-    # Validar que sea una lista y tenga items con estructura correcta
-    if not isinstance(carrito, list):
-        carrito = []
+    # Calcula el subtotal por producto y guárdalo en cada item
+    for item in carrito:
+        item['subtotal'] = item['precio'] * item['cantidad']
 
-    try:
-        subtotal = sum(float(item['precio']) * int(item['cantidad']) for item in carrito if
-                       isinstance(item, dict) and 'precio' in item and 'cantidad' in item)
-    except (TypeError, ValueError):
-        subtotal = 0
+    subtotal = sum(item['subtotal'] for item in carrito)
+    descuento = 0
+    envio_costo = 0
+
+    if total_productos > 4:
+        descuento = subtotal * 0.05
+
+    if envio:
+        envio_costo = 3000
+
+    total_final = subtotal - descuento + envio_costo
+
+    # Ticket por correo si hay más de 6 productos
+    if total_productos > 6 and request.user.is_authenticated:
+        mensaje = "Gracias por tu compra. Aquí está el resumen:\n"
+        for item in carrito:
+            mensaje += f"{item['nombre']} x {item['cantidad']} = ${item['subtotal']}\n"
+        mensaje += f"Subtotal: ${subtotal}\nDescuento: ${descuento}\nEnvío: ${envio_costo}\nTotal: ${total_final}"
+        
+        send_mail(
+            'Ticket de compra',
+            mensaje,
+            'tu_email@tudominio.com',
+            [request.user.email],  # Asegúrate de que el usuario esté autenticado
+            fail_silently=True
+        )
 
     context = {
         'carrito': carrito,
         'subtotal': subtotal,
+        'descuento': descuento,
+        'envio_costo': envio_costo,
+        'total': total_final,
     }
 
     return render(request, 'carrito.html', context)
+
+
+@require_POST
+def quitar_del_carrito(request, id_producto):
+    carrito = request.session.get('carrito', [])
+
+    carrito = [item for item in carrito if item['id'] != id_producto]
+
+    request.session['carrito'] = carrito
+    request.session.modified = True
+
+    return JsonResponse({'success': True})
 
 #-------------------------------------------------------------------------------------#
 
@@ -441,3 +486,17 @@ def actualizar_stock(request, alerta_id):
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)})
     return JsonResponse({'success': False, 'error': 'Método no permitido.'})
+
+@login_required
+def informes_stock(request):
+    # Verificar que el usuario tenga el rol de bodeguero
+    if request.user.rol != 'bodeguero':
+        return render(request, 'acceso_denegado.html', status=403)
+    
+    # Renderizar la plantilla informes_stock.html
+    return render(request, 'informes_stock.html')
+
+    #--------ADMIN---------------#
+
+def admin_index(request):
+    return render(request, "admin.html")

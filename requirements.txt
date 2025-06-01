@@ -1,0 +1,4 @@
+cx_oracle
+django
+bcrypt
+djangorestframework

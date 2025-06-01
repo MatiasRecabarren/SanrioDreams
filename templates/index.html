@@ -29,6 +29,7 @@
 
 <body>
 
+
   <div class="main_body_content">
 
     <div class="hero_area">
@@ -46,16 +47,6 @@
         <span class=""></span>
       </button>
 
-      <!-- Botón simple y elegante para cambiar moneda -->
-      <div id="dolar-conversor" class="text-end my-3">
-  <span style="font-weight: 600; color: #333;"> <strong id="dolar-valor"></strong> </span>
-  <button id="toggle-moneda" class="btn btn-dark btn-sm ms-3" style="border-radius: 20px; padding: 6px 16px;">
-    Mostrar en USD
-  </button>
-</div>
-
-
-
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ml-auto d-flex align-items-center">
           <li class="nav-item active">
@@ -64,6 +55,11 @@
           <li class="nav-item">
             <a class="nav-link" href="{% url 'nosotros' %}">Sobre Nosotros</a>
           </li>
+        {% if user.is_authenticated and user.rol == 'cliente' %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'informes_stock' %}">Informes de Stock</a>
+          </li>
+        {% endif %}
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProductos" role="button"
               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -78,9 +74,6 @@
               <a class="dropdown-item" href="{% url 'productos' %}#llaveros">Llaveros</a>
               <a class="dropdown-item" href="{% url 'productos' %}#lamparas">Lámparas</a>
             </div>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="contact.html">Contacta con Nosotros</a>
           </li>
         </ul>
 
@@ -391,7 +384,7 @@
                       </div>
                       <div class="detail-box mt-3">
                         <h6>Peluche <span>Hello Kitty</span></h6>
-                        <h5 class="precio-producto">$15.000 CLP</h5>
+                        <h5 class="precio-producto">$12.990 CLP</h5>
                         <a href="{% url 'productos' %}" class="btn-ver-producto">Ver producto</a>
                       </div>
                     </div>
@@ -406,8 +399,8 @@
                   </div>
                   <div class="detail-box mt-3">
                     <h6>Peluche <span>Kuromi</span></h6>
-                    <h5>$xx.xxx CLP</h5>
-                    <a href="#">Agregar al Carrito</a>
+                    <h5 class="precio-producto">$13.990 CLP</h5>
+                    <a href="{% url 'productos' %}" class="btn-ver-producto">Ver producto</a>
                   </div>
                 </div>
               </div>
@@ -419,15 +412,14 @@
                   </div>
                   <div class="detail-box mt-3">
                     <h6>Peluche <span>My Melody</span></h6>
-                    <h5>$xx.xxx CLP</h5>
-                    <a href="#">Agregar al Carrito</a>
+                    <h5 class="precio-producto">$12.990 CLP</h5>
+                   <a href="{% url 'productos' %}" class="btn-ver-producto">Ver producto</a>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Slide 2 -->
           <div class="carousel-item">
             <div class="row justify-content-center">
               <div class="col-md-4">
@@ -437,8 +429,8 @@
                   </div>
                   <div class="detail-box mt-3">
                     <h6>Peluche <span>Pompompurin</span></h6>
-                    <h5>$xx.xxx CLP</h5>
-                    <a href="#">Agregar al Carrito</a>
+                    <h5 class="precio-producto">$13.490 CLP</h5>
+                    <a href="{% url 'productos' %}" class="btn-ver-producto">Ver producto</a>
                   </div>
                 </div>
               </div>
@@ -449,8 +441,8 @@
                   </div>
                   <div class="detail-box mt-3">
                     <h6>Peluche <span>Cinnamoroll</span></h6>
-                    <h5>$xx.xxx CLP</h5>
-                    <a href="#">Agregar al Carrito</a>
+                    <h5> class="precio-producto"$xx.xxx CLP</h5>
+                    <a href="{% url 'productos' %}" class="btn-ver-producto">Ver producto</a>
                   </div>
                 </div>
               </div>
@@ -461,8 +453,8 @@
                   </div>
                   <div class="detail-box mt-3">
                     <h6>Peluche <span>Pochacco</span></h6>
-                    <h5>$xx.xxx CLP</h5>
-                    <a href="#">Agregar al Carrito</a>
+                    <h5 class="precio-producto">$12.990 CLP</h5>
+                    <a href="{% url 'productos' %}" class="btn-ver-producto">Ver producto</a>
                   </div>
                 </div>
               </div>
