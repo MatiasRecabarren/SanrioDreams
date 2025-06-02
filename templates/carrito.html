@@ -184,48 +184,48 @@
         </div>
       </header>
 
-      <div class="container py-5">
-        <h2 class="text-center mb-4">CARRITO</h2>
+    <div class="container py-5">
+    <h2 class="text-center mb-4">🛒 Tu Carrito</h2>
 
-        {% if carrito and carrito|length > 0 %}
-        <div id="lista-carrito" class="list-group">
-          {% for producto in carrito %}
-          <div class="producto-carrito list-group-item d-flex justify-content-between align-items-center">
-            <div>
-              <strong class="fs-5">{{ producto.nombre }}</strong>
-              <div class="text-muted">Precio unitario: ${{ producto.precio }}</div>
-            </div>
-            <div class="d-flex align-items-center">
-              <button class="btn btn-outline-secondary btn-sm me-2" onclick="actualizarCantidad('{{ producto.nombre }}', -1)">
-                <i class="bi bi-dash"></i>
-              </button>
-              <span class="px-3 fs-5">{{ producto.cantidad }}</span>
-              <button class="btn btn-outline-secondary btn-sm ms-2" onclick="actualizarCantidad('{{ producto.nombre }}', 1)">
-                <i class="bi bi-plus"></i>
-              </button>
-              <button class="btn btn-danger btn-sm ms-3" onclick="eliminarProducto('{{ producto.nombre }}')" title="Eliminar producto">
-                <i class="bi bi-trash"></i>
-              </button>
-            </div>
-          </div>
-          {% endfor %}
-        </div>
-
-        <div class="total-section text-end mt-4">
-          <h4>Total: <span id="total" class="text-primary">${{ total }}</span></h4>
-          <a href="#" class="btn btn-success btn-lg mt-2">
-            <i class="bi bi-credit-card"></i> Proceder al Pago
-          </a>
-        </div>
-        {% else %}
-        <div class="empty-cart d-flex flex-column justify-content-center align-items-center">
-          <p class="fs-4 text-secondary mb-3">Parece que tu carrito está vacío :c</p>
-          <p>Continúa navegando <a href="{% url 'productos' %}" class="text-decoration-none">aquí :3</a></p>
-        </div>
-        {% endif %}
+   {% if carrito and carrito|length > 0 %}
+  <div class="table-responsive">
+  <table class="table table-bordered align-middle bg-white">
+    <thead class="thead-light">
+      <tr>
+        <th>Producto</th>
+        <th class="text-center">Precio </th>
+        <th class="text-center">Subtotal</th>
+      </tr>
+    </thead>
+  <tbody>
+  {% for producto in carrito %}
+  <tr>
+    <td>
+      <div class="d-flex align-items-center">
+        <img src="{% static 'images/'|add:producto.imagen %}" alt="{{ producto.nombre }}" style="width:32px; height:32px; object-fit:cover; border-radius:8px; margin-right:10px;">
+        <strong>{{ producto.nombre }}</strong>
       </div>
-
+    </td>
+    <td class="text-center">${{ producto.precio }}</td>
+    <td class="text-center">${{ producto.subtotal|floatformat:2 }}</td>
+  </tr>
+  {% endfor %}
+</tbody>
+  </table>
+</div>
+    <div class="total-section text-end mt-4">
+      <h4>Total: <span id="total" class="text-primary">${{ total|floatformat:2 }}</span></h4>
+      <a href="{% url 'pago' %}" class="btn btn-success btn-lg mt-2">
+        <i class="bi bi-credit-card"></i> Proceder al Pago
+      </a>
     </div>
+    {% else %}
+    <div class="empty-cart d-flex flex-column justify-content-center align-items-center">
+      <p class="fs-4 text-secondary mb-3">Parece que tu carrito está vacío :c</p>
+      <p>Continúa navegando <a href="{% url 'productos' %}" class="text-decoration-none">aquí :3</a></p>
+    </div>
+    {% endif %}
+  </div>
 
     <!-- footer section -->
    <footer class="container-fluid footer_section" style="background-color: #111; padding: 20px 0;">
@@ -266,32 +266,7 @@
   </script>
 
 
-<script>
-  document.querySelectorAll('.btn-agregar-carrito').forEach(button => {
-    button.addEventListener('click', () => {
-      const nombre = button.getAttribute('data-nombre');
-      const precio = button.getAttribute('data-precio');
 
-      fetch("{% url 'agregar_al_carrito' %}", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': '{{ csrf_token }}'
-        },
-        body: JSON.stringify({
-          nombre: nombre,
-          precio: precio,
-          cantidad: 1
-        })
-      })
-      .then(response => response.json())
-      .then(data => {
-        alert(data.mensaje);
-        // Aquí puedes actualizar contador del carrito si quieres
-      });
-    });
-  });
-</script>
 
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 

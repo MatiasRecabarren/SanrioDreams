@@ -55,6 +55,7 @@
           <li class="nav-item">
             <a class="nav-link" href="{% url 'nosotros' %}">Sobre Nosotros</a>
           </li>
+          
         {% if user.is_authenticated and user.rol == 'cliente' %}
           <li class="nav-item">
             <a class="nav-link" href="{% url 'informes_stock' %}">Informes de Stock</a>
@@ -75,6 +76,30 @@
               <a class="dropdown-item" href="{% url 'productos' %}#lamparas">Lámparas</a>
             </div>
           </li>
+          <ul class="navbar-nav ml-auto d-flex align-items-center">
+  <li class="nav-item active">
+    <a class="nav-link" href="{% url 'index' %}">Inicio <span class="sr-only">(current)</span></a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'nosotros' %}">Sobre Nosotros</a>
+  </li>
+  <!-- ...otros items... -->
+  <li class="nav-item dropdown">
+    <!-- ...productos... -->
+  </li>
+
+  <!-- Aquí pega el bloque de registro/login/perfil -->
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'login' %}">Iniciar sesión</a>
+  </li>
+  {% if user.is_authenticated %}
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'perfil' %}">
+        <i class="fa fa-user-circle"></i> Perfil
+      </a>
+    </li>
+  {% endif %}
+</ul>
         </ul>
 
         <div class="quote_btn-container d-flex align-items-center ml-3">

@@ -7,7 +7,7 @@ try:
     connection = oracledb.connect(
         user='C##SanrioDreams',
         password='12345',
-        dsn='localhost/XE'
+        dsn='localhost/orcl'
     )
     with connection.cursor() as cursor:
         cursor.execute("SELECT BANNER FROM V$VERSION")
@@ -77,7 +77,7 @@ TEMPLATES = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.oracle',
-        'NAME': 'XE',  # Nombre del SID
+        'NAME': 'orcl',  # Nombre del SID
         'USER': 'C##SanrioDreams',
         'PASSWORD': '12345',
         'HOST': 'localhost',

@@ -9,9 +9,6 @@ from rest_framework.routers import DefaultRouter
 from .views import agregar_al_carrito, obtener_carrito
 
 urlpatterns = [
-
-    
-    path('admin/', admin.site.urls),
     path('', views.index, name='index'),
     path('loading/', views.loading, name='loading'),
     path('productos/', views.productos, name='productos'),
@@ -20,11 +17,19 @@ urlpatterns = [
     path('nosotros/', views.nosotros, name='nosotros'),
     path('informes_stock/', views.informes_stock, name='informes_stock'),
     path('actualizar-stock/<int:alerta_id>/', views.actualizar_stock, name='actualizar_stock'),
-    path('carrito/', views.ver_carrito, name='carrito'),
     path('agregar-al-carrito/<int:id_producto>/', views.agregar_al_carrito, name='agregar_al_carrito'),
-    path('obtener-carrito/', obtener_carrito, name='obtener_carrito'),
+    path('obtener-carrito/', views.obtener_carrito, name='obtener_carrito'),
+    path('carrito/', views.ver_carrito, name='carrito'),
+    path('quitar-del-carrito/<int:id_producto>/', views.quitar_del_carrito, name='quitar_del_carrito'),
     path('admin/', views.admin_index, name='admin_index'),
-   
+    path('carrito/aumentar/<int:id_producto>/', views.aumentar_cantidad_carrito, name='aumentar_cantidad_carrito'),
+    path('carrito/disminuir/<int:id_producto>/', views.disminuir_cantidad_carrito, name='disminuir_cantidad_carrito'),
+    path('carrito/quitar/<int:id_producto>/', views.quitar_del_carrito, name='quitar_del_carrito'),
+    path('pago/transferencia/', views.pago_transferencia, name='pago_transferencia'),
+    path('pago/tarjeta/', views.pago_tarjeta, name='pago_tarjeta'),
+    path('pago/exito/', views.pago_exito, name='pago_exito'),
+    path('pago/', views.pago, name='pago'),
+
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:

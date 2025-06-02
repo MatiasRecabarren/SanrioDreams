@@ -1,0 +1,173 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>SanrioDreams ✨ | Pago</title>
+  <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}" />
+  <style>
+    .pago-opciones { margin-bottom: 2rem; }
+    .datos-transferencia { background: #fff0f6; border-radius: 10px; padding: 1.5rem; }
+    .custom-file-input { margin-top: 1rem; }
+    .tab-content { margin-top: 2rem; }
+  </style>
+</head>
+<body>
+    <style>
+  .pago-opciones .nav-link {
+    color: #b03a5b;
+    font-weight: 600;
+    border-radius: 20px 20px 0 0;
+    background: #f6e0e9;
+    margin-right: 5px;
+    transition: background 0.2s, color 0.2s;
+  }
+  .pago-opciones .nav-link.active {
+    background: #ffb6d5;
+    color: #fff;
+    border-bottom: 2px solid #ff69b4;
+  }
+  .datos-transferencia, .tab-pane form {
+    background: #fff0f6;
+    border-radius: 16px;
+    padding: 2rem 1.5rem;
+    box-shadow: 0 2px 8px rgba(255,182,193,0.12);
+    margin-bottom: 2rem;
+  }
+  .datos-transferencia h5 {
+    color: #b03a5b;
+    font-weight: bold;
+  }
+  .btn-success, .btn-success:focus {
+    background: #ff69b4 !important;
+    border-color: #ff69b4 !important;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+  .btn-success:hover {
+    background: #d6336c !important;
+    border-color: #d6336c !important;
+  }
+  .form-control, .form-control-file {
+    border-radius: 8px;
+    border-color: #ffb6d5;
+  }
+  label {
+    color: #b03a5b;
+    font-weight: 500;
+  }
+  .nav-tabs {
+    border-bottom: none;
+  }
+</style>
+  <div class="container py-5">
+    <h2 class="text-center mb-4">Pago</h2>
+    <ul class="nav nav-tabs pago-opciones" id="pagoTab" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link active" id="transfer-tab" data-toggle="tab" href="#transferencia" role="tab" aria-controls="transferencia" aria-selected="true">
+          Transferencia Bancaria
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="tarjeta-tab" data-toggle="tab" href="#tarjeta" role="tab" aria-controls="tarjeta" aria-selected="false">
+          Tarjeta de Crédito/Débito
+        </a>
+      </li>
+    </ul>
+    <div class="tab-content" id="pagoTabContent">
+      <!-- Transferencia -->
+      <div class="tab-pane fade show active" id="transferencia" role="tabpanel" aria-labelledby="transfer-tab">
+        <div class="datos-transferencia">
+          <h5>Datos para Transferencia</h5>
+          <ul class="mb-3">
+            <li><strong>Banco:</strong> Banco Ejemplo</li>
+            <li><strong>Cuenta:</strong> 1234567890</li>
+            <li><strong>CLABE:</strong> 012345678901234567</li>
+            <li><strong>Nombre:</strong> SanrioDreams</li>
+            <li><strong>Correo:</strong> pagos@sanriodreams.com</li>
+          </ul>
+          <form method="post" enctype="multipart/form-data" action="{% url 'pago_transferencia' %}">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="comprobante">Sube tu comprobante de pago:</label>
+              <input type="file" class="form-control-file" id="comprobante" name="comprobante" required>
+            </div>
+            <button type="submit" class="btn btn-success mt-2">Enviar comprobante</button>
+          </form>
+        </div>
+      </div>
+   <!-- Tarjeta -->
+<!-- ...tu HTML y estilos arriba... -->
+
+<!-- Tarjeta -->
+<div class="tab-pane fade" id="tarjeta" role="tabpanel" aria-labelledby="tarjeta-tab">
+  <div class="text-center mb-4">
+    <p style="color:#b03a5b; font-weight:700; font-size:1.3rem;">Paga con tarjeta o PayPal</p>
+    <button id="mostrar-paypal" class="btn btn-lg mb-4" style="background:#ffc0cb; color:#b03a5b; border:none; font-size:1.3rem; font-weight:700; box-shadow:0 2px 8px #ffb6d5;">
+      <i class="fab fa-paypal" style="font-size:2rem; vertical-align:middle;"></i>
+      <span style="vertical-align:middle;">PAGAR CON PAYPAL</span>
+    </button>
+    <div id="paypal-button-container" style="display:none; max-width:350px; margin:0 auto;"></div>
+  </div>
+</div>
+
+<!-- jQuery y Bootstrap JS (antes del SDK de PayPal y tu script) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- PayPal SDK (después de jQuery/Bootstrap) -->
+<script src="https://www.paypal.com/sdk/js?client-id=sb&currency=MXN"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Reinicia el botón PayPal al cambiar de pestaña
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+      if (e.target.id === 'tarjeta-tab') {
+        $('#mostrar-paypal').show();
+        $('#paypal-button-container').hide();
+        window.paypalRendered = false;
+      }
+    });
+
+    var mostrarBtn = document.getElementById('mostrar-paypal');
+    if (mostrarBtn) {
+      mostrarBtn.onclick = function() {
+        document.getElementById('paypal-button-container').style.display = 'block';
+        this.style.display = 'none';
+        if (!window.paypalRendered) {
+          paypal.Buttons({
+            style: {
+              color: 'gold',
+              shape: 'rect',
+              label: 'paypal',
+              height: 50,
+              layout: 'vertical',
+              tagline: false
+            },
+            createOrder: function(data, actions) {
+              return actions.order.create({
+                purchase_units: [{
+                  amount: {
+                    value: '{{ total }}' // O un número fijo para pruebas, ej: '12990'
+                  },
+                  description: 'Compra en SanrioDreams'
+                }]
+              });
+            },
+            onApprove: function(data, actions) {
+              return actions.order.capture().then(function(details) {
+                window.location.href = "{% url 'pago_exito' %}";
+              });
+            }
+          }).render('#paypal-button-container');
+          window.paypalRendered = true;
+        }
+      };
+    }
+  });
+</script>
+  <!-- Bootstrap JS (necesario para tabs) -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

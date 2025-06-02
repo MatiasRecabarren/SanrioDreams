@@ -1,17 +1,176 @@
-admin html <!-- web/templates/admin.html -->
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Panel de Administración Personalizado</title>
-</head>
-<body>
-    <h1>Bienvenido al Panel de Administración</h1>
-    <p>Este es tu panel personalizado, sin usar el admin de Django.</p>
+    <title>Panel de Administración - Usuarios</title>
 
-    <ul>
-        <li><a href="#">Gestionar Usuarios</a></li>
-        <li><a href="#">Gestionar Productos</a></li>
-    </ul>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"  rel="stylesheet">
+
+    <!-- Estilos personalizados -->
+    <style>
+        body {
+            background-color: #fffaf9;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        h2 {
+            color: #d63384;
+            font-weight: bold;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 4px 12px rgba(214, 51, 132, 0.1);
+        }
+
+        .card-header {
+            background-color: #f8d7da;
+            color: #842029;
+            font-weight: bold;
+        }
+
+        .form-control:focus {
+            border-color: #d63384;
+            box-shadow: 0 0 0 0.2rem rgba(214, 51, 132, 0.25);
+        }
+
+        .btn-primary {
+            background-color: #d63384;
+            border: none;
+        }
+
+        .btn-success {
+            background-color: #9effc8;
+            color: #000;
+            border: none;
+        }
+
+        .btn-warning {
+            background-color: #ffe08a;
+            color: #000;
+            border: none;
+        }
+
+        .btn-danger {
+            background-color: #f59fb4;
+            border: none;
+        }
+
+        table th {
+            background-color: #fcd5ce;
+            color: #be2b69;
+        }
+
+        .table-bordered td,
+        .table-bordered th {
+            border: 1px solid #fcd5ce;
+        }
+    </style>
+</head>
+<body class="container mt-4">
+
+    <h2 class="text-center mb-4">🌸 Panel de Administración - Usuarios</h2>
+
+    <!-- Formulario de Registro -->
+    <div class="card mb-4">
+        <div class="card-header text-center">Registrar Nuevo Usuario</div>
+        <div class="card-body">
+            <form id="registro-form" class="row g-3">
+                <div class="col-md-6">
+                    <label for="id_usuario" class="form-label">RUT</label>
+                    <input type="text" class="form-control" id="id_usuario" name="id_usuario"
+                        placeholder="Ej: 12345678-9" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="nombre" class="form-label">Nombre</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre"
+                        placeholder="Ingresa tu nombre" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="apellido" class="form-label">Apellido</label>
+                    <input type="text" class="form-control" id="apellido" name="apellido"
+                        placeholder="Ingresa tu apellido" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="correo" class="form-label">Correo electrónico</label>
+                    <input type="email" class="form-control" id="correo" name="correo"
+                        placeholder="ejemplo@correo.com" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="contrasenna" class="form-label">Contraseña</label>
+                    <input type="password" class="form-control" id="contrasenna" name="contrasenna"
+                        placeholder="Mínimo 8 caracteres" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="confirm-contra" class="form-label">Confirmar Contraseña</label>
+                    <input type="password" class="form-control" id="confirm-contra" name="confirm-contra"
+                        placeholder="Repite tu contraseña" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="direccion" class="form-label">Dirección</label>
+                    <input type="text" class="form-control" id="direccion" name="direccion"
+                        placeholder="Ingresa tu dirección" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="telefono" class="form-label">Teléfono</label>
+                    <input type="text" class="form-control" id="telefono" name="telefono"
+                        placeholder="Ej: 912345678" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="rol" class="form-label">Rol</label>
+                    <select class="form-select" id="rol" name="rol" required>
+                        <option value="">Selecciona un rol</option>
+                        <option value="cliente">Cliente</option>
+                        <option value="empleado">Empleado</option>
+                        <option value="bodeguero">Bodeguero</option>
+                        <option value="contador">Contador</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+                </div>
+
+                <div class="col-12 d-grid">
+                    <button type="submit" class="btn btn-success btn-lg mt-3">Registrar Usuario</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla de Usuarios -->
+    <div class="card mb-4">
+        <div class="card-header text-center">Lista de Usuarios</div>
+        <div class="card-body">
+            <table class="table table-bordered table-striped" id="usuarios-tabla">
+                <thead>
+                    <tr>
+                        <th>RUT</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Correo</th>
+                        <th>Teléfono</th>
+                        <th>Rol</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Aquí se cargarán los usuarios dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Cargar admin.js -->
+    <script src="{% static 'js/admin.js' %}"></script>
+
 </body>
 </html>
+          

@@ -13,10 +13,23 @@ import json
 from django.contrib.auth import authenticate, login
 from .models import Producto, Stock, AlertaStock, Carrito
 from django.shortcuts import get_object_or_404
+from django.contrib.auth import login as auth_login
+
 
 
 def productos(request):
-    return render(request, 'dj/productos.html')
+    productos = Producto.objects.all()
+    # ...tu lógica de categorías...
+    cart_count = sum(item['cantidad'] for item in request.session.get('carrito', []))
+    return render(request, 'productos.html', {
+        'peluches': peluches,
+        'botellas': botellas,
+        'termos': termos,
+        'pines': pines,
+        'llaveros': llaveros,
+        'lamparas': lamparas,
+        'cart_count': cart_count,
+    })
 # Vistas generales
 def loading(request):
     return render(request, 'loading.html')
@@ -60,7 +73,32 @@ def productos(request):
 
 
 def carrito(request):
-    return render(request, 'carrito.html')
+    carrito = request.session.get('carrito', [])
+    total = sum(item['subtotal'] for item in carrito)
+    return render(request, 'carrito.html', {'carrito': carrito, 'total': total})
+@login_required
+def pago(request):
+    # Puedes pasar el carrito y el total si lo necesitas en la página de pago
+    carrito = request.session.get('carrito', [])
+    total = sum(item['subtotal'] for item in carrito)
+    return render(request, 'pago.html', {'carrito': carrito, 'total': total})
+def pago_transferencia(request):
+    mensaje = None
+    if request.method == 'POST':
+        comprobante = request.FILES.get('comprobante')
+        mensaje = "¡Pago recibido con éxito! Pronto confirmaremos tu pago."
+    return render(request, 'pago_transferencia.html', {'mensaje': mensaje})
+def pago_tarjeta(request):
+    if request.method == 'POST':
+        # Aquí puedes procesar los datos de la tarjeta (solo ejemplo, no real)
+        # numero = request.POST.get('numero')
+        # expira = request.POST.get('expira')
+        # cvv = request.POST.get('cvv')
+        # Procesa el pago o muestra mensaje de éxito
+        return render(request, 'pago_exito.html')
+    return render(request, 'pago_tarjeta.html')
+def pago_exito(request):
+    return render(request, 'pago_exito.html')
 
 # Validaciones
 def validar_contrasenna(contrasenna):
@@ -159,6 +197,7 @@ def registro(request):
                 rol='cliente'
             )
             usuario.save()
+            
             messages.success(request, 'Registro exitoso. ¡Ahora puedes iniciar sesión!')
             return redirect('login')
         except Exception as e:
@@ -187,36 +226,27 @@ def login(request):
 
     return render(request, 'login.html')  # Renderizar el formulario de login
 
-def validar_rut_chileno(rut):
-    """
-    Valida un RUT chileno incluyendo el dígito verificador.
-    Formato esperado: 12345678-9 o 12.345.678-9
-    """
-    rut = rut.replace('.', '').replace('-', '').upper()
-    if len(rut) < 2:
-        return False
+import re
 
+def validar_rut(rut):
+    rut = rut.replace(".", "").replace("-", "")
+    if len(rut) < 8:
+        return False
     cuerpo = rut[:-1]
-    dv = rut[-1]
-
-    # Validar que el cuerpo sea numérico
-    if not cuerpo.isdigit():
-        return False
-
-    # Calcular dígito verificador
+    dv = rut[-1].upper()
     suma = 0
-    factor = 2
+    multiplo = 2
     for c in reversed(cuerpo):
-        suma += int(c) * factor
-        factor = 2 if factor == 7 else factor + 1
-
-    dv_real = str(11 - (suma % 11))
-    if dv_real == "10":
-        dv_real = "K"
-    elif dv_real == "11":
-        dv_real = "0"
-
-    return dv == dv_real
+        suma += int(c) * multiplo
+        multiplo = 9 if multiplo == 7 else multiplo + 1
+    dv_esperado = 11 - (suma % 11)
+    if dv_esperado == 11:
+        dv_esperado = '0'
+    elif dv_esperado == 10:
+        dv_esperado = 'K'
+    else:
+        dv_esperado = str(dv_esperado)
+    return dv == dv_esperado
 
 
 @login_required
@@ -331,40 +361,29 @@ from .models import Producto
 
 @require_POST
 def agregar_al_carrito(request, id_producto):
-    try:
-        # Obtener el producto o lanzar 404
-        producto = get_object_or_404(Producto, pk=id_producto)
-
-        # Obtener o inicializar el carrito
+    if request.method == 'POST':
         carrito = request.session.get('carrito', [])
-
-        # Buscar si ya está el producto en el carrito
+        encontrado = False
         for item in carrito:
-            if item['id'] == producto.id_producto:
+            if item['id'] == id_producto:
                 item['cantidad'] += 1
-                # Recalcula el subtotal
-                item['subtotal'] = float(producto.precio or 0) * item['cantidad']
+                encontrado = True
                 break
-        else:
-            # Si no existe en el carrito, agregarlo
+        if not encontrado:
+            # Busca el producto en la base de datos y agrega con cantidad 1
+            producto = Producto.objects.get(id_producto=id_producto)
             carrito.append({
                 'id': producto.id_producto,
                 'nombre': producto.nombre,
-                'precio': float(producto.precio or 0),
+                'precio': producto.precio,
                 'cantidad': 1,
                 'imagen': producto.imagen,
-                'subtotal': float(producto.precio or 0),  # Calcula el subtotal inicial
+                'subtotal': producto.precio,
+                'stock': producto.stock_set.first().cantidad,
             })
-
-        # Guardar el carrito actualizado en la sesión
         request.session['carrito'] = carrito
-        request.session.modified = True
-
         return JsonResponse({'success': True})
-
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)})
-
+    return JsonResponse({'success': False, 'error': 'Método no permitido'})
 
 def obtener_carrito(request):
     carrito = request.session.get('carrito', [])
@@ -426,13 +445,39 @@ def ver_carrito(request):
 @require_POST
 def quitar_del_carrito(request, id_producto):
     carrito = request.session.get('carrito', [])
-
-    carrito = [item for item in carrito if item['id'] != id_producto]
-
+    carrito = [item for item in carrito if int(item['id']) != int(id_producto)]
     request.session['carrito'] = carrito
     request.session.modified = True
-
     return JsonResponse({'success': True})
+
+@require_POST
+def aumentar_cantidad_carrito(request, id_producto):
+    carrito = request.session.get('carrito', [])
+    for item in carrito:
+        if int(item['id']) == int(id_producto):
+            item['cantidad'] += 1
+            item['subtotal'] = float(item['precio']) * item['cantidad']
+            break
+    request.session['carrito'] = carrito
+    request.session.modified = True
+    return JsonResponse({'success': True})
+
+@require_POST
+def disminuir_cantidad_carrito(request, id_producto):
+    carrito = request.session.get('carrito', [])
+    for item in carrito:
+        if int(item['id']) == int(id_producto):
+            if item['cantidad'] > 1:
+                item['cantidad'] -= 1
+                item['subtotal'] = float(item['precio']) * item['cantidad']
+            break
+    request.session['carrito'] = carrito
+    request.session.modified = True
+    return JsonResponse({'success': True})
+
+
+
+
 
 #-------------------------------------------------------------------------------------#
 

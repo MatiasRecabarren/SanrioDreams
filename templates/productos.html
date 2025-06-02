@@ -86,80 +86,54 @@
 <!-- Botón del Carrito -->
 <button type="button" class="ml-3 position-relative cart-icon" style="background: none; border: none; padding: 0; cursor: pointer;" title="Ver carrito">
   <i class="fas fa-shopping-cart" style="font-size: 1.5rem; margin-left: -25px; color: black;"></i>
-  {% with request.session.carrito|length as cart_count %}
-    {% if cart_count > 0 %}
-      <span class="cart-count-badge" id="cart-count-badge" style="position: absolute; top: -5px; right: -10px; background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem;">
-        {{ cart_count }}
-      </span>
-    {% endif %}
-  {% endwith %}
+  {% if cart_count > 0 %}
+    <span id="cart-count-badge">{{ cart_count }}</span>
+  {% endif %}
 </button>
 
 
-<!-- Modal del Carrito -->
+
+
+    <!-- Modal del Carrito -->
 <div id="cartModal" class="cart-modal">
   <div class="cart-modal-content">
     <h2>TU CARRITO</h2>
     <button class="close-button">&times;</button>
-
-    <!-- Lista de productos en el carrito -->
-    <div class="cart-items" id="cartItemsContainer">
-      {% if request.session.carrito %}
-        {% for item in request.session.carrito.values %}
-          <div class="cart-item" data-id="{{ item.id }}">
-            <img src="{% static 'images/'|add:item.imagen %}" alt="{{ item.nombre }}" class="cart-item-image">
-            <div class="cart-item-details">
-              <h3>{{ item.nombre }}</h3>
-              <p>Precio: $<span class="item-precio">{{ item.precio }}</span></p>
-              <p>Cantidad: 
-                <span class="item-cantidad">{{ item.cantidad }}</span>
-              </p>
-              <p>Subtotal: $<span class="item-subtotal">{{ item.subtotal }}</span></p>
-            </div>
-            <div class="cart-item-actions">
-              <button class="action-button aumentar">+</button>
-              <button class="action-button disminuir">-</button>
-              <button class="action-button eliminar">Eliminar</button>
-            </div>
-          </div>
-        {% endfor %}
-      {% else %}
-        <p class="empty-cart" id="emptyCartMessage">El carrito está vacío.</p>
-      {% endif %}
-    </div>
-
-    <!-- Total -->
+    <!-- Lista de productos en el carrito (se llena con JS) -->
+    <div class="cart-items" id="cartItemsContainer"></div>
     <div class="cart-total">
       <p>SUBTOTAL: $<span id="subtotal">0.00</span></p>
     </div>
-
-    <!-- Botones de acción -->
     <div class="cart-footer">
       <a href="{% url 'carrito' %}" class="view-cart-button">VER CARRITO</a>
       <button class="checkout-button" id="checkoutButton">REALIZAR COMPRA</button>
     </div>
   </div>
 </div>
+
+   
+
+   
       </header>
       <!-- Fin de Header -->
 
       <!-- Sección Peluches -->
 
-      <section id="peluches" class="peluches">
-        <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Peluches</h3>
-        <div class="tarjetas-contenedor">
-           {% for producto in peluches %}
-              <div class="tarjeta">
-                <img src="{% static 'images/'|add:producto.imagen %}" alt="{{ producto.nombre }}">
-                <h3>{{ producto.nombre }}</h3>
-                <p>{{ producto.descripcion }}</p>
-                <p class="precio-producto" data-precio="{{ producto.precio }}">{{ producto.precio | intcomma }}</p>
-                <p>Cantidad: {{ producto.stock_set.first.cantidad }}</p>
-               <button onclick="agregarAlCarrito('{{ producto.id_producto }}')">Agregar al carrito</button>
-              </div>
-          {% endfor %}
-        </div>
-      </section>
+    <section id="peluches" class="peluches">
+      <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Peluches</h3>
+      <div class="tarjetas-contenedor">
+        {% for producto in peluches %}
+          <div class="tarjeta producto" data-precio="{{ producto.precio }}">
+            <img src="{% static 'images/'|add:producto.imagen %}" alt="{{ producto.nombre }}">
+            <h3>{{ producto.nombre }}</h3>
+            <p>{{ producto.descripcion }}</p>
+            <p class="precio-producto">{{ producto.precio|intcomma }}</p>
+            <p>Cantidad: {{ producto.stock_set.first.cantidad }}</p>
+            <button onclick="agregarAlCarrito('{{ producto.id_producto }}')">Agregar al carrito</button>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
 
       <br>
 
@@ -172,7 +146,7 @@
                 <img src="{% static 'images/'|add:producto.imagen %}" alt="{{ producto.nombre }}">
                 <h3>{{ producto.nombre }}</h3>
                 <p>{{ producto.descripcion }}</p>
-                <p>$ {{ producto.precio | intcomma }}</p>
+                <p class="precio-producto">{{ producto.precio|intcomma }}</p>
                 <p>Cantidad: {{ producto.stock_set.first.cantidad }}</p>
                 <button onclick="agregarAlCarrito('{{ producto.id_producto }}')">Agregar al carrito</button>
               </div>
@@ -406,14 +380,13 @@
       }
       alert("No se encontró la categoría.");
     });
-
-  let valorDolar = null; // Valor del dólar en CLP (1 USD = X CLP)
+let valorDolar = null; // Valor del dólar en CLP (1 USD = X CLP)
 let mostrandoDolares = false;
 
-// Obtener el valor del dólar desde la API
+// Obtener el valor del dólar desde la API de mindicador.cl
 async function obtenerDolar() {
     try {
-        const res = await fetch('https://mindicador.cl/api/dolar'); 
+        const res = await fetch('https://mindicador.cl/api/dolar');
         const data = await res.json();
         return data.serie[0].valor;
     } catch (e) {
@@ -422,11 +395,10 @@ async function obtenerDolar() {
     }
 }
 
-// Funciones para formatear los precios
+// Formatear precios
 function formatearCLP(valor) {
     return '$' + valor.toLocaleString('es-CL') + ' CLP';
 }
-
 function formatearUSD(valor) {
     return '$' + valor.toFixed(2) + ' USD';
 }
@@ -437,13 +409,11 @@ function actualizarPrecios() {
     productos.forEach(producto => {
         const precioCLP = Number(producto.dataset.precio);
         const precioElem = producto.querySelector('.precio-producto');
-
         if (mostrandoDolares && valorDolar) {
             // Convertir de CLP a USD: precioCLP / valorDolar
             const precioUSD = precioCLP / valorDolar;
             precioElem.textContent = formatearUSD(precioUSD);
         } else {
-            // Mostrar en CLP
             precioElem.textContent = formatearCLP(precioCLP);
         }
     });
@@ -453,64 +423,23 @@ function actualizarPrecios() {
 document.addEventListener('DOMContentLoaded', async () => {
     valorDolar = await obtenerDolar();
     if (valorDolar) {
-        document.getElementById('dolar-valor').textContent = Math.round(valorDolar).toLocaleString('es-CL');
+        document.getElementById('dolar-valor').textContent = `1 USD ≈ $${Math.round(valorDolar).toLocaleString('es-CL')} CLP`;
+    } else {
+        document.getElementById('dolar-valor').textContent = "Error al cargar USD";
     }
 
     actualizarPrecios();
 
     document.getElementById('toggle-moneda').addEventListener('click', () => {
         mostrandoDolares = !mostrandoDolares;
-        document.getElementById('toggle-moneda').textContent = mostrandoDolares ? 'Mostrar en CLP' : 'Mostrar en Dólares';
+        document.getElementById('toggle-moneda').textContent = mostrandoDolares ? 'Mostrar en CLP' : 'Mostrar en USD';
         actualizarPrecios();
     });
 });
-
-// Variables adicionales para la segunda parte del código
-let mostrarEnUSD = false;
-let tasaCambio = 1; // Valor por defecto
-
-// Obtener la tasa de cambio desde otra API
-async function obtenerTasaCambio() {
-    try {
-        const respuesta = await fetch("https://api.exchangerate.host/latest?base=CLP&symbols=USD");
-        const datos = await respuesta.json();
-        tasaCambio = datos.rates.USD;
-        document.getElementById("dolar-valor").innerText = `1 USD ≈ $${Math.round(1 / tasaCambio).toLocaleString('es-CL')} CLP`;
-    } catch (error) {
-        console.error("Error al obtener tasa de cambio:", error);
-        document.getElementById("dolar-valor").innerText = "Error al cargar USD";
-    }
-}
-
-// Convertir todos los precios
-function convertirPrecios() {
-    const precios = document.querySelectorAll(".precio-producto");
-    precios.forEach(elemento => {
-        const precioCLP = parseInt(elemento.getAttribute("data-precio"));
-        if (mostrarEnUSD) {
-            // Convertir de CLP a USD: precioCLP * tasaCambio
-            const precioUSD = precioCLP * tasaCambio;
-            elemento.innerText = `$ ${precioUSD.toFixed(2)} USD`;
-        } else {
-            // Mostrar en CLP
-            elemento.innerText = `$ ${precioCLP.toLocaleString()} CLP`;
-        }
-    });
-}
-
-// Alternar moneda al presionar botón
-document.getElementById('toggle-moneda').addEventListener('click', () => {
-    mostrarEnUSD = !mostrarEnUSD;
-    convertirPrecios();
-    document.getElementById('toggle-moneda').innerText = mostrarEnUSD ? "Mostrar en CLP" : "Mostrar en USD";
-});
-
-// Ejecutar al inicio
-obtenerTasaCambio();
  
 
 
-// Función para obtener el token CSRF
+ // Obtener token CSRF
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -525,172 +454,154 @@ obtenerTasaCambio();
         }
         return cookieValue;
     }
-
     // Función para abrir el modal del carrito
-    function abrirModalCarrito() {
-        const cartModal = document.getElementById('cartModal');
-        if (cartModal) {
-            cartModal.classList.add('open');
-        }
+   function abrirModalCarrito() {
+    const cartModal = document.getElementById('cartModal');
+    if (cartModal) {
+        obtenerYMostrarCarrito(); // <-- Esto actualiza el contenido antes de mostrar
+        cartModal.classList.add('open');
+        cartModal.style.display = 'block'; // Si usas display:block para mostrar
     }
+}
+
+// Cerrar el modal del carrito
+document.addEventListener('DOMContentLoaded', function() {
+    const closeButton = document.querySelector('.close-button');
+    const cartModal = document.getElementById('cartModal');
+    if (closeButton && cartModal) {
+        closeButton.addEventListener('click', function() {
+            cartModal.style.display = 'none';
+        });
+    }
+    // Abrir modal al hacer click en el icono del carrito
+   const cartIcon = document.querySelector('.cart-icon');
+if (cartIcon) {
+    cartIcon.addEventListener('click', abrirModalCarrito);
+}
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('cartItemsContainer').addEventListener('click', function(e) {
+    const btn = e.target;
+    const cartItem = btn.closest('.cart-item');
+    if (!cartItem) return;
+    const id = cartItem.getAttribute('data-id');
+    const cantidadElem = cartItem.querySelector('.item-cantidad');
+    let cantidad = Number(cantidadElem.textContent);
+
+    // Si tienes stock máximo, puedes agregarlo como data-stock en el backend y leerlo aquí
+    const stockMax = Number(cartItem.dataset.stock) || 99;
+
+    if (btn.classList.contains('aumentar')) {
+      if (cantidad < stockMax) {
+        fetch(`/carrito/aumentar/${id}/`, {method: 'POST', headers: {'X-CSRFToken': getCookie('csrftoken')}})
+          .then(() => obtenerYMostrarCarrito());
+      } else {
+        alert('No puedes agregar más de lo disponible en stock.');
+      }
+    }
+    if (btn.classList.contains('disminuir')) {
+      if (cantidad > 1) {
+        fetch(`/carrito/disminuir/${id}/`, {method: 'POST', headers: {'X-CSRFToken': getCookie('csrftoken')}})
+          .then(() => obtenerYMostrarCarrito());
+      } else {
+        // Si la cantidad es 1 y presionan menos, elimina el producto (pero NO cierres el modal)
+        fetch(`/carrito/quitar/${id}/`, {method: 'POST', headers: {'X-CSRFToken': getCookie('csrftoken')}})
+          .then(() => obtenerYMostrarCarrito());
+      }
+    }
+    if (btn.classList.contains('eliminar')) {
+      fetch(`/carrito/quitar/${id}/`, {method: 'POST', headers: {'X-CSRFToken': getCookie('csrftoken')}})
+        .then(() => obtenerYMostrarCarrito());
+    }
+  });
+});
 
     // Función para actualizar el contador del carrito
-    function actualizarContadorCarrito(contador) {
-        const cartCountBadge = document.getElementById('cart-count-badge');
-        if (cartCountBadge) {
-            cartCountBadge.textContent = contador;
-        }
+  function actualizarContadorCarrito(carrito) {
+    const cartCountBadge = document.getElementById('cart-count-badge');
+    let count = 0;
+    if (Array.isArray(carrito)) {
+        carrito.forEach(item => count += Number(item.cantidad));
     }
-
-    // Función para actualizar el contenido del modal del carrito
-    function actualizarCarritoModal(carrito) {
-        const cartItemsContainer = document.getElementById('cartItemsContainer');
-        if (!cartItemsContainer) return;
-
-        // Limpiar el contenido actual
-        cartItemsContainer.innerHTML = '';
-
-        // Verificar si el carrito está vacío
-        if (carrito.length === 0) {
-            const emptyMessage = document.createElement('p');
-            emptyMessage.className = 'empty-cart';
-            emptyMessage.id = 'emptyCartMessage';
-            emptyMessage.textContent = 'El carrito está vacío.';
-            cartItemsContainer.appendChild(emptyMessage);
-            return;
-        }
-
-        // Mostrar cada producto del carrito
-        carrito.forEach(item => {
-            const cartItem = document.createElement('div');
-            cartItem.className = 'cart-item';
-            cartItem.dataset.id = item.id;
-
-            cartItem.innerHTML = `
-                <img src="${item.imagen}" alt="${item.nombre}" class="cart-item-image">
-                <div class="cart-item-details">
-                    <h3>${item.nombre}</h3>
-                    <p>Precio: $<span class="item-precio">${item.precio}</span></p>
-                    <p>Cantidad: 
-                        <span class="item-cantidad">${item.cantidad}</span>
-                    </p>
-                    <p>Subtotal: $<span class="item-subtotal">${item.subtotal}</span></p>
-                </div>
-                <div class="cart-item-actions">
-                    <button class="action-button aumentar">+</button>
-                    <button class="action-button disminuir">-</button>
-                    <button class="action-button eliminar">Eliminar</button>
-                </div>
-            `;
-
-            cartItemsContainer.appendChild(cartItem);
-        });
+    if (cartCountBadge) {
+        cartCountBadge.textContent = count;
+        cartCountBadge.style.display = count > 0 ? 'inline-block' : 'none';
     }
+}
+
 
     // Función para agregar un producto al carrito
-    function agregarAlCarrito(id_producto) {
-        const url = `/agregar-al-carrito/${id_producto}/`;
-        const csrftoken = getCookie('csrftoken');
-
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrftoken
-            }
-        })
-        .then(res => {
-            if (!res.ok) {
-                throw new Error(`Error del servidor: ${res.status}`);
-            }
-            return res.json();
-        })
-        .then(data => {
-            if (data.success) {
-                alert('✅ Producto agregado al carrito');
-
-                // Actualizar el contador del carrito
-                const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
-                const nuevoContador = carrito.length + 1;
-                actualizarContadorCarrito(nuevoContador);
-
-                // Abrir el modal del carrito
-                abrirModalCarrito();
-
-                // Actualizar el contenido del modal
-                obtenerYMostrarCarrito();
-            } else {
-                alert('❌ Error: ' + data.error);
-            }
-        })
-        .catch(err => {
-            console.error('🚨 Hubo un error:', err);
-            alert('Hubo un problema al agregar el producto. Revisa la consola.');
-        });
-    }
+function agregarAlCarrito(id_producto) {
+    const url = `/agregar-al-carrito/${id_producto}/`;
+    const csrftoken = getCookie('csrftoken');
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            obtenerYMostrarCarrito();
+            abrirModalCarrito();
+        } else {
+            alert('❌ Error: ' + data.error);
+        }
+    })
+    .catch(err => {
+        alert('Hubo un problema al agregar el producto. Revisa la consola.');
+    });
+}
 
     // Función para obtener y mostrar el carrito
-    function obtenerYMostrarCarrito() {
-        fetch('/obtener-carrito/', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(res => {
-            if (!res.ok) {
-                throw new Error(`Error del servidor: ${res.status}`);
-            }
-            return res.json();
-        })
-        .then(data => {
-            if (data.carrito) {
-                const carrito = data.carrito;
-                localStorage.setItem('carrito', JSON.stringify(carrito)); // Guardar en localStorage
-                actualizarCarritoModal(carrito);
-                actualizarContadorCarrito(carrito.length);
-            }
-        })
-        .catch(err => {
-            console.error('🚨 Error al obtener el carrito:', err);
-        });
-    }
-
+   function obtenerYMostrarCarrito() {
+    fetch('/obtener-carrito/', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.carrito) {
+            const carrito = data.carrito;
+            actualizarCarritoModal(carrito);
+            actualizarContadorCarrito(carrito);
+        }
+    })
+    .catch(err => {
+        console.error('🚨 Error al obtener el carrito:', err);
+    });
+}
     // Cargar el carrito al cargar la página
     window.onload = function () {
         obtenerYMostrarCarrito();
     };
 
-    function actualizarCarritoModal(carrito) {
+  function actualizarCarritoModal(carrito) {
     const cartItemsContainer = document.getElementById('cartItemsContainer');
-    if (!cartItemsContainer) return;
-
-    // Limpiar contenido anterior
     cartItemsContainer.innerHTML = '';
-
-    if (carrito.length === 0) {
-        const emptyMessage = document.createElement('p');
-        emptyMessage.className = 'empty-cart';
-        emptyMessage.textContent = 'El carrito está vacío.';
-        cartItemsContainer.appendChild(emptyMessage);
+    if (!Array.isArray(carrito) || carrito.length === 0) {
+        cartItemsContainer.innerHTML = '<p class="empty-cart">El carrito está vacío.</p>';
+        document.getElementById('subtotal').textContent = '0.00';
         return;
     }
-
-    // Mostrar cada producto con subtotal
     carrito.forEach(item => {
         const cartItem = document.createElement('div');
         cartItem.className = 'cart-item';
         cartItem.dataset.id = item.id;
+        cartItem.dataset.stock = item.stock || 99; // Asegúrate que tu backend envía 'stock'
 
         cartItem.innerHTML = `
-            <img src="${item.imagen}" alt="${item.nombre}" class="cart-item-image">
+            <img src="/static/images/${item.imagen}" alt="${item.nombre}" class="cart-item-image">
             <div class="cart-item-details">
                 <h3>${item.nombre}</h3>
                 <p>Precio: $<span class="item-precio">${item.precio}</span></p>
-                <p>Cantidad: 
-                    <span class="item-cantidad">${item.cantidad}</span>
-                </p>
-                <p>Subtotal: $<span class="item-subtotal">${item.subtotal.toFixed(2)}</span></p>
+                <p>Cantidad: <span class="item-cantidad">${item.cantidad}</span></p>
+                <p>Subtotal: $<span class="item-subtotal">${Number(item.subtotal).toFixed(2)}</span></p>
             </div>
             <div class="cart-item-actions">
                 <button class="action-button aumentar">+</button>
@@ -698,28 +609,27 @@ obtenerTasaCambio();
                 <button class="action-button eliminar">Eliminar</button>
             </div>
         `;
-
         cartItemsContainer.appendChild(cartItem);
     });
-
     // Actualizar total
-    const subtotalTotal = carrito.reduce((acc, item) => acc + item.subtotal, 0);
+    const subtotalTotal = carrito.reduce((acc, item) => acc + Number(item.subtotal), 0);
     const totalElement = document.getElementById('subtotal');
     if (totalElement) {
         totalElement.textContent = subtotalTotal.toFixed(2);
     }
 }
+
   </script>
 
   <!-- Scripts -->
- 
+ <script src="https://cdn.jsdelivr.net/npm/@formatjs/intl-numberformat-polyfill@4/dist/formatjs-intl-numberformat.min.js"></script> 
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script> 
   <script src="{% static 'js/custom.js' %}"></script>
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"> 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> 
-  <script src="{% static 'js/carrito.js' %}"></script>
+
 
 
 
