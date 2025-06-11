@@ -16,7 +16,6 @@ urlpatterns = [
     path('registro/', views.registro, name='registro'),
     path('nosotros/', views.nosotros, name='nosotros'),
     path('informes_stock/', views.informes_stock, name='informes_stock'),
-    path('actualizar-stock/<int:alerta_id>/', views.actualizar_stock, name='actualizar_stock'),
     path('agregar-al-carrito/<int:id_producto>/', views.agregar_al_carrito, name='agregar_al_carrito'),
     path('obtener-carrito/', views.obtener_carrito, name='obtener_carrito'),
     path('carrito/', views.ver_carrito, name='carrito'),
@@ -28,7 +27,11 @@ urlpatterns = [
     path('pago/transferencia/', views.pago_transferencia, name='pago_transferencia'),
     path('pago/tarjeta/', views.pago_tarjeta, name='pago_tarjeta'),
     path('pago/exito/', views.pago_exito, name='pago_exito'),
+    path('perfil/', views.perfil, name='perfil'),
     path('pago/', views.pago, name='pago'),
+    path('actualizar-stock/<int:id>/', views.actualizar_stock, name='actualizar_stock'),
+    path('usuarios/', views.usuarios_api, name='usuarios_api'),
+    path('usuarios/<str:id_usuario>', views.usuario_detalle_api, name='usuario_detalle_api'),
 
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

@@ -111,6 +111,31 @@
     body.carrito-page .empty-cart a:hover {
       text-decoration: underline;
     }
+    .btn-pink {
+  background-color: #ff69b4 !important;
+  border: none !important;
+  color: #fff !important;
+  font-weight: bold;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+.btn-pink:hover {
+  background-color: #ff85b8 !important;
+  color: #fff !important;
+}
+.btn-eliminar {
+  background: none !important;
+  border: none !important;
+  color: #d6336c !important;
+  font-weight: bold;
+  border-radius: 8px;
+  transition: color 0.2s;
+}
+.btn-eliminar:hover {
+  color: #ff69b4 !important;
+  text-decoration: underline;
+  background: none !important;
+}
   </style>
 </head>
 
@@ -135,6 +160,7 @@
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav ml-auto d-flex align-items-center">
+                
                 <li class="nav-item active">
                   <a class="nav-link" href="{% url 'index' %}">Inicio <span class="sr-only">(current)</span></a>
                 </li>
@@ -143,21 +169,15 @@
                 </li>
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProductos" role="button"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Productos
-                  </a>
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Productos</a>
                   <div class="dropdown-menu" aria-labelledby="navbarDropdownProductos">
-                    <a class="dropdown-item" href="{% url 'productos' %}">Todos los productos</a>
-                    <a class="dropdown-item" href="{% url 'productos' %}#peluches">Peluches</a>
-                    <a class="dropdown-item" href="{% url 'productos' %}#botellas">Botellas</a>
-                    <a class="dropdown-item" href="{% url 'productos' %}#termos">Termos</a>
-                    <a class="dropdown-item" href="{% url 'productos' %}#pines">Pines</a>
-                    <a class="dropdown-item" href="{% url 'productos' %}#llaveros">Llaveros</a>
-                    <a class="dropdown-item" href="{% url 'productos' %}#lamparas">Lámparas</a>
+                    <a class="dropdown-item" href="#peluches">Peluches</a>
+                    <a class="dropdown-item" href="#botellas">Botellas</a>
+                    <a class="dropdown-item" href="#termos">Termos</a>
+                    <a class="dropdown-item" href="#pines">Pines</a>
+                    <a class="dropdown-item" href="#llaveros">Llaveros</a>
+                    <a class="dropdown-item" href="#lamparas">Lámparas</a>
                   </div>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="contact.html">Contacta con Nosotros</a>
                 </li>
               </ul>
 
@@ -168,16 +188,16 @@
                     <i class="fa fa-search" aria-hidden="true"></i>
                   </button>
                 </form>
-                {% if user.is_authenticated %}
-                <span class="ml-3 text-success" title="Ya has iniciado sesión">
-                  <i class="fa fa-check-circle" aria-hidden="true" style="font-size: 1.3rem;"></i>
-                  <small>Ya iniciaste sesión</small>
-                </span>
-                {% else %}
-                <a href="{% url 'login' %}" class="ml-3" title="Iniciar sesión">
-                  <i class="fa fa-user" aria-hidden="true" style="font-size: 1.3rem;"></i>
-                </a>
-                {% endif %}
+                <!-- ICONO DE USUARIO CON LÓGICA DE SESIÓN -->
+{% if request.session.usuario_id %}
+  <a href="{% url 'perfil' %}" class="ml-3" title="Perfil">
+    <i class="fa fa-user-circle" aria-hidden="true" style="font-size: 1.7rem;"></i>
+  </a>
+{% else %}
+  <a href="{% url 'login' %}" class="ml-3" title="Iniciar sesión">
+    <i class="fa fa-user" aria-hidden="true" style="font-size: 1.7rem;"></i>
+  </a>
+{% endif %}
               </div>
             </div>
           </nav>
@@ -190,30 +210,62 @@
    {% if carrito and carrito|length > 0 %}
   <div class="table-responsive">
   <table class="table table-bordered align-middle bg-white">
-    <thead class="thead-light">
-      <tr>
-        <th>Producto</th>
-        <th class="text-center">Precio </th>
-        <th class="text-center">Subtotal</th>
-      </tr>
-    </thead>
-  <tbody>
+   <thead class="thead-light">
+  <tr>
+    <th>Producto</th>
+    <th class="text-center">Precio </th>
+    <th class="text-center">Subtotal</th>
+    <th class="text-center"></th> <!-- Sin texto "Acciones" -->
+  </tr>
+</thead>
+<tbody>
   {% for producto in carrito %}
   <tr>
     <td>
       <div class="d-flex align-items-center">
         <img src="{% static 'images/'|add:producto.imagen %}" alt="{{ producto.nombre }}" style="width:32px; height:32px; object-fit:cover; border-radius:8px; margin-right:10px;">
-        <strong>{{ producto.nombre }}</strong>
+        <strong>
+          {{ producto.nombre }}{% if producto.cantidad and producto.cantidad|add:0 >= 2 %} x {{ producto.cantidad }}{% endif %}
+        </strong>
       </div>
     </td>
     <td class="text-center">${{ producto.precio }}</td>
     <td class="text-center">${{ producto.subtotal|floatformat:2 }}</td>
+    <td class="text-center">
+      <button
+  onclick="aumentarCantidad('{{ producto.id }}')"
+  class="btn btn-sm mx-1 btn-pink"
+  style="font-size:1.3rem;"
+  {% if producto.cantidad >= producto.stock %}disabled{% endif %}
+>+</button>
+      <button onclick="disminuirCantidad('{{ producto.id }}', '{{ producto.cantidad }}')" class="btn btn-sm mx-1 btn-pink" style="font-size:1.3rem;">-</button>
+      <button onclick="eliminarProducto('{{ producto.id }}')" class="btn btn-sm mx-1 btn-eliminar" style="font-size:1rem;">Eliminar</button>
+    </td>
   </tr>
   {% endfor %}
 </tbody>
   </table>
 </div>
-    <div class="total-section text-end mt-4">
+<div class="mb-4">
+  <form id="envioForm" method="get" action="">
+    <label class="me-3 fw-bold">¿Cómo deseas recibir tu pedido?</label>
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="radio" name="envio" id="retiro" value="0" {% if not envio_costo or envio_costo == 0 %}checked{% endif %} onchange="this.form.submit()">
+      <label class="form-check-label" for="retiro">Retiro en Tienda</label>
+    </div>
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="radio" name="envio" id="envio" value="1" {% if envio_costo and envio_costo > 0 %}checked{% endif %} onchange="this.form.submit()">
+      <label class="form-check-label" for="envio">Envío a Domicilio (+$3000)</label>
+    </div>
+  </form>
+</div>
+      <div class="total-section text-end mt-4">
+      {% if descuento and descuento > 0 %}
+        <h5>
+          <span style="color:#d6336c;">Descuento:</span>
+          <span style="color:#007bff;">-${{ descuento|floatformat:2 }}</span>
+        </h5>
+      {% endif %}
       <h4>Total: <span id="total" class="text-primary">${{ total|floatformat:2 }}</span></h4>
       <a href="{% url 'pago' %}" class="btn btn-success btn-lg mt-2">
         <i class="bi bi-credit-card"></i> Proceder al Pago
@@ -264,6 +316,47 @@
         });
     }
   </script>
+<script>
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  function aumentarCantidad(id) {
+    fetch(`/carrito/aumentar/${id}/`, {
+      method: 'POST',
+      headers: {'X-CSRFToken': getCookie('csrftoken')}
+    }).then(() => location.reload());
+  }
+
+  function disminuirCantidad(id, cantidad) {
+    if (cantidad > 1) {
+      fetch(`/carrito/disminuir/${id}/`, {
+        method: 'POST',
+        headers: {'X-CSRFToken': getCookie('csrftoken')}
+      }).then(() => location.reload());
+    } else {
+      eliminarProducto(id);
+    }
+  }
+
+  function eliminarProducto(id) {
+    fetch(`/carrito/quitar/${id}/`, {
+      method: 'POST',
+      headers: {'X-CSRFToken': getCookie('csrftoken')}
+    }).then(() => location.reload());
+  }
+</script>
 
 
 

@@ -168,9 +168,204 @@
         </div>
     </div>
 
+    <!-- Gestión de Productos -->
+<div class="card mb-4">
+  <div class="card-header text-center">Gestionar Productos</div>
+  <div class="card-body">
+    <form id="producto-form" class="row g-3">
+      <input type="hidden" id="id_producto" name="id_producto">
+      <div class="col-md-6">
+        <label for="nombre_producto" class="form-label">Nombre</label>
+        <input type="text" class="form-control" id="nombre_producto" name="nombre" required>
+      </div>
+      <div class="col-md-6">
+        <label for="precio_producto" class="form-label">Precio</label>
+        <input type="number" class="form-control" id="precio_producto" name="precio" min="0" required>
+      </div>
+      <div class="col-md-12">
+        <label for="descripcion_producto" class="form-label">Descripción</label>
+        <textarea class="form-control" id="descripcion_producto" name="descripcion" required></textarea>
+      </div>
+      <div class="col-md-6">
+        <label for="imagen_producto" class="form-label">Imagen (URL)</label>
+        <input type="text" class="form-control" id="imagen_producto" name="imagen" required>
+      </div>
+      <div class="col-md-6">
+        <label for="disponible_producto" class="form-label">Disponible</label>
+        <select class="form-select" id="disponible_producto" name="disponible" required>
+          <option value="1">Sí</option>
+          <option value="0">No</option>
+        </select>
+      </div>
+      <div class="col-12 d-grid">
+        <button type="submit" class="btn btn-success btn-lg mt-3" id="btn-producto">Registrar Producto</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- Mostrar productos de la base de datos (Django) -->
+<div class="card mb-4">
+  <div class="card-header text-center">Gestión de Productos</div>
+  <div class="card-body">
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Precio</th>
+          <th>Imagen</th>
+          <th>Disponible</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for producto in productos %}
+        <tr>
+          <td>{{ producto.id_producto }}</td>
+          <td>{{ producto.nombre }}</td>
+          <td>{{ producto.descripcion }}</td>
+          <td>${{ producto.precio}}</td>
+          <td>
+            {% if producto.imagen %}
+              <img src="{% static 'images/'|add:producto.imagen %}" alt="img" style="width:50px;height:50px;object-fit:cover;">
+            {% else %}
+              Sin imagen
+            {% endif %}
+          </td>
+          <td>{{ producto.disponible|yesno:"Sí,No" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="text-center">No hay productos en la base de datos.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const PRODUCT_API_URL = "http://localhost:3000/producto";
+const PRODUCT_API_KEY = "llaveparaapy11.";
+
+async function cargarProductos() {
+  try {
+    const res = await fetch(PRODUCT_API_URL, {
+      headers: { "x-api-key": PRODUCT_API_KEY }
+    });
+    if (!res.ok) throw new Error("Error al cargar productos");
+    const productos = await res.json();
+    mostrarProductos(productos);
+  } catch (err) {
+    document.querySelector("#productos-tabla tbody").innerHTML =
+      `<tr><td colspan="7" class="text-center">⚠️ Error al cargar productos</td></tr>`;
+  }
+}
+
+function mostrarProductos(productos) {
+  const tbody = document.querySelector("#productos-tabla tbody");
+  tbody.innerHTML = "";
+  if (!productos.length) {
+    tbody.innerHTML = `<tr><td colspan="7" class="text-center">No hay productos</td></tr>`;
+    return;
+  }
+  productos.forEach(prod => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${prod.id_producto}</td>
+        <td>${prod.nombre}</td>
+        <td>${prod.descripcion}</td>
+        <td>$${prod.precio}</td>
+        <td><img src="${prod.imagen}" alt="img" style="width:50px;height:50px;object-fit:cover;"></td>
+        <td>${prod.disponible ? "Sí" : "No"}</td>
+        <td>
+          <button class="btn btn-warning btn-sm" onclick="editarProducto('${prod.id_producto}')">Editar</button>
+          <button class="btn btn-danger btn-sm" onclick="eliminarProducto('${prod.id_producto}')">Eliminar</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+document.getElementById("producto-form").onsubmit = async function(e) {
+  e.preventDefault();
+  const id = document.getElementById("id_producto").value;
+  const nombre = document.getElementById("nombre_producto").value;
+  const descripcion = document.getElementById("descripcion_producto").value;
+  const precio = document.getElementById("precio_producto").value;
+  const imagen = document.getElementById("imagen_producto").value;
+  const disponible = document.getElementById("disponible_producto").value;
+
+  const data = { nombre, descripcion, precio, imagen, disponible };
+  let url = PRODUCT_API_URL;
+  let method = "POST";
+  if (id) {
+    url += "/" + id;
+    method = "PUT";
+  }
+
+  try {
+    const res = await fetch(url, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": PRODUCT_API_KEY
+      },
+      body: JSON.stringify(data)
+    });
+    if (!res.ok) throw new Error("Error al guardar producto");
+    cargarProductos();
+    this.reset();
+    document.getElementById("btn-producto").textContent = "Registrar Producto";
+    document.getElementById("id_producto").value = "";
+  } catch (err) {
+    alert("❌ Error al guardar producto");
+  }
+};
+
+async function editarProducto(id) {
+  try {
+    const res = await fetch(PRODUCT_API_URL + "/" + id, {
+      headers: { "x-api-key": PRODUCT_API_KEY }
+    });
+    if (!res.ok) throw new Error("Error al obtener producto");
+    const prod = await res.json();
+    document.getElementById("id_producto").value = prod.id_producto;
+    document.getElementById("nombre_producto").value = prod.nombre;
+    document.getElementById("descripcion_producto").value = prod.descripcion;
+    document.getElementById("precio_producto").value = prod.precio;
+    document.getElementById("imagen_producto").value = prod.imagen;
+    document.getElementById("disponible_producto").value = prod.disponible;
+    document.getElementById("btn-producto").textContent = "Actualizar Producto";
+  } catch (err) {
+    alert("❌ Error al cargar producto");
+  }
+}
+
+async function eliminarProducto(id) {
+  if (!confirm("¿Eliminar producto?")) return;
+  try {
+    const res = await fetch(PRODUCT_API_URL + "/" + id, {
+      method: "DELETE",
+      headers: { "x-api-key": PRODUCT_API_KEY }
+    });
+    if (!res.ok) throw new Error("Error al eliminar producto");
+    cargarProductos();
+  } catch (err) {
+    alert("❌ Error al eliminar producto");
+  }
+}
+
+// Inicializar productos al cargar la página
+document.addEventListener("DOMContentLoaded", cargarProductos);
+</script>
+
     <!-- Cargar admin.js -->
     <script src="{% static 'js/admin.js' %}"></script>
 
+
 </body>
 </html>
-          
+

@@ -1,14 +1,12 @@
+
 {% load static %}
-{% load humanize %} 
+{% load humanize %}
 <!DOCTYPE html>
 <html>
 <head>
-  <!-- Basic -->
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <!-- Mobile Metas -->
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <!-- Site Metas -->
   <meta name="keywords" content="" />
   <meta name="description" content="" />
   <meta name="author" content="" />
@@ -21,6 +19,73 @@
   <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" />
   <link href="{% static 'css/style.css' %}" rel="stylesheet" />
   <link href="{% static 'css/responsive.css' %}" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .cart-modal {
+  display: none;
+  position: fixed;
+  z-index: 99999; /* más alto para asegurar que esté encima */
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.45); /* más oscuro para tapar mejor */
+}
+    .cart-modal.open, .cart-modal[style*="block"] { display: flex !important; align-items: center; justify-content: center;}
+    .cart-modal-content { background: #fff; border-radius: 14px; padding: 2em; width: 100%; max-width: 520px; max-height: 95vh; overflow-y: auto; box-shadow: 0 0 20px #0002; position: relative;}
+    .close-button { position: absolute; right: 1em; top: 1em; background: none; border: none; font-size: 2em; color: #444; cursor: pointer;}
+    .cart-items .cart-item { display: flex; align-items: flex-start; gap: 15px; border-bottom: 1px solid #eee; padding: 1em 0; background: #fff; border-radius: 8px; margin-bottom: 10px; position: relative;}
+    .cart-item-image { width: 64px; height: 64px; object-fit: contain; border-radius: 7px; border: 1px solid #ddd; background: #fafafa;}
+    .cart-item-details { flex: 1; min-width: 0; }
+    .cart-item-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 7px;
+  min-width: 80px;
+}
+.cart-item-actions .acciones-cantidad {
+  display: flex;
+  flex-direction: row;
+  gap: 7px;
+  margin-bottom: 5px;
+}
+.cart-item-actions button {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  font-size: 1.2em;
+  border-radius: 6px;
+  background: #ff69b4;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+.cart-item-actions button.eliminar {
+  background: #eee;
+  color: #b00;
+  width: auto;
+  padding: 5px 10px;
+  margin-top: 5px;
+}
+    .cart-total { font-weight: bold; text-align: right; margin: 1em 0 0.5em 0;}
+    .view-cart-button { display: block; width: 100%; background: #ff69b4; color: #fff; border: none; border-radius: 6px; padding: 13px 0; margin-top: 1em; font-weight: 700; letter-spacing: 1px; font-size: 1.1em; text-align: center;}
+    .cart-count-badge { position: absolute; top: -5px; right: -10px; background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem;}
+    body.modal-abierto {
+  overflow: hidden;
+  pointer-events: none;
+}
+.cart-modal.open, .cart-modal[style*="block"] {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+.cart-modal-content {
+  pointer-events: auto;
+}
+  </style>
 </head>
 <body>
   <div class="main_body_content">
@@ -29,36 +94,25 @@
       <header class="header_section">
         <div class="container-fluid">
           <nav class="navbar navbar-expand-lg custom_nav-container">
-            <a class="navbar-brand" href="{% url 'index' %}">
-              SanrioDreams
-            </a>
+            <a class="navbar-brand" href="{% url 'index' %}">SanrioDreams</a>
+            <div style="display: flex; align-items: center; gap: 1.2em; margin: 2em 0 1em 0; justify-content: center;">
+  <button id="toggle-moneda" style="background: #ff69b4; color: white; border: none; border-radius: 6px; padding: 7px 18px; font-weight: bold; cursor:pointer;">
+    Mostrar en USD
+  </button>
+  <span id="dolar-valor" style="font-weight:bold; color:#444;">Cargando USD...</span>
+</div>
             <button class="navbar-toggler" type="button" data-toggle="collapse"
               data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" 
               aria-expanded="false" aria-label="Toggle navigation">
               <span class=""></span>
             </button>
-
-            <!-- Botón simple y elegante para cambiar moneda -->
-                  <div id="dolar-conversor" class="text-end my-3">
-              <span style="font-weight: 600; color: #333;"> <strong id="dolar-valor"></strong> </span>
-              <button id="toggle-moneda" class="btn btn-dark btn-sm ms-3" style="border-radius: 20px; padding: 6px 16px;">
-                Mostrar en USD
-              </button>
-            </div>
-
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav ml-auto d-flex align-items-center">
-                <li class="nav-item active">
-                  <a class="nav-link" href="{% url 'index' %}">Inicio <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="{% url 'nosotros' %}">Sobre Nosotros</a>
-                </li>
+                <li class="nav-item active"><a class="nav-link" href="{% url 'index' %}">Inicio <span class="sr-only">(current)</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'nosotros' %}">Sobre Nosotros</a></li>
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProductos" role="button"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Productos
-                  </a>
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Productos</a>
                   <div class="dropdown-menu" aria-labelledby="navbarDropdownProductos">
                     <a class="dropdown-item" href="#peluches">Peluches</a>
                     <a class="dropdown-item" href="#botellas">Botellas</a>
@@ -68,9 +122,6 @@
                     <a class="dropdown-item" href="#lamparas">Lámparas</a>
                   </div>
                 </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="contact.html">Contacta con Nosotros</a>
-                </li>
               </ul>
               <div class="quote_btn-container d-flex align-items-center ml-3">
                 <form class="form-inline" id="searchForm">
@@ -79,42 +130,38 @@
                     <i class="fa fa-search" aria-hidden="true"></i>
                   </button>
                 </form>
-                <a href="{% url 'login' %}" class="ml-3" title="Iniciar sesión">
-          <i class="fa fa-user" aria-hidden="true" style="font-size: 1.5rem;"></i>
-      </a>
-
-<!-- Botón del Carrito -->
-<button type="button" class="ml-3 position-relative cart-icon" style="background: none; border: none; padding: 0; cursor: pointer;" title="Ver carrito">
-  <i class="fas fa-shopping-cart" style="font-size: 1.5rem; margin-left: -25px; color: black;"></i>
-  {% if cart_count > 0 %}
-    <span id="cart-count-badge">{{ cart_count }}</span>
-  {% endif %}
-</button>
-
-
-
-
-    <!-- Modal del Carrito -->
-<div id="cartModal" class="cart-modal">
-  <div class="cart-modal-content">
-    <h2>TU CARRITO</h2>
-    <button class="close-button">&times;</button>
-    <!-- Lista de productos en el carrito (se llena con JS) -->
-    <div class="cart-items" id="cartItemsContainer"></div>
-    <div class="cart-total">
-      <p>SUBTOTAL: $<span id="subtotal">0.00</span></p>
-    </div>
-    <div class="cart-footer">
-      <a href="{% url 'carrito' %}" class="view-cart-button">VER CARRITO</a>
-      <button class="checkout-button" id="checkoutButton">REALIZAR COMPRA</button>
-    </div>
-  </div>
-</div>
-
-   
-
-   
+                {% if request.session.usuario_id %}
+                  <a href="{% url 'perfil' %}" class="ml-3" title="Perfil">
+                    <i class="fa fa-user-circle" aria-hidden="true" style="font-size: 1.7rem;"></i>
+                  </a>
+                {% else %}
+                  <a href="{% url 'login' %}" class="ml-3" title="Iniciar sesión">
+                    <i class="fa fa-user" aria-hidden="true" style="font-size: 1.7rem;"></i>
+                  </a>
+                {% endif %}
+                {% with request.session.carrito|length as cart_count %}
+                  <button type="button" class="ml-3 position-relative cart-icon" style="background: none; border: none; padding: 0; cursor: pointer;" title="Ver carrito">
+                    <i class="fas fa-shopping-cart" style="font-size: 1.5rem; margin-left: -25px; color: black;"></i>
+                    {% if cart_count > 0 %}
+                      <span class="cart-count-badge" id="cart-count-badge">{{ cart_count }}</span>
+                    {% endif %}
+                  </button>
+                {% endwith %}
+              </div>
+            </div>
+          </nav>
+        </div>
+        <div id="cartModal" class="cart-modal">
+          <div class="cart-modal-content">
+            <h2>TU CARRITO</h2>
+            <button class="close-button">&times;</button>
+            <div class="cart-items" id="cartItemsContainer"></div>
+            <div class="cart-total"><p>SUBTOTAL: <span id="subtotal">$0.00</span></p></div>
+            <a href="{% url 'carrito' %}" class="view-cart-button">VER CARRITO</a>
+          </div>
+        </div>
       </header>
+      
       <!-- Fin de Header -->
 
       <!-- Sección Peluches -->
@@ -129,10 +176,20 @@
             <p>{{ producto.descripcion }}</p>
             <p class="precio-producto">{{ producto.precio|intcomma }}</p>
             <p>Cantidad: {{ producto.stock_set.first.cantidad }}</p>
-            <button onclick="agregarAlCarrito('{{ producto.id_producto }}')">Agregar al carrito</button>
+            <button 
+  onclick="agregarAlCarrito('{{ producto.id_producto }}')" 
+  {% if producto.stock_set.first.cantidad == 0 %}disabled style="opacity:0.6;cursor:not-allowed;"{% endif %}
+>
+  {% if producto.stock_set.first.cantidad == 0 %}
+    Sin stock
+  {% else %}
+    Agregar al carrito
+  {% endif %}
+</button>
           </div>
-        {% endfor %}
-      </div>
+       {% endfor %}
+  
+    </div>
     </section>
 
       <br>
@@ -439,186 +496,165 @@ document.addEventListener('DOMContentLoaded', async () => {
  
 
 
- // Obtener token CSRF
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
+ function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
         }
-        return cookieValue;
-    }
-    // Función para abrir el modal del carrito
-   function abrirModalCarrito() {
-    const cartModal = document.getElementById('cartModal');
-    if (cartModal) {
-        obtenerYMostrarCarrito(); // <-- Esto actualiza el contenido antes de mostrar
-        cartModal.classList.add('open');
-        cartModal.style.display = 'block'; // Si usas display:block para mostrar
-    }
-}
-
-// Cerrar el modal del carrito
-document.addEventListener('DOMContentLoaded', function() {
-    const closeButton = document.querySelector('.close-button');
-    const cartModal = document.getElementById('cartModal');
-    if (closeButton && cartModal) {
-        closeButton.addEventListener('click', function() {
-            cartModal.style.display = 'none';
-        });
-    }
-    // Abrir modal al hacer click en el icono del carrito
-   const cartIcon = document.querySelector('.cart-icon');
-if (cartIcon) {
-    cartIcon.addEventListener('click', abrirModalCarrito);
-}
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('cartItemsContainer').addEventListener('click', function(e) {
-    const btn = e.target;
-    const cartItem = btn.closest('.cart-item');
-    if (!cartItem) return;
-    const id = cartItem.getAttribute('data-id');
-    const cantidadElem = cartItem.querySelector('.item-cantidad');
-    let cantidad = Number(cantidadElem.textContent);
-
-    // Si tienes stock máximo, puedes agregarlo como data-stock en el backend y leerlo aquí
-    const stockMax = Number(cartItem.dataset.stock) || 99;
-
-    if (btn.classList.contains('aumentar')) {
-      if (cantidad < stockMax) {
-        fetch(`/carrito/aumentar/${id}/`, {method: 'POST', headers: {'X-CSRFToken': getCookie('csrftoken')}})
-          .then(() => obtenerYMostrarCarrito());
-      } else {
-        alert('No puedes agregar más de lo disponible en stock.');
       }
+      return cookieValue;
     }
-    if (btn.classList.contains('disminuir')) {
-      if (cantidad > 1) {
-        fetch(`/carrito/disminuir/${id}/`, {method: 'POST', headers: {'X-CSRFToken': getCookie('csrftoken')}})
-          .then(() => obtenerYMostrarCarrito());
-      } else {
-        // Si la cantidad es 1 y presionan menos, elimina el producto (pero NO cierres el modal)
-        fetch(`/carrito/quitar/${id}/`, {method: 'POST', headers: {'X-CSRFToken': getCookie('csrftoken')}})
-          .then(() => obtenerYMostrarCarrito());
-      }
-    }
-    if (btn.classList.contains('eliminar')) {
-      fetch(`/carrito/quitar/${id}/`, {method: 'POST', headers: {'X-CSRFToken': getCookie('csrftoken')}})
-        .then(() => obtenerYMostrarCarrito());
-    }
-  });
-});
-
-    // Función para actualizar el contador del carrito
-  function actualizarContadorCarrito(carrito) {
-    const cartCountBadge = document.getElementById('cart-count-badge');
-    let count = 0;
-    if (Array.isArray(carrito)) {
+    function abrirModalCarrito() {
+  const cartModal = document.getElementById('cartModal');
+  if (cartModal) {
+    obtenerYMostrarCarrito();
+    cartModal.style.display = 'block';
+    cartModal.classList.add('open');
+    document.body.classList.add('modal-abierto');
+  }
+}
+function cerrarModalCarrito() {
+  const cartModal = document.getElementById('cartModal');
+  if (cartModal) {
+    cartModal.style.display = 'none';
+    cartModal.classList.remove('open');
+    document.body.classList.remove('modal-abierto');
+  }
+}
+    function actualizarContadorCarrito(carrito) {
+      const cartCountBadge = document.getElementById('cart-count-badge');
+      let count = 0;
+      if (Array.isArray(carrito)) {
         carrito.forEach(item => count += Number(item.cantidad));
-    }
-    if (cartCountBadge) {
+      }
+      if (cartCountBadge) {
         cartCountBadge.textContent = count;
         cartCountBadge.style.display = count > 0 ? 'inline-block' : 'none';
+      }
     }
-}
-
-
-    // Función para agregar un producto al carrito
-function agregarAlCarrito(id_producto) {
-    const url = `/agregar-al-carrito/${id_producto}/`;
-    const csrftoken = getCookie('csrftoken');
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrftoken
-        }
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            obtenerYMostrarCarrito();
-            abrirModalCarrito();
-        } else {
-            alert('❌ Error: ' + data.error);
-        }
-    })
-    .catch(err => {
-        alert('Hubo un problema al agregar el producto. Revisa la consola.');
-    });
-}
-
-    // Función para obtener y mostrar el carrito
-   function obtenerYMostrarCarrito() {
-    fetch('/obtener-carrito/', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.carrito) {
-            const carrito = data.carrito;
-            actualizarCarritoModal(carrito);
-            actualizarContadorCarrito(carrito);
-        }
-    })
-    .catch(err => {
-        console.error('🚨 Error al obtener el carrito:', err);
-    });
-}
-    // Cargar el carrito al cargar la página
-    window.onload = function () {
-        obtenerYMostrarCarrito();
-    };
-
-  function actualizarCarritoModal(carrito) {
-    const cartItemsContainer = document.getElementById('cartItemsContainer');
-    cartItemsContainer.innerHTML = '';
-    if (!Array.isArray(carrito) || carrito.length === 0) {
+    function actualizarCarritoModal(carrito) {
+      const cartItemsContainer = document.getElementById('cartItemsContainer');
+      cartItemsContainer.innerHTML = '';
+      if (!Array.isArray(carrito) || carrito.length === 0) {
         cartItemsContainer.innerHTML = '<p class="empty-cart">El carrito está vacío.</p>';
-        document.getElementById('subtotal').textContent = '0.00';
+        document.getElementById('subtotal').textContent = '$0.00';
         return;
-    }
-    carrito.forEach(item => {
+      }
+      carrito.forEach(item => {
         const cartItem = document.createElement('div');
         cartItem.className = 'cart-item';
         cartItem.dataset.id = item.id;
-        cartItem.dataset.stock = item.stock || 99; // Asegúrate que tu backend envía 'stock'
-
+        cartItem.dataset.stock = item.stock || 99;
         cartItem.innerHTML = `
-            <img src="/static/images/${item.imagen}" alt="${item.nombre}" class="cart-item-image">
-            <div class="cart-item-details">
-                <h3>${item.nombre}</h3>
-                <p>Precio: $<span class="item-precio">${item.precio}</span></p>
-                <p>Cantidad: <span class="item-cantidad">${item.cantidad}</span></p>
-                <p>Subtotal: $<span class="item-subtotal">${Number(item.subtotal).toFixed(2)}</span></p>
-            </div>
-            <div class="cart-item-actions">
-                <button class="action-button aumentar">+</button>
-                <button class="action-button disminuir">-</button>
-                <button class="action-button eliminar">Eliminar</button>
-            </div>
+          <img src="/static/images/${item.imagen}" alt="${item.nombre}" class="cart-item-image">
+          <div class="cart-item-details">
+            <h3>${item.nombre}</h3>
+            <p>Precio: $${item.precio}</p>
+            <p>Cantidad: ${item.cantidad}</p>
+            <p>Subtotal: $${Number(item.subtotal).toFixed(2)}</p>
+          </div>
+          <div class="cart-item-actions">
+            <div class="acciones-cantidad">
+      <button class="action-button aumentar">+</button>
+      <button class="action-button disminuir">-</button>
+    </div>
+    <button class="action-button eliminar">Eliminar</button>
+          </div>
         `;
         cartItemsContainer.appendChild(cartItem);
-    });
-    // Actualizar total
-    const subtotalTotal = carrito.reduce((acc, item) => acc + Number(item.subtotal), 0);
-    const totalElement = document.getElementById('subtotal');
-    if (totalElement) {
-        totalElement.textContent = subtotalTotal.toFixed(2);
+      });
+      const subtotalTotal = carrito.reduce((acc, item) => acc + Number(item.subtotal), 0);
+      document.getElementById('subtotal').textContent = `$${subtotalTotal.toFixed(2)}`;
     }
-}
+    function obtenerYMostrarCarrito() {
+      fetch('/obtener-carrito/', {
+        method: 'GET',
+        headers: {'Content-Type': 'application/json'}
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.carrito) {
+          actualizarCarritoModal(data.carrito);
+          actualizarContadorCarrito(data.carrito);
+        }
+      })
+      .catch(err => {
+        console.error('🚨 Error al obtener el carrito:', err);
+      });
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      const cartIcon = document.querySelector('.cart-icon');
+      if (cartIcon) {
+        cartIcon.addEventListener('click', abrirModalCarrito);
+      }
+      const closeButton = document.querySelector('.close-button');
+      if (closeButton) {
+        closeButton.addEventListener('click', cerrarModalCarrito);
+      }
+      document.getElementById('cartItemsContainer').addEventListener('click', function(e) {
+        const btn = e.target;
+        const cartItem = btn.closest('.cart-item');
+        if (!cartItem) return;
+        const id = cartItem.getAttribute('data-id');
+        const cantidadElem = cartItem.querySelector('.cart-item-details p:nth-child(3)');
+        let cantidad = Number(cantidadElem ? cantidadElem.textContent.replace(/\D/g, '') : 1);
+        const stockMax = Number(cartItem.dataset.stock) || 99;
 
+        if (btn.classList.contains('aumentar')) {
+          if (cantidad < stockMax) {
+            fetch(`/carrito/aumentar/${id}/`, {method: 'POST', headers: {'X-CSRFToken': getCookie('csrftoken')}})
+              .then(() => obtenerYMostrarCarrito());
+          } else {
+            alert('No puedes agregar más de lo disponible en stock.');
+          }
+        }
+        if (btn.classList.contains('disminuir')) {
+          if (cantidad > 1) {
+            fetch(`/carrito/disminuir/${id}/`, {method: 'POST', headers: {'X-CSRFToken': getCookie('csrftoken')}})
+              .then(() => obtenerYMostrarCarrito());
+          } else {
+            fetch(`/carrito/quitar/${id}/`, {method: 'POST', headers: {'X-CSRFToken': getCookie('csrftoken')}})
+              .then(() => obtenerYMostrarCarrito());
+          }
+        }
+        if (btn.classList.contains('eliminar')) {
+          fetch(`/carrito/quitar/${id}/`, {method: 'POST', headers: {'X-CSRFToken': getCookie('csrftoken')}})
+            .then(() => obtenerYMostrarCarrito());
+        }
+      });
+      obtenerYMostrarCarrito();
+    });
+
+    // Agregar producto al carrito desde las tarjetas
+    function agregarAlCarrito(id_producto) {
+      const url = `/agregar-al-carrito/${id_producto}/`;
+      const csrftoken = getCookie('csrftoken');
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrftoken
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          obtenerYMostrarCarrito();
+          abrirModalCarrito();
+        } else {
+          alert('❌ Error: ' + data.error);
+        }
+      })
+      .catch(err => {
+        alert('Hubo un problema al agregar el producto. Revisa la consola.');
+      });
+    }
   </script>
 
   <!-- Scripts -->

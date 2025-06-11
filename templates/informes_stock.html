@@ -35,6 +35,11 @@
       display: flex;
       gap: 0.5rem;
     }
+    .stock-ok {
+      color: #21a121;
+      font-weight: bold;
+      font-size: 1em;
+    }
   </style>
 </head>
 <body>
@@ -76,10 +81,20 @@
                     <i class="fa fa-search" aria-hidden="true"></i>
                   </button>
                 </form>
-                <a href="{% url 'login' %}" class="ml-3" title="Iniciar sesión">
-          <i class="fa fa-user" aria-hidden="true" style="font-size: 1.5rem;"></i>
-      </a>
-      </header>
+                {% if request.session.usuario_id %}
+                  <a href="{% url 'perfil' %}" class="ml-3" title="Perfil">
+                    <i class="fa fa-user-circle" aria-hidden="true" style="font-size: 1.7rem;"></i>
+                  </a>
+                {% else %}
+                  <a href="{% url 'login' %}" class="ml-3" title="Iniciar sesión">
+                    <i class="fa fa-user" aria-hidden="true" style="font-size: 1.7rem;"></i>
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          </nav>
+        </div>
+    </header>
       <!-- Fin de Header -->
 <div class="container">
   <h2>Informe de Stock</h2>
@@ -96,21 +111,22 @@
       </thead>
       <tbody>
         {% for alerta in alertas %}
-          <tr class="
-            {% if alerta.stock_actual <= 5 %}rojo
-            {% endif %}
-          ">
+          <tr class="{% if alerta.stock_actual <= 15 %}rojo{% endif %}">
             <td>{{ alerta.producto.nombre }}</td>
-            <td>{{ alerta.stock_actual }}</td>
+            <td class="stock-actual" data-stock="{{ alerta.stock_actual }}">{{ alerta.stock_actual }}</td>
             <td>{{ alerta.fecha_alerta|date:"H:i - d/m/Y" }}</td>
             <td>{{ alerta.ubicacion_detalle }}</td>
             <td>
-              <form id="form-pedido-{{ alerta.id }}" class="form-pedido" data-id="{{ alerta.id }}">
-                <div class="input-group-number mb-2">
-                  <input type="number" min="1" placeholder="Cantidad" required class="form-control form-control-sm" />
-                </div>
-                <button type="submit" class="btn btn-pedir btn-sm">Pedir nuevo stock</button>
-              </form>
+              {% if alerta.stock_actual > 50 %}
+                <span class="stock-ok">Stock suficiente</span>
+              {% else %}
+                <form id="form-pedido-{{ alerta.id }}" class="form-pedido" data-id="{{ alerta.id }}">
+                  <div class="input-group-number mb-2">
+                    <input type="number" min="1" max="100" placeholder="Cantidad (máx 100)" required class="form-control form-control-sm" />
+                  </div>
+                  <button type="submit" class="btn btn-pedir btn-sm">Pedir nuevo stock</button>
+                </form>
+              {% endif %}
             </td>
           </tr>
         {% endfor %}
@@ -128,8 +144,20 @@
       const id = this.dataset.id;
       const input = this.querySelector('input');
       const cantidad = parseInt(input.value);
+      // Limitar máximo a 100
       if (!cantidad || cantidad <= 0) {
         alert("Por favor ingrese una cantidad válida.");
+        return;
+      }
+      if (cantidad > 100) {
+        alert("Demasiados productos (máximo 100 por solicitud).");
+        return;
+      }
+      // Verifica de nuevo en JS si el stock actual supera 50 (por si el HTML está desactualizado)
+      const fila = this.closest('tr');
+      const stockActual = parseInt(fila.querySelector('.stock-actual').dataset.stock);
+      if (stockActual > 50) {
+        alert("No puedes pedir stock si hay más de 50 productos disponibles.");
         return;
       }
       fetch(`/actualizar-stock/${id}/`, {

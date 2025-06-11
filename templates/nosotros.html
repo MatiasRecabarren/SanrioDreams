@@ -152,9 +152,6 @@
               <a class="dropdown-item" href="#lamparas">Lámparas</a>
             </div>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="contact.html">Contacta con Nosotros</a>
-          </li>
         </ul>
 
         <div class="quote_btn-container d-flex align-items-center ml-3">
@@ -164,9 +161,25 @@
               <i class="fa fa-search" aria-hidden="true"></i>
             </button>
           </form>
-          <a href="{% url 'login' %}" class="ml-3" title="Iniciar sesión">
-            <i class="fa fa-user" aria-hidden="true" style="font-size: 1.3rem;"></i>
-          </a>
+          {% if request.session.usuario_id %}
+  <a href="{% url 'perfil' %}" class="ml-3" title="Perfil">
+    <i class="fa fa-user-circle" aria-hidden="true" style="font-size: 1.7rem;"></i>
+  </a>
+{% else %}
+  <a href="{% url 'login' %}" class="ml-3" title="Iniciar sesión">
+    <i class="fa fa-user" aria-hidden="true" style="font-size: 1.7rem;"></i>
+  </a>
+{% endif %}
+<!-- FIN DE ICONO DE USUARIO -->
+
+{% with request.session.carrito|length as cart_count %}
+  <button type="button" class="ml-3 position-relative cart-icon" style="background: none; border: none; padding: 0; cursor: pointer;" title="Ver carrito">
+    <i class="fas fa-shopping-cart" style="font-size: 1.5rem; margin-left: -25px;color: black;"></i>
+    {% if cart_count > 0 %}
+      <span class="cart-count-badge" id="cart-count-badge">{{ cart_count }}</span>
+    {% endif %}
+  </button>
+{% endwith %}
           <a href="{% url 'carrito' %}" class="ml-3 position-relative" style="text-decoration: none; color: black;" title="Ver carrito">
             <i class="fas fa-shopping-cart" style="font-size: 1.5rem; margin-left: -25px;color: black;"></i>
             {% with request.session.carrito|length as cart_count %}
@@ -196,7 +209,7 @@
     </section>
 
     <section>
-      <img src="{% static 'images/hello_kitty_historia.jpg' %}" alt="Historia Hello Kitty" />
+      <img src="{% static 'images/hello_kitty_historia.png' %}" alt="Historia Hello Kitty" />
       <div class="texto">
         <h3>Historia de Hello Kitty</h3>
         <p>Creada en 1974 por Yuko Shimizu, Hello Kitty ha trascendido fronteras para convertirse en un símbolo de cultura pop y moda global. Con su diseño simple pero encantador, ha inspirado generaciones alrededor del mundo.</p>
@@ -204,7 +217,7 @@
     </section>
 
     <section>
-      <img src="{% static 'images/pandemia_2019.jpg' %}" alt="Pandemia 2019" />
+      <img src="{% static 'images/pandemia.png' %}" alt="Pandemia 2019" />
       <div class="texto">
         <h3>Crisis y Adaptación en 2019</h3>
         <p>La pandemia del COVID-19 impactó fuertemente a muchas industrias, incluyendo Sanrio. Para adaptarnos, implementamos diversas estrategias que nos permitieron seguir conectados con nuestros fans:</p>

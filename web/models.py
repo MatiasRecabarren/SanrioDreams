@@ -125,7 +125,7 @@ class Producto(models.Model):
 
 class Stock(models.Model):
     id_stock = models.AutoField(primary_key=True)
-    cantidad = models.DecimalField(max_digits=5, decimal_places=0)
+    cantidad = models.PositiveIntegerField()
     ubicacion_detalle = models.CharField(max_length=255)
     producto = models.ForeignKey(
         Producto,
@@ -142,7 +142,7 @@ class Stock(models.Model):
 
 
 class Carrito(models.Model):
-    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, null=True, blank=True)
     creado_en = models.DateTimeField(default=timezone.now)
     pedido_aprobado = models.BooleanField(default=False)
 

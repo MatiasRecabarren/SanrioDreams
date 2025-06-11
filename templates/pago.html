@@ -81,9 +81,8 @@
         <div class="datos-transferencia">
           <h5>Datos para Transferencia</h5>
           <ul class="mb-3">
-            <li><strong>Banco:</strong> Banco Ejemplo</li>
+            <li><strong>Banco:</strong> Banco Estado</li>
             <li><strong>Cuenta:</strong> 1234567890</li>
-            <li><strong>CLABE:</strong> 012345678901234567</li>
             <li><strong>Nombre:</strong> SanrioDreams</li>
             <li><strong>Correo:</strong> pagos@sanriodreams.com</li>
           </ul>
@@ -117,7 +116,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- PayPal SDK (después de jQuery/Bootstrap) -->
-<script src="https://www.paypal.com/sdk/js?client-id=sb&currency=MXN"></script>
+<script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     // Reinicia el botón PayPal al cambiar de pestaña
@@ -145,10 +144,14 @@
               tagline: false
             },
             createOrder: function(data, actions) {
+              // Usa un valor fijo si no tienes la variable total
+              var monto = '{{ total|default:20 }}'; // 20 USD por defecto para sandbox
+              if (!monto || isNaN(monto)) monto = '20';
               return actions.order.create({
                 purchase_units: [{
                   amount: {
-                    value: '{{ total }}' // O un número fijo para pruebas, ej: '12990'
+                    value: monto,
+                    currency_code: 'USD'
                   },
                   description: 'Compra en SanrioDreams'
                 }]

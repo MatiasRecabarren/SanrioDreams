@@ -2,3 +2,5 @@ cx_oracle
 django
 bcrypt
 djangorestframework
+oracledb
+django-cors-headers

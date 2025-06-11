@@ -1,1 +1,85 @@
-return render(request, 'pago.html', {'total': total})
+<!DOCTYPE html>
+<html>
+<head>
+  <title>¡Pago Exitoso! | SanrioDreams</title>
+  <meta http-equiv="refresh" content="4;url={% url 'index' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      background: #fff0f6;
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .ticket {
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 4px 24px rgba(255,182,193,0.18);
+      padding: 2.5rem 2rem;
+      max-width: 400px;
+      text-align: center;
+      border: 2px dashed #ffb6d5;
+      position: relative;
+    }
+    .ticket:before, .ticket:after {
+      content: '';
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background: #fff0f6;
+      border-radius: 50%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1;
+    }
+    .ticket:before {
+      top: -22px;
+      border-bottom: 2px dashed #ffb6d5;
+    }
+    .ticket:after {
+      bottom: -22px;
+      border-top: 2px dashed #ffb6d5;
+    }
+    .ticket .icon {
+      font-size: 3rem;
+      color: #ff69b4;
+      margin-bottom: 1rem;
+    }
+    .ticket h2 {
+      color: #b03a5b;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .ticket p {
+      color: #4a4a4a;
+      margin-bottom: 1.5rem;
+    }
+    .ticket .brand {
+      color: #ff69b4;
+      font-weight: 600;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+    }
+    .ticket .redirect {
+      color: #b03a5b;
+      font-size: 0.95rem;
+      margin-top: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="ticket">
+    <div class="icon">
+      <i class="fa fa-check-circle"></i>
+    </div>
+    <h2>¡Pago exitoso!</h2>
+    <p>Tu pago fue procesado correctamente.<br>
+    <span class="brand">SanrioDreams</span> agradece tu compra 💖</p>
+    <div class="redirect">
+      Serás redirigido al inicio en 4 segundos...
+    </div>
+  </div>
+</body>
+</html>

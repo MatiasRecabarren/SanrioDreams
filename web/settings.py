@@ -7,7 +7,7 @@ try:
     connection = oracledb.connect(
         user='C##SanrioDreams',
         password='12345',
-        dsn='localhost/orcl'
+        dsn='localhost/XE'
     )
     with connection.cursor() as cursor:
         cursor.execute("SELECT BANNER FROM V$VERSION")
@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'rest_framework',
+    'corsheaders',
     # Apps personalizadas
     'SitioWeb',
     'web',
@@ -50,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 # URLs y WSGI
@@ -77,7 +79,7 @@ TEMPLATES = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.oracle',
-        'NAME': 'orcl',  # Nombre del SID
+        'NAME': 'XE',  # Nombre del SID
         'USER': 'C##SanrioDreams',
         'PASSWORD': '12345',
         'HOST': 'localhost',
@@ -113,6 +115,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Redirecciones
 LOGIN_REDIRECT_URL = '/index'
 LOGOUT_REDIRECT_URL = '/'
+
+CORS_ALLOW_ALL_ORIGINS = True  # Solo para desarrollo
 
 # Mensajes con Bootstrap
 MESSAGE_TAGS = {

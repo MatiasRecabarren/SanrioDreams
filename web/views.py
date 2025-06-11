@@ -14,6 +14,10 @@ from django.contrib.auth import authenticate, login
 from .models import Producto, Stock, AlertaStock, Carrito
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import login as auth_login
+from .models import Producto
+from django.views.decorators.csrf import csrf_exempt
+
+
 
 
 
@@ -22,12 +26,12 @@ def productos(request):
     # ...tu lógica de categorías...
     cart_count = sum(item['cantidad'] for item in request.session.get('carrito', []))
     return render(request, 'productos.html', {
-        'peluches': peluches,
-        'botellas': botellas,
-        'termos': termos,
-        'pines': pines,
-        'llaveros': llaveros,
-        'lamparas': lamparas,
+        'peluches': peluches,  # type: ignore
+        'botellas': botellas, # type: ignore
+        'termos': termos, # type: ignore
+        'pines': pines, # type: ignore
+        'llaveros': llaveros, # type: ignore
+        'lamparas': lamparas, # type: ignore
         'cart_count': cart_count,
     })
 # Vistas generales
@@ -76,7 +80,7 @@ def carrito(request):
     carrito = request.session.get('carrito', [])
     total = sum(item['subtotal'] for item in carrito)
     return render(request, 'carrito.html', {'carrito': carrito, 'total': total})
-@login_required
+#@login_required
 def pago(request):
     # Puedes pasar el carrito y el total si lo necesitas en la página de pago
     carrito = request.session.get('carrito', [])
@@ -86,8 +90,22 @@ def pago_transferencia(request):
     mensaje = None
     if request.method == 'POST':
         comprobante = request.FILES.get('comprobante')
+        # Descontar stock
+        carrito = request.session.get('carrito', [])
+        for item in carrito:
+            try:
+                producto = Producto.objects.get(id_producto=item['id'])
+                producto.stock_set.first().cantidad -= item['cantidad']
+                producto.stock_set.first().save()
+            except Producto.DoesNotExist:
+                pass
+        # Limpiar el carrito
+        request.session['carrito'] = []
+        request.session.modified = True
         mensaje = "¡Pago recibido con éxito! Pronto confirmaremos tu pago."
+        return redirect('pago_exito')  # Esto es correcto
     return render(request, 'pago_transferencia.html', {'mensaje': mensaje})
+
 def pago_tarjeta(request):
     if request.method == 'POST':
         # Aquí puedes procesar los datos de la tarjeta (solo ejemplo, no real)
@@ -97,7 +115,25 @@ def pago_tarjeta(request):
         # Procesa el pago o muestra mensaje de éxito
         return render(request, 'pago_exito.html')
     return render(request, 'pago_tarjeta.html')
+
 def pago_exito(request):
+    carrito = request.session.get('carrito', [])
+    for item in carrito:
+        try:
+            producto = Producto.objects.get(id_producto=item['id'])
+            stock_obj = producto.stock_set.first()
+            if stock_obj:
+                # Convierte ambos a int para evitar problemas de tipo
+                cantidad_actual = int(stock_obj.cantidad)
+                cantidad_comprada = int(item['cantidad'])
+                nueva_cantidad = max(cantidad_actual - cantidad_comprada, 0)
+                stock_obj.cantidad = nueva_cantidad
+                stock_obj.save()
+        except Producto.DoesNotExist:
+            continue
+    # Vacía el carrito después del pago
+    request.session['carrito'] = []
+    request.session.modified = True
     return render(request, 'pago_exito.html')
 
 # Validaciones
@@ -212,19 +248,23 @@ def login(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
 
-        # Autenticar al usuario usando el backend personalizado
-        user = authenticate(request, email=email, password=password)
-
-        if user is not None:
-            # Iniciar sesión si las credenciales son válidas
-            login(request, user)
-            return redirect('index')  # Redirigir a la página principal después del login
-        else:
-            # Mostrar mensaje de error si las credenciales son inválidas
+        try:
+            user = Usuario.objects.get(correo=email)
+            # Verifica tanto para hash como para texto plano (por si tienes usuarios antiguos)
+            if check_password(password, user.contrasenna) or password == user.contrasenna:
+                # Guardas el usuario en la sesión
+                request.session['usuario_id'] = user.id_usuario
+                request.session['usuario_nombre'] = user.nombre
+                request.session['usuario_rol'] = user.rol
+                return redirect('index')
+            else:
+                messages.error(request, 'Correo electrónico o contraseña incorrectos.')
+        except Usuario.DoesNotExist:
             messages.error(request, 'Correo electrónico o contraseña incorrectos.')
-            return redirect('login')  # Redirigir de nuevo al formulario de login
 
-    return render(request, 'login.html')  # Renderizar el formulario de login
+        return redirect('login')
+
+    return render(request, 'login.html')
 
 import re
 
@@ -397,48 +437,24 @@ def obtener_carrito(request):
 
 def ver_carrito(request):
     carrito = request.session.get('carrito', [])
-    envio = request.GET.get('envio') == '1'
-    total_productos = sum(item['cantidad'] for item in carrito)
-
-    # Calcula el subtotal por producto y guárdalo en cada item
-    for item in carrito:
-        item['subtotal'] = item['precio'] * item['cantidad']
-
-    subtotal = sum(item['subtotal'] for item in carrito)
-    descuento = 0
     envio_costo = 0
-
-    if total_productos > 4:
-        descuento = subtotal * 0.05
-
-    if envio:
+    if request.GET.get('envio') == '1':
         envio_costo = 3000
 
-    total_final = subtotal - descuento + envio_costo
+    subtotal = sum(item['precio'] * item['cantidad'] for item in carrito)
+    cantidad_total = sum(item['cantidad'] for item in carrito)
+    descuento = 0
+    if cantidad_total >= 4:
+        descuento = subtotal * 0.10  # 10% de descuento
 
-    # Ticket por correo si hay más de 6 productos
-    if total_productos > 6 and request.user.is_authenticated:
-        mensaje = "Gracias por tu compra. Aquí está el resumen:\n"
-        for item in carrito:
-            mensaje += f"{item['nombre']} x {item['cantidad']} = ${item['subtotal']}\n"
-        mensaje += f"Subtotal: ${subtotal}\nDescuento: ${descuento}\nEnvío: ${envio_costo}\nTotal: ${total_final}"
-        
-        send_mail(
-            'Ticket de compra',
-            mensaje,
-            'tu_email@tudominio.com',
-            [request.user.email],  # Asegúrate de que el usuario esté autenticado
-            fail_silently=True
-        )
+    total = subtotal + envio_costo - descuento
 
     context = {
         'carrito': carrito,
-        'subtotal': subtotal,
-        'descuento': descuento,
         'envio_costo': envio_costo,
-        'total': total_final,
+        'descuento': descuento,
+        'total': total,
     }
-
     return render(request, 'carrito.html', context)
 
 
@@ -513,35 +529,109 @@ def informes_stock(request):
 
     return render(request, 'informes_stock.html', {'alertas': alertas})
 
-def actualizar_stock(request, alerta_id):
-    if request.method == 'POST':
+@csrf_exempt
+def actualizar_stock(request, id):
+    if request.method == "POST":
         try:
-            cantidad_a_agregar = int(request.POST.get('cantidad'))
-            alerta = AlertaStock.objects.get_or_create(producto_id=Producto.id_producto)
+            data = json.loads(request.body)
+            cantidad = int(data.get("cantidad", 0))
+            alerta = AlertaStock.objects.get(id=id)
+            # Actualiza el stock real
             stock = alerta.producto.stock_set.first()
-
             if stock:
-                stock.cantidad += cantidad_a_agregar
+                stock.cantidad += cantidad
                 stock.save()
                 alerta.stock_actual = stock.cantidad
                 alerta.save()
-                return JsonResponse({'success': True})
+                return JsonResponse({"success": True})
             else:
-                return JsonResponse({'success': False, 'error': 'No hay stock asociado.'})
+                return JsonResponse({"success": False, "error": "No hay stock asociado."})
         except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)})
-    return JsonResponse({'success': False, 'error': 'Método no permitido.'})
+            return JsonResponse({"success": False, "error": str(e)})
+    return JsonResponse({"success": False, "error": "Método no permitido"})
 
-@login_required
-def informes_stock(request):
-    # Verificar que el usuario tenga el rol de bodeguero
-    if request.user.rol != 'bodeguero':
-        return render(request, 'acceso_denegado.html', status=403)
-    
-    # Renderizar la plantilla informes_stock.html
-    return render(request, 'informes_stock.html')
-
-    #--------ADMIN---------------#
+def perfil(request):
+    if not request.session.get('usuario_id'):
+        return redirect('login')
+    if request.method == 'POST':
+        if 'cerrar' in request.POST:
+            request.session.flush()
+            messages.success(request, "Sesión cerrada correctamente.")
+            return redirect('login')
+        else:
+            return redirect('index')
+    return render(request, 'perfil.html')
 
 def admin_index(request):
-    return render(request, "admin.html")
+    productos = Producto.objects.all()
+    return render(request, "admin.html", {"productos": productos})
+
+def descontar_stock_y_limpiar_carrito(request):
+    carrito = request.session.get('carrito', {})
+    for producto_id, item in carrito.items():
+        try:
+            producto = Producto.objects.get(pk=producto_id)
+            producto.stock -= item['cantidad']
+            producto.save()
+        except Producto.DoesNotExist:
+            pass  # O maneja el error como prefieras
+    request.session['carrito'] = {}
+    request.session.modified = True
+
+@csrf_exempt
+def usuarios_api(request):
+    if request.method == "GET":
+        usuarios = list(Usuario.objects.all().values(
+            "id_usuario", "nombre", "apellido", "correo", "telefono", "rol", "direccion"
+        ))
+        return JsonResponse(usuarios, safe=False)
+    elif request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            if Usuario.objects.filter(id_usuario=data["id_usuario"]).exists():
+                return JsonResponse({"detail": "RUT ya registrado"}, status=400)
+            if Usuario.objects.filter(correo=data["correo"]).exists():
+                return JsonResponse({"detail": "Correo ya registrado"}, status=400)
+            usuario = Usuario(
+                id_usuario=data["id_usuario"],
+                nombre=data["nombre"],
+                apellido=data["apellido"],
+                correo=data["correo"],
+                contrasenna=data["contrasenna"],
+                direccion=data.get("direccion", ""),
+                telefono=str(data.get("telefono", "")),
+                rol=data.get("rol", "cliente"),
+            )
+            usuario.save()
+            return JsonResponse({"success": True})
+        except Exception as e:
+            return JsonResponse({"detail": str(e)}, status=400)
+    else:
+        return JsonResponse({"detail": "Método no permitido"}, status=405)
+@csrf_exempt
+def usuario_detalle_api(request, id_usuario):
+    try:
+        usuario = Usuario.objects.get(id_usuario=id_usuario)
+    except Usuario.DoesNotExist:
+        return JsonResponse({"detail": "Usuario no encontrado"}, status=404)
+
+    if request.method == "PATCH":
+        try:
+            data = json.loads(request.body)
+            usuario.nombre = data.get("nombre", usuario.nombre)
+            usuario.apellido = data.get("apellido", usuario.apellido)
+            usuario.correo = data.get("correo", usuario.correo)
+            usuario.direccion = data.get("direccion", usuario.direccion)
+            usuario.telefono = str(data.get("telefono", usuario.telefono))
+            usuario.rol = data.get("rol", usuario.rol)
+            if data.get("contrasenna"):
+                usuario.contrasenna = data["contrasenna"]
+            usuario.save()
+            return JsonResponse({"success": True})
+        except Exception as e:
+            return JsonResponse({"detail": str(e)}, status=400)
+    elif request.method == "DELETE":
+        usuario.delete()
+        return JsonResponse({"success": True})
+    else:
+        return JsonResponse({"detail": "Método no permitido"}, status=405)

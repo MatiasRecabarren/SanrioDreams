@@ -8,14 +8,13 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <!-- Mobile Metas -->
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <!-- Site Metas -->
   <meta name="keywords" content="" />
   <meta name="description" content="" />
   <meta name="author" content="" />
 
   <title>SanrioDreams - Tienda de artículos</title>
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/icofont @1.0.0/dist/css/icofont.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/icofont@1.0.0/dist/css/icofont.min.css">
   <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.9/slick.min.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.9/slick-theme.min.css" />
@@ -24,148 +23,192 @@
   <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" />
   <link href="{% static 'css/style.css' %}" rel="stylesheet" />
   <link href="{% static 'css/responsive.css' %}" rel="stylesheet" />
-
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    html { scroll-behavior: smooth; }
+    .cart-modal {
+  display: none;
+  position: fixed;
+  z-index: 99999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.45);
+}
+.cart-modal.open, .cart-modal[style*="block"] {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+.cart-modal-content {
+  background: #fff;
+  border-radius: 14px;
+  padding: 2em;
+  width: 100%;
+  max-width: 520px;
+  max-height: 95vh;
+  overflow-y: auto;
+  box-shadow: 0 0 20px #0002;
+  position: relative;
+  pointer-events: auto;
+}
+.close-button {
+  position: absolute;
+  right: 1em;
+  top: 1em;
+  background: none;
+  border: none;
+  font-size: 2em;
+  color: #444;
+  cursor: pointer;
+}
+.cart-items .cart-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  border-bottom: 1px solid #eee;
+  padding: 1em 0;
+  background: #fff;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  position: relative;
+}
+.cart-item-image {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  border-radius: 7px;
+  border: 1px solid #ddd;
+  background: #fafafa;
+}
+.cart-item-details {
+  flex: 1;
+  min-width: 0;
+}
+.cart-item-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 7px;
+  min-width: 80px;
+}
+.cart-item-actions .acciones-cantidad {
+  display: flex;
+  flex-direction: row;
+  gap: 7px;
+  margin-bottom: 5px;
+}
+.cart-item-actions button {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  font-size: 1.2em;
+  border-radius: 6px;
+  background: #ff69b4;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+.cart-item-actions button.eliminar {
+  background: #eee;
+  color: #b00;
+  width: auto;
+  padding: 5px 10px;
+  margin-top: 5px;
+}
+.cart-total { font-weight: bold; text-align: right; margin: 1em 0 0.5em 0;}
+.view-cart-button { display: block; width: 100%; background: #ff69b4; color: #fff; border: none; border-radius: 6px; padding: 13px 0; margin-top: 1em; font-weight: 700; letter-spacing: 1px; font-size: 1.1em; text-align: center;}
+.cart-count-badge { position: absolute; top: -5px; right: -10px; background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem;}
+body.modal-abierto {
+  overflow: hidden;
+  pointer-events: none;
+}
+.cart-modal.open, .cart-modal[style*="block"] {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+.cart-modal-content {
+  pointer-events: auto;
+}
+  </style>
 </head>
-
 <body>
-
-
   <div class="main_body_content">
-
     <div class="hero_area">
-
       <!-- Header Inicio -->
-<header class="header_section">
-  <div class="container-fluid">
-    <nav class="navbar navbar-expand-lg custom_nav-container">
-      <a class="navbar-brand" href="index.html">
-        SanrioDreams 
-      </a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse"
-        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-        aria-expanded="false" aria-label="Toggle navigation">
-        <span class=""></span>
-      </button>
-
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav ml-auto d-flex align-items-center">
-          <li class="nav-item active">
-            <a class="nav-link" href="{% url 'index' %}">Inicio <span class="sr-only">(current)</span></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'nosotros' %}">Sobre Nosotros</a>
-          </li>
-          
-        {% if user.is_authenticated and user.rol == 'cliente' %}
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'informes_stock' %}">Informes de Stock</a>
-          </li>
-        {% endif %}
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProductos" role="button"
-              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Productos
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdownProductos">
-              <a class="dropdown-item" href="{% url 'productos' %}">Todos los productos</a>
-              <a class="dropdown-item" href="{% url 'productos' %}#peluches">Peluches</a>
-              <a class="dropdown-item" href="{% url 'productos' %}#botellas">Botellas</a>
-              <a class="dropdown-item" href="{% url 'productos' %}#termos">Termos</a>
-              <a class="dropdown-item" href="{% url 'productos' %}#pines">Pines</a>
-              <a class="dropdown-item" href="{% url 'productos' %}#llaveros">Llaveros</a>
-              <a class="dropdown-item" href="{% url 'productos' %}#lamparas">Lámparas</a>
-            </div>
-          </li>
-          <ul class="navbar-nav ml-auto d-flex align-items-center">
-  <li class="nav-item active">
-    <a class="nav-link" href="{% url 'index' %}">Inicio <span class="sr-only">(current)</span></a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="{% url 'nosotros' %}">Sobre Nosotros</a>
-  </li>
-  <!-- ...otros items... -->
-  <li class="nav-item dropdown">
-    <!-- ...productos... -->
-  </li>
-
-  <!-- Aquí pega el bloque de registro/login/perfil -->
-  <li class="nav-item">
-    <a class="nav-link" href="{% url 'login' %}">Iniciar sesión</a>
-  </li>
-  {% if user.is_authenticated %}
-    <li class="nav-item">
-      <a class="nav-link" href="{% url 'perfil' %}">
-        <i class="fa fa-user-circle"></i> Perfil
-      </a>
-    </li>
-  {% endif %}
-</ul>
-        </ul>
-
-        <div class="quote_btn-container d-flex align-items-center ml-3">
-          <form class="form-inline d-flex" id="searchFormIndex">
-            <input type="text" id="searchInputIndex" class="form-control form-control-sm mr-2" placeholder="Buscar..." />
-            <button class="btn btn-sm nav_search-btn" type="submit">
-              <i class="fa fa-search" aria-hidden="true"></i>
+      <header class="header_section">
+        <div class="container-fluid">
+          <nav class="navbar navbar-expand-lg custom_nav-container">
+            <a class="navbar-brand" href="{% url 'index' %}"> SanrioDreams </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse"
+              data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+              aria-expanded="false" aria-label="Toggle navigation">
+              <span class=""></span>
             </button>
-          </form>
-          {% if user.is_authenticated %}
-            <span class="ml-3 text-success" title="Ya has iniciado sesión">
-              <i class="fa fa-check-circle" aria-hidden="true" style="font-size: 1.3rem;"></i>
-              <small>Ya iniciaste sesión</small>
-            </span>
-          {% else %}
-            <a href="{% url 'login' %}" class="ml-3" title="Iniciar sesión">
-              <i class="fa fa-user" aria-hidden="true" style="font-size: 1.3rem;"></i>
-            </a>
-          {% endif %}
-                <button type="button" class="ml-3 position-relative cart-icon" style="background: none; border: none; padding: 0; cursor: pointer;" title="Ver carrito">
-                <i class="fas fa-shopping-cart" style="font-size: 1.5rem; margin-left: -25px;color: black;"></i>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav ml-auto d-flex align-items-center">
+                <li class="nav-item active"><a class="nav-link" href="{% url 'index' %}">Inicio <span class="sr-only">(current)</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'nosotros' %}">Sobre Nosotros</a></li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProductos" role="button"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Productos</a>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdownProductos">
+                    <a class="dropdown-item" href="{% url 'productos' %}">Todos los productos</a>
+                    <a class="dropdown-item" href="{% url 'productos' %}#peluches">Peluches</a>
+                    <a class="dropdown-item" href="{% url 'productos' %}#botellas">Botellas</a>
+                    <a class="dropdown-item" href="{% url 'productos' %}#termos">Termos</a>
+                    <a class="dropdown-item" href="{% url 'productos' %}#pines">Pines</a>
+                    <a class="dropdown-item" href="{% url 'productos' %}#llaveros">Llaveros</a>
+                    <a class="dropdown-item" href="{% url 'productos' %}#lamparas">Lámparas</a>
+                  </div>
+                </li>
+              </ul>
+              <div class="quote_btn-container d-flex align-items-center ml-3">
+                <form class="form-inline d-flex" id="searchFormIndex">
+                  <input type="text" id="searchInputIndex" class="form-control form-control-sm mr-2" placeholder="Buscar..." />
+                  <button class="btn btn-sm nav_search-btn" type="submit">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                  </button>
+                </form>
+                <!-- ICONO DE USUARIO CON LÓGICA DE SESIÓN -->
+                {% if request.session.usuario_id %}
+                  <a href="{% url 'perfil' %}" class="ml-3" title="Perfil">
+                    <i class="fa fa-user-circle" aria-hidden="true" style="font-size: 1.7rem;"></i>
+                  </a>
+                {% else %}
+                  <a href="{% url 'login' %}" class="ml-3" title="Iniciar sesión">
+                    <i class="fa fa-user" aria-hidden="true" style="font-size: 1.7rem;"></i>
+                  </a>
+                {% endif %}
+                <!-- CARRITO -->
                 {% with request.session.carrito|length as cart_count %}
+                  <button type="button" class="ml-3 position-relative cart-icon" style="background: none; border: none; padding: 0; cursor: pointer;" title="Ver carrito">
+                    <i class="fas fa-shopping-cart" style="font-size: 1.5rem; margin-left: -25px;color: black;"></i>
                     {% if cart_count > 0 %}
-                        <span class="cart-count-badge" id="cart-count-badge" style="position: absolute; top: -5px; right: -10px; background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem;">
-                            {{ cart_count }}
-                        </span>
+                      <span class="cart-count-badge" id="cart-count-badge">{{ cart_count }}</span>
                     {% endif %}
+                  </button>
                 {% endwith %}
-              </button>
-
-<!-- Modal del carrito -->
-<div id="cartModal" class="cart-modal">
-    <div class="cart-modal-content">
-        <h2>TU CARRITO</h2>
-        <button class="close-button">&times;</button>
-        <div class="cart-items">
-            {% if request.session.carrito %}
-                {% for item in request.session.carrito %}
-                    <div class="cart-item">
-                        <img src="{{ item.imagen }}" alt="{{ item.nombre }}" class="cart-item-image">
-                        <div class="cart-item-details">
-                            <h3>{{ item.nombre }}</h3>
-                            <p>Precio: ${{ item.precio }}</p>
-                            <p>Cantidad: {{ item.cantidad }}</p>
-                        </div>
-                        <div class="cart-item-actions">
-                            <button class="action-button aumentar" data-nombre="{{ item.nombre }}">+</button>
-                            <button class="action-button disminuir" data-nombre="{{ item.nombre }}">-</button>
-                            <button class="action-button eliminar" data-nombre="{{ item.nombre }}">Eliminar</button>
-                        </div>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <p class="empty-cart">El carrito está vacío.</p>
-            {% endif %}
+              </div>
+            </div>
+          </nav>
         </div>
-        <div class="cart-total">
-            <p>SUBTOTAL: <span id="subtotal">$0.00</span></p>
+        <!-- Modal del Carrito -->
+        <div id="cartModal" class="cart-modal">
+          <div class="cart-modal-content">
+            <h2>TU CARRITO</h2>
+            <button class="close-button">&times;</button>
+            <div class="cart-items" id="cartItemsContainer"></div>
+            <div class="cart-total"><p>SUBTOTAL: <span id="subtotal">$0.00</span></p></div>
+            <a href="{% url 'carrito' %}" class="view-cart-button">VER CARRITO</a>
+          </div>
         </div>
-        <a href="{% url 'carrito' %}" class="view-cart-button">VER CARRITO</a>
-    </div>
-</div>
-
-
-  
-</header>
+      </header>
 <!-- Fin de Header -->
 
 
@@ -389,36 +432,32 @@
     </div>
 
     <!-- Contenedor del carrusel -->
-    <div class="d-flex align-items-center">
+    <div class="d-flex align-items-center justify-content-center">
       <!-- Flecha izquierda -->
       <a class="btn btn-dark btn-lg rounded-circle mx-2" href="#productCarousel" role="button" data-slide="prev">
         <i class="fa fa-chevron-left"></i>
       </a>
 
-      <!-- Carrusel -->
-      <div id="productCarousel" class="carousel slide w-100" data-ride="carousel">
+      <!-- Carrusel (NOTA: quité d-flex, solo usa la clase personalizada) -->
+      <div id="productCarousel" class="carousel slide productos-mas-vendidos" data-ride="carousel" style="width: 100%;">
         <div class="carousel-inner">
-
           <!-- Slide 1 -->
-             <div class="carousel-item active">
-                <div class="row justify-content-center">
-                  <div class="col-md-4">
-                    <div class="box text-center producto" data-precio="15000">
-                      <div class="img-box">
-                        <img src="{% static 'images/Peluche_HelloKitty.png' %}" alt="" class="img-fluid">
-                      </div>
-                      <div class="detail-box mt-3">
-                        <h6>Peluche <span>Hello Kitty</span></h6>
-                        <h5 class="precio-producto">$12.990 CLP</h5>
-                        <a href="{% url 'productos' %}" class="btn-ver-producto">Ver producto</a>
-                      </div>
-                    </div>
+          <div class="carousel-item active">
+            <div class="row justify-content-center">
+              <div class="col-md-4">
+                <div class="box text-center producto" data-precio="15000">
+                  <div class="img-box">
+                    <img src="{% static 'images/Peluche_HelloKitty.png' %}" alt="" class="img-fluid">
+                  </div>
+                  <div class="detail-box mt-3">
+                    <h6>Peluche <span>Hello Kitty</span></h6>
+                    <h5 class="precio-producto">$12.990 CLP</h5>
+                    <a href="{% url 'productos' %}" class="btn-ver-producto">Ver producto</a>
                   </div>
                 </div>
               </div>
-
               <div class="col-md-4">
-                <div class="box text-center">
+                <div class="box text-center producto" data-precio="13990">
                   <div class="img-box">
                     <img src="{% static 'images/Peluche_Kuromi.png' %}" alt="" class="img-fluid">
                   </div>
@@ -429,26 +468,25 @@
                   </div>
                 </div>
               </div>
-
               <div class="col-md-4">
-                <div class="box text-center">
+                <div class="box text-center producto" data-precio="12990">
                   <div class="img-box">
                     <img src="{% static 'images/Peluche_MyMelody.png' %}" alt="" class="img-fluid">
                   </div>
                   <div class="detail-box mt-3">
                     <h6>Peluche <span>My Melody</span></h6>
                     <h5 class="precio-producto">$12.990 CLP</h5>
-                   <a href="{% url 'productos' %}" class="btn-ver-producto">Ver producto</a>
+                    <a href="{% url 'productos' %}" class="btn-ver-producto">Ver producto</a>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-
+          <!-- Slide 2 (ejemplo, reemplaza con tus productos) -->
           <div class="carousel-item">
             <div class="row justify-content-center">
               <div class="col-md-4">
-                <div class="box text-center">
+                <div class="box text-center producto" data-precio="13490">
                   <div class="img-box">
                     <img src="{% static 'images/Peluche_Pompompurin.png' %}" alt="" class="img-fluid">
                   </div>
@@ -460,19 +498,19 @@
                 </div>
               </div>
               <div class="col-md-4">
-                <div class="box text-center">
+                <div class="box text-center producto" data-precio="9990">
                   <div class="img-box">
                     <img src="{% static 'images/Peluche_Cinnamoroll.png' %}" alt="" class="img-fluid">
                   </div>
                   <div class="detail-box mt-3">
                     <h6>Peluche <span>Cinnamoroll</span></h6>
-                    <h5> class="precio-producto"$xx.xxx CLP</h5>
+                    <h5 class="precio-producto">$9.990 CLP</h5>
                     <a href="{% url 'productos' %}" class="btn-ver-producto">Ver producto</a>
                   </div>
                 </div>
               </div>
               <div class="col-md-4">
-                <div class="box text-center">
+                <div class="box text-center producto" data-precio="12990">
                   <div class="img-box">
                     <img src="{% static 'images/Peluche_Pochacco.png' %}" alt="" class="img-fluid">
                   </div>
@@ -485,7 +523,7 @@
               </div>
             </div>
           </div>
-
+          <!-- Más slides si quieres -->
         </div>
       </div>
 
@@ -814,67 +852,140 @@
 </script>
 
 <script>
-  // Función para actualizar el badge del carrito
-  function actualizarBadge(cart_count, subtotal) {
-    let badge = document.getElementById('cart-count-badge');
-    if (cart_count > 0) {
-      if (!badge) {
-        // Crear badge si no existe
-        badge = document.createElement('span');
-        badge.id = 'cart-count-badge';
-        badge.className = 'cart-count-badge';
-        badge.style = "position: absolute; top: -5px; right: -10px; background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem;";
-        document.querySelector('.cart-icon').appendChild(badge);
-      }
-      badge.textContent = cart_count;
-    } else if (badge) {
-      // Si carrito vacío, quitar badge
-      badge.remove();
-    }
-
-    // Actualizar subtotal en el modal
-    const subtotalSpan = document.getElementById('subtotal');
-    if (subtotalSpan) {
-      subtotalSpan.textContent = `$${subtotal.toFixed(2)}`;
-    }
-  }
-
-  // Ejemplo de función para agregar al carrito y actualizar badge
-  function agregarAlCarrito(nombre, precio) {
-    fetch('/ruta/agregar_al_carrito/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': getCookie('csrftoken')  // Necesitas esta función para CSRF token si usas Django
-      },
-      body: JSON.stringify({nombre: nombre, precio: precio})
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        actualizarBadge(data.cart_count, data.subtotal);
-      } else {
-        alert('Error al agregar al carrito: ' + (data.error || 'Error desconocido'));
-      }
-    });
-  }
-
-  // Función para obtener la cookie csrf token (útil para Django POST AJAX)
   function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        // ¿Esta cookie comienza con el nombre que buscamos?
-        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
         }
       }
+      return cookieValue;
     }
-    return cookieValue;
+    function abrirModalCarrito() {
+  const cartModal = document.getElementById('cartModal');
+  if (cartModal) {
+    obtenerYMostrarCarrito();
+    cartModal.style.display = 'block';
+    cartModal.classList.add('open');
+    document.body.classList.add('modal-abierto');
   }
+}
+function cerrarModalCarrito() {
+  const cartModal = document.getElementById('cartModal');
+  if (cartModal) {
+    cartModal.style.display = 'none';
+    cartModal.classList.remove('open');
+    document.body.classList.remove('modal-abierto');
+  }
+}
+    function actualizarContadorCarrito(carrito) {
+      const cartCountBadge = document.getElementById('cart-count-badge');
+      let count = 0;
+      if (Array.isArray(carrito)) {
+        carrito.forEach(item => count += Number(item.cantidad));
+      }
+      if (cartCountBadge) {
+        cartCountBadge.textContent = count;
+        cartCountBadge.style.display = count > 0 ? 'inline-block' : 'none';
+      }
+    }
+    function actualizarCarritoModal(carrito) {
+      const cartItemsContainer = document.getElementById('cartItemsContainer');
+      cartItemsContainer.innerHTML = '';
+      if (!Array.isArray(carrito) || carrito.length === 0) {
+        cartItemsContainer.innerHTML = '<p class="empty-cart">El carrito está vacío.</p>';
+        document.getElementById('subtotal').textContent = '$0.00';
+        return;
+      }
+      carrito.forEach(item => {
+        const cartItem = document.createElement('div');
+        cartItem.className = 'cart-item';
+        cartItem.dataset.id = item.id;
+        cartItem.dataset.stock = item.stock || 99;
+        cartItem.innerHTML = `
+          <img src="/static/images/${item.imagen}" alt="${item.nombre}" class="cart-item-image">
+          <div class="cart-item-details">
+            <h3>${item.nombre}</h3>
+            <p>Precio: $${item.precio}</p>
+            <p>Cantidad: ${item.cantidad}</p>
+            <p>Subtotal: $${Number(item.subtotal).toFixed(2)}</p>
+          </div>
+          <div class="cart-item-actions">
+            <div class="acciones-cantidad">
+              <button class="action-button aumentar">+</button>
+              <button class="action-button disminuir">-</button>
+            </div>
+            <button class="action-button eliminar">Eliminar</button>
+          </div>
+        `;
+        cartItemsContainer.appendChild(cartItem);
+      });
+      const subtotalTotal = carrito.reduce((acc, item) => acc + Number(item.subtotal), 0);
+      document.getElementById('subtotal').textContent = `$${subtotalTotal.toFixed(2)}`;
+    }
+    function obtenerYMostrarCarrito() {
+      fetch('/obtener-carrito/', {
+        method: 'GET',
+        headers: {'Content-Type': 'application/json'}
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.carrito) {
+          actualizarCarritoModal(data.carrito);
+          actualizarContadorCarrito(data.carrito);
+        }
+      })
+      .catch(err => {
+        console.error('🚨 Error al obtener el carrito:', err);
+      });
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      const cartIcon = document.querySelector('.cart-icon');
+      if (cartIcon) {
+        cartIcon.addEventListener('click', abrirModalCarrito);
+      }
+      const closeButton = document.querySelector('.close-button');
+      if (closeButton) {
+        closeButton.addEventListener('click', cerrarModalCarrito);
+      }
+      document.getElementById('cartItemsContainer').addEventListener('click', function(e) {
+        const btn = e.target;
+        const cartItem = btn.closest('.cart-item');
+        if (!cartItem) return;
+        const id = cartItem.getAttribute('data-id');
+        const cantidadElem = cartItem.querySelector('.cart-item-details p:nth-child(3)');
+        let cantidad = Number(cantidadElem ? cantidadElem.textContent.replace(/\D/g, '') : 1);
+        const stockMax = Number(cartItem.dataset.stock) || 99;
+
+        if (btn.classList.contains('aumentar')) {
+          if (cantidad < stockMax) {
+            fetch(`/carrito/aumentar/${id}/`, {method: 'POST', headers: {'X-CSRFToken': getCookie('csrftoken')}})
+              .then(() => obtenerYMostrarCarrito());
+          } else {
+            alert('No puedes agregar más de lo disponible en stock.');
+          }
+        }
+        if (btn.classList.contains('disminuir')) {
+          if (cantidad > 1) {
+            fetch(`/carrito/disminuir/${id}/`, {method: 'POST', headers: {'X-CSRFToken': getCookie('csrftoken')}})
+              .then(() => obtenerYMostrarCarrito());
+          } else {
+            fetch(`/carrito/quitar/${id}/`, {method: 'POST', headers: {'X-CSRFToken': getCookie('csrftoken')}})
+              .then(() => obtenerYMostrarCarrito());
+          }
+        }
+        if (btn.classList.contains('eliminar')) {
+          fetch(`/carrito/quitar/${id}/`, {method: 'POST', headers: {'X-CSRFToken': getCookie('csrftoken')}})
+            .then(() => obtenerYMostrarCarrito());
+        }
+      });
+      obtenerYMostrarCarrito();
+    });
 </script>
 
 
