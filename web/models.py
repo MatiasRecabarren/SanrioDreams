@@ -117,7 +117,7 @@ class Producto(models.Model):
 
     class Meta:
         db_table = 'PRODUCTO'
-        managed = False
+        managed = True
 
     def __str__(self):
         return self.nombre
