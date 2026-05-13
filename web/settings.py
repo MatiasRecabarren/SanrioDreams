@@ -67,11 +67,10 @@ TEMPLATES = [
 # Base de datos (usar PostgreSQL en producción)
 DATABASES = {
     'default': dj_database_url.config(
-        default='sqlite:///db.sqlite3', 
+        default=os.environ.get('DATABASE_URL'),
         conn_max_age=600
     )
 }
-
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Validación de contraseñas
