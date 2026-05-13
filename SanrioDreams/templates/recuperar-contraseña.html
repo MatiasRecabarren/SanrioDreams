@@ -1,0 +1,17 @@
+<!-- templates/emails/restablecer_email.html -->
+
+<div style="font-family: 'Poppins', sans-serif; background-color: #fff0f5; padding: 20px;">
+  <h2 style="color: #ff69b4;">Hola {{ nombre }},</h2>
+  <p>Hemos recibido una solicitud para restablecer tu contraseña.</p>
+
+  <p>Haz clic en el botón de abajo para crear una nueva contraseña:</p>
+
+  <a href="{{ reset_url }}" style="display: inline-block; background-color: #ff69b4; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; margin: 20px 0;">
+    Restablecer Contraseña
+  </a>
+
+  <p style="color: #555;">Este enlace expirará en 1 hora.</p>
+  <p style="margin-top: 20px; font-size: 0.9rem; color: #aaa;">Si no solicitaste este cambio, ignora este mensaje.</p>
+  <hr style="border-color: #ddd;" />
+  <p style="font-size: 0.8rem; color: #888;">© SanrioDreams | Todos los derechos reservados</p>
+</div>

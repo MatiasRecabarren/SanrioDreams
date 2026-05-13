@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Perfil - SanrioDreams</title>
+  <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+  <style>
+    .perfil-container {
+      max-width: 400px;
+      margin: 120px auto;
+      padding: 30px;
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .perfil-container h2 {
+      color: #ff69b4;
+    }
+    .btn-cerrar {
+      background: #ff69b4;
+      border: none;
+      color: white;
+      margin-right: 10px;
+    }
+    .btn-continuar {
+      background: #ccc;
+      border: none;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="perfil-container">
+    <h2>¿Quieres cerrar sesión?</h2>
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit" name="cerrar" class="btn btn-cerrar">Sí, cerrar sesión</button>
+      <button type="submit" name="continuar" class="btn btn-continuar">No, deseo continuar</button>
+    </form>
+  </div>
+</body>
+</html>

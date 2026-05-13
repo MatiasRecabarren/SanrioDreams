@@ -1,0 +1,5 @@
+django
+bcrypt
+djangorestframework
+oracledb
+django-cors-headers
