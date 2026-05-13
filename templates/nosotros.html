@@ -1,0 +1,306 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sobre Nosotros - SanrioDreams</title>
+  <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.9/slick.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.9/slick-theme.min.css" />
+  <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'css/slick-theme.css' %}" />
+  <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" />
+  <link href="{% static 'css/style.css' %}" rel="stylesheet" />
+  <link href="{% static 'css/responsive.css' %}" rel="stylesheet" />
+  <style>
+    /* Contenedor principal */
+    main.nosotros {
+      max-width: 900px;
+      margin: 3rem auto 5rem;
+      padding: 0 1.2rem;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #4b3f72; /* morado suave */
+      background: #fff0f6; /* rosa pastel muy suave */
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(203, 113, 151, 0.15);
+    }
+
+    /* Título principal */
+    main.nosotros h2 {
+      font-size: 3rem;
+      color: #d6336c; /* rosa vibrante */
+      font-weight: 700;
+      margin-bottom: 2rem;
+      text-align: center;
+      letter-spacing: 2px;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      text-shadow: 1px 1px 2px #f8bbd0;
+    }
+
+    /* Secciones con imagen a la izquierda */
+    main.nosotros section {
+      display: flex;
+      align-items: center;
+      gap: 1.6rem;
+      margin-bottom: 2.8rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px dotted #d6336c44;
+    }
+
+    /* Imagen con bordes redondeados y sombra */
+    main.nosotros section img {
+      width: 180px;
+      height: 180px;
+      border-radius: 20px;
+      object-fit: cover;
+      box-shadow: 0 4px 10px rgba(214, 51, 108, 0.3);
+      flex-shrink: 0;
+    }
+
+    /* Texto dentro de la sección */
+    main.nosotros section div.texto {
+      flex: 1;
+      font-size: 1.1rem;
+      line-height: 1.5;
+      color: #5a4e78;
+    }
+
+    /* Subtítulos dentro de la sección */
+    main.nosotros section div.texto h3 {
+      margin-top: 0;
+      margin-bottom: 0.8rem;
+      font-weight: 600;
+      color: #b32454;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* Lista kawaii con iconos */
+    main.nosotros ul.kawaii-list {
+      padding-left: 1.3rem;
+      list-style: none;
+      margin-top: 1rem;
+      color: #a23662;
+      font-weight: 600;
+    }
+
+    main.nosotros ul.kawaii-list li {
+      position: relative;
+      margin-bottom: 0.7rem;
+      padding-left: 28px;
+      font-size: 1.1rem;
+    }
+
+    /* Icono kawaii de estrella al inicio de cada li */
+    main.nosotros ul.kawaii-list li::before {
+      content: "⭐";
+      position: absolute;
+      left: 0;
+      top: 0;
+      font-size: 1.2rem;
+      color: #ff69b4; /* rosa fuerte */
+      text-shadow: 0 0 2px #ffa6c9;
+    }
+
+    /* Responsive: apila las secciones en móvil */
+    @media (max-width: 700px) {
+      main.nosotros section {
+        flex-direction: column;
+        text-align: center;
+      }
+      main.nosotros section img {
+        margin-bottom: 1rem;
+        width: 140px;
+        height: 140px;
+      }
+      main.nosotros section div.texto {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header Inicio -->
+      <header class="header_section">
+  <div class="container-fluid">
+    <nav class="navbar navbar-expand-lg custom_nav-container">
+      <a class="navbar-brand" href="index.html">
+        SanrioDreams 
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse"
+        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class=""></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto d-flex align-items-center">
+          <li class="nav-item active">
+            <a class="nav-link" href="{% url 'index' %}">Inicio <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProductos" role="button"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Productos
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownProductos">
+              <a class="dropdown-item" href="#peluches">Peluches</a>
+              <a class="dropdown-item" href="#botellas">Botellas</a>
+              <a class="dropdown-item" href="#termos">Termos</a>
+              <a class="dropdown-item" href="#pines">Pines</a>
+              <a class="dropdown-item" href="#llaveros">Llaveros</a>
+              <a class="dropdown-item" href="#lamparas">Lámparas</a>
+            </div>
+          </li>
+        </ul>
+
+        <div class="quote_btn-container d-flex align-items-center ml-3">
+          <form class="form-inline d-flex" id="searchFormIndex">
+            <input type="text" id="searchInputIndex" class="form-control form-control-sm mr-2" placeholder="Buscar..." />
+            <button class="btn btn-sm nav_search-btn" type="submit">
+              <i class="fa fa-search" aria-hidden="true"></i>
+            </button>
+          </form>
+          {% if request.session.usuario_id %}
+  <a href="{% url 'perfil' %}" class="ml-3" title="Perfil">
+    <i class="fa fa-user-circle" aria-hidden="true" style="font-size: 1.7rem;"></i>
+  </a>
+{% else %}
+  <a href="{% url 'login' %}" class="ml-3" title="Iniciar sesión">
+    <i class="fa fa-user" aria-hidden="true" style="font-size: 1.7rem;"></i>
+  </a>
+{% endif %}
+<!-- FIN DE ICONO DE USUARIO -->
+
+{% with request.session.carrito|length as cart_count %}
+  <button type="button" class="ml-3 position-relative cart-icon" style="background: none; border: none; padding: 0; cursor: pointer;" title="Ver carrito">
+    <i class="fas fa-shopping-cart" style="font-size: 1.5rem; margin-left: -25px;color: black;"></i>
+    {% if cart_count > 0 %}
+      <span class="cart-count-badge" id="cart-count-badge">{{ cart_count }}</span>
+    {% endif %}
+  </button>
+{% endwith %}
+          <a href="{% url 'carrito' %}" class="ml-3 position-relative" style="text-decoration: none; color: black;" title="Ver carrito">
+            <i class="fas fa-shopping-cart" style="font-size: 1.5rem; margin-left: -25px;color: black;"></i>
+            {% with request.session.carrito|length as cart_count %}
+              {% if cart_count > 0 %}
+                <span style="position: absolute; top: -5px; right: -10px; background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem;">
+                  {{ cart_count }}
+                </span>
+              {% endif %}
+            {% endwith %}
+          </a>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+      <!-- Fin de Header -->  
+
+
+  <main class="nosotros">
+    <h2>SanrioDreams</h2>
+
+    <section>
+      <img src="{% static 'images/Kitty.png' %}" alt="Hello Kitty Linda" />
+      <div class="texto">
+        <p>Sanrio, fundada en 1960, es reconocida mundialmente por sus icónicos personajes como Hello Kitty. Nuestra misión es llevar alegría y ternura a personas de todas las edades a través de nuestros productos únicos y de alta calidad.</p>
+      </div>
+    </section>
+
+    <section>
+      <img src="{% static 'images/hello_kitty_historia.png' %}" alt="Historia Hello Kitty" />
+      <div class="texto">
+        <h3>Historia de Hello Kitty</h3>
+        <p>Creada en 1974 por Yuko Shimizu, Hello Kitty ha trascendido fronteras para convertirse en un símbolo de cultura pop y moda global. Con su diseño simple pero encantador, ha inspirado generaciones alrededor del mundo.</p>
+      </div>
+    </section>
+
+    <section>
+      <img src="{% static 'images/pandemia.png' %}" alt="Pandemia 2019" />
+      <div class="texto">
+        <h3>Crisis y Adaptación en 2019</h3>
+        <p>La pandemia del COVID-19 impactó fuertemente a muchas industrias, incluyendo Sanrio. Para adaptarnos, implementamos diversas estrategias que nos permitieron seguir conectados con nuestros fans:</p>
+        <ul class="kawaii-list">
+          <li>Fortalecimos nuestra tienda online para facilitar el acceso a nuestros productos.</li>
+          <li>Lanzamos colecciones especiales que celebran la esperanza y resiliencia.</li>
+          <li>Colaboramos con artistas y creadores para apoyar la comunidad local.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer style="text-align:center; padding:1.5rem 0; background:#fff0f6; color:#a23662; font-size:0.9rem; font-weight:600;">
+    &copy; {{ year|default:2025 }} SanrioDreams - Todos los derechos reservados.
+  </footer>
+
+  <script>
+  // Solo ejecutar si estamos en index.html (si existe el formulario)
+  const searchForm = document.getElementById('searchFormIndex');
+  if (searchForm) {
+    searchForm.addEventListener('submit', function(e) {
+      e.preventDefault(); // Evita recargar la página
+
+      const searchTerm = document.getElementById('searchInputIndex').value.trim().toLowerCase();
+
+      // Mapeo de palabras clave a IDs de productos
+      const sectionMap = {
+        'todos': 'productos',
+        'peluche': 'peluches',
+        'muñeco': 'peluches',
+        'figura': 'peluches',
+        'stuffed': 'peluches',
+        'peluchito': 'peluches',
+        'juguete': 'peluches','botella': 'botellas',
+        'vaso': 'botellas',
+        'taza': 'botellas',
+        'botellita': 'botellas',
+        'bidón': 'botellas',
+        'cantimplora': 'botellas',
+        'termo': 'termos',
+        'thermos': 'termos',
+        'termico': 'termos',
+        'termo de café': 'termos',
+        'vaso térmico': 'termos',
+        'mug térmico': 'termos',
+        'pin': 'pines',
+        'sticker': 'pines',
+        'pegatina': 'pines',
+        'calcomanía': 'pines',
+        'insignia': 'pines',
+        'chapita': 'pines',
+        'llavero': 'llaveros',
+        'keychain': 'llaveros',
+        'llave': 'llaveros',
+        'adorno de llave': 'llaveros',
+        'colgante': 'llaveros',
+        'lampara': 'lamparas',
+        'luz': 'lamparas',
+        'luminaria': 'lamparas',
+        'foco decorativo': 'lamparas',
+        'led': 'lamparas',
+        'night light': 'lamparas'
+      };
+
+      let targetId = null;
+
+      for (const key in sectionMap) {
+        if (searchTerm.includes(key)) {
+          targetId = sectionMap[key];
+          break;
+        }
+      }
+
+      if (targetId) {
+        window.location.href = "{% url 'productos' %}#" + targetId;
+      } else {
+        alert("No encontramos esa categoría. Inténtalo de nuevo.");
+      }
+    });
+  }
+</script>
+
+
+</body>
+</html>
+

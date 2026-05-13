@@ -1,0 +1,125 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>🧾 Panel Contador - Informes y Pagos</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #fffaf9;
+      font-family: 'Nunito', sans-serif;
+      color: #5c5c5c;
+    }
+    h2 {
+      color: #d63384;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+    .card {
+      background-color: #ffe4ed;
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 6px 20px rgba(214, 51, 132, 0.1);
+    }
+    .card-header {
+      background-color: #ffc2d1;
+      color: #be2b69;
+      font-weight: bold;
+      font-size: 1.2rem;
+      border-top-left-radius: 15px;
+      border-top-right-radius: 15px;
+    }
+    .btn {
+      border-radius: 12px;
+    }
+    .btn-primary {
+      background-color: #c2dfff;
+      color: #084298;
+    }
+    .btn-success {
+      background-color: #c8f7dc;
+      color: #2e7d32;
+    }
+    .btn-danger {
+      background-color: #f59fb4;
+      color: #842029;
+    }
+    .form-control, .form-select {
+      border-radius: 10px;
+    }
+    .badge-info {
+      background-color: #d0ebff;
+      color: #0c5460;
+    }
+  </style>
+</head>
+<body class="container mt-4">
+
+  <h2 class="text-center">📚 Panel del Contador - Informes y Validación</h2>
+
+  <!-- Generar informe -->
+  <div class="card mb-4">
+    <div class="card-header text-center">Generar Informe Financiero</div>
+    <div class="card-body">
+      <form>
+        <div class="mb-3">
+          <label for="tipo-informe" class="form-label">Tipo de Informe:</label>
+          <select class="form-select" id="tipo-informe">
+            <option>Ventas Mensuales</option>
+            <option>Ingresos Totales</option>
+            <option>Pagos Pendientes</option>
+          </select>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="fecha-inicio" class="form-label">Desde:</label>
+            <input type="date" class="form-control" id="fecha-inicio">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="fecha-fin" class="form-label">Hasta:</label>
+            <input type="date" class="form-control" id="fecha-fin">
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary">Generar</button>
+        <button type="button" class="btn btn-success">Descargar PDF</button>
+        <button type="button" class="btn btn-outline-secondary">Descargar Excel</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Validación de pagos -->
+  <div class="card mb-4">
+    <div class="card-header text-center">Validar Pagos por Transferencia</div>
+    <div class="card-body">
+      <ul class="list-group">
+        <li class="list-group-item">
+          <strong>Pedido #112233</strong> <span class="badge bg-warning text-dark">Pendiente</span><br>
+          Cliente: Mariana Fuentes
+          <div class="mt-2">
+            <p><strong>Banco:</strong> Banco Estado | <strong>Monto:</strong> $18.990</p>
+            <p><strong>Comprobante:</strong> <a href="#">Ver archivo</a></p>
+            <button class="btn btn-success btn-sm">Aprobar Pago</button>
+          </div>
+        </li>
+        <li class="list-group-item">
+          <strong>Pedido #112234</strong> <span class="badge bg-warning text-dark">Pendiente</span><br>
+          Cliente: Samuel Ríos
+          <div class="mt-2">
+            <p><strong>Banco:</strong> Santander | <strong>Monto:</strong> $12.500</p>
+            <p><strong>Comprobante:</strong> <a href="#">Ver archivo</a></p>
+            <select class="form-select mb-2">
+              <option value="">Seleccionar motivo de rechazo</option>
+              <option value="Datos no coinciden">Datos no coinciden</option>
+              <option value="Archivo ilegible">Archivo ilegible</option>
+            </select>
+            <button class="btn btn-danger btn-sm">Rechazar Pago</button>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+</body>
+</html>

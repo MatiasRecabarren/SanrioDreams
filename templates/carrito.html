@@ -1,0 +1,378 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- Basic -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Mobile Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!-- Site Metas -->
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+
+  <title>SanrioDreams - Tienda de artículos</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/icofont @1.0.0/dist/css/icofont.min.css">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.9/slick.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.9/slick-theme.min.css" />
+  <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'css/slick-theme.css' %}" />
+  <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" />
+  <link href="{% static 'css/style.css' %}" rel="stylesheet" />
+  <link href="{% static 'css/responsive.css' %}" rel="stylesheet" />
+
+  <style>
+    /* Estilos exclusivos para la página carrito */
+    body.carrito-page {
+      background-color: #fff0f6; /* rosita muy claro */
+      color: #4a4a4a;
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    body.carrito-page .header_section {
+      background-color: #f6e0e9; /* rosa pastel claro */
+      box-shadow: 0 2px 5px rgba(255, 182, 193, 0.3);
+    }
+
+    body.carrito-page .header_section .navbar-brand,
+    body.carrito-page .header_section .nav-link {
+      color: #b03a5b;
+      font-weight: 600;
+    }
+
+    body.carrito-page .header_section .nav-link:hover,
+    body.carrito-page .header_section .nav-link.active {
+      color: #f7dee8;
+    }
+
+    body.carrito-page .footer_section {
+      background-color: #111111;
+      color: #cfcfcf;
+      padding: 20px 0;
+      font-size: 0.9rem;
+      text-align: center;
+      margin-top: auto; /* para empujar footer abajo */
+    }
+
+    body.carrito-page .footer_section a {
+      color: #ff85b8;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    body.carrito-page .footer_section a:hover {
+      text-decoration: underline;
+    }
+
+    body.carrito-page .header_section .fa,
+    body.carrito-page .header_section .bi,
+    body.carrito-page .header_section .navbar-toggler span {
+      color: #b03a5b;
+    }
+
+    body.carrito-page .btn-success {
+      background-color: #ff69b4 !important;
+      border-color: #ff69b4 !important;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+
+    body.carrito-page .btn-success:hover {
+      background-color: #d6336c !important;
+      border-color: #d6336c !important;
+    }
+
+    /* Centrar contenido del carrito vacío */
+    body.carrito-page .empty-cart {
+      height: 60vh; /* altura para centrar verticalmente */
+      text-align: center;
+      justify-content: center;
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      color: #6c757d;
+    }
+
+    body.carrito-page .empty-cart a {
+      color: #ff69b4;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    body.carrito-page .empty-cart a:hover {
+      text-decoration: underline;
+    }
+    .btn-pink {
+  background-color: #ff69b4 !important;
+  border: none !important;
+  color: #fff !important;
+  font-weight: bold;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+.btn-pink:hover {
+  background-color: #ff85b8 !important;
+  color: #fff !important;
+}
+.btn-eliminar {
+  background: none !important;
+  border: none !important;
+  color: #d6336c !important;
+  font-weight: bold;
+  border-radius: 8px;
+  transition: color 0.2s;
+}
+.btn-eliminar:hover {
+  color: #ff69b4 !important;
+  text-decoration: underline;
+  background: none !important;
+}
+  </style>
+</head>
+
+<body class="carrito-page">
+
+  <div class="main_body_content">
+
+    <div class="hero_area">
+
+      <!-- Header Inicio -->
+      <header class="header_section">
+        <div class="container-fluid">
+          <nav class="navbar navbar-expand-lg custom_nav-container">
+            <a class="navbar-brand" href="index.html">
+              SanrioDreams
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse"
+              data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+              aria-expanded="false" aria-label="Toggle navigation">
+              <span class=""></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav ml-auto d-flex align-items-center">
+                
+                <li class="nav-item active">
+                  <a class="nav-link" href="{% url 'index' %}">Inicio <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'nosotros' %}">Sobre Nosotros</a>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProductos" role="button"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Productos</a>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdownProductos">
+                    <a class="dropdown-item" href="#peluches">Peluches</a>
+                    <a class="dropdown-item" href="#botellas">Botellas</a>
+                    <a class="dropdown-item" href="#termos">Termos</a>
+                    <a class="dropdown-item" href="#pines">Pines</a>
+                    <a class="dropdown-item" href="#llaveros">Llaveros</a>
+                    <a class="dropdown-item" href="#lamparas">Lámparas</a>
+                  </div>
+                </li>
+              </ul>
+
+              <div class="quote_btn-container d-flex align-items-center ml-3">
+                <form class="form-inline d-flex" id="searchFormIndex">
+                  <input type="text" id="searchInputIndex" class="form-control form-control-sm mr-2" placeholder="Buscar..." />
+                  <button class="btn btn-sm nav_search-btn" type="submit">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                  </button>
+                </form>
+                <!-- ICONO DE USUARIO CON LÓGICA DE SESIÓN -->
+{% if request.session.usuario_id %}
+  <a href="{% url 'perfil' %}" class="ml-3" title="Perfil">
+    <i class="fa fa-user-circle" aria-hidden="true" style="font-size: 1.7rem;"></i>
+  </a>
+{% else %}
+  <a href="{% url 'login' %}" class="ml-3" title="Iniciar sesión">
+    <i class="fa fa-user" aria-hidden="true" style="font-size: 1.7rem;"></i>
+  </a>
+{% endif %}
+              </div>
+            </div>
+          </nav>
+        </div>
+      </header>
+
+    <div class="container py-5">
+    <h2 class="text-center mb-4">🛒 Tu Carrito</h2>
+
+   {% if carrito and carrito|length > 0 %}
+  <div class="table-responsive">
+  <table class="table table-bordered align-middle bg-white">
+   <thead class="thead-light">
+  <tr>
+    <th>Producto</th>
+    <th class="text-center">Precio </th>
+    <th class="text-center">Subtotal</th>
+    <th class="text-center"></th> <!-- Sin texto "Acciones" -->
+  </tr>
+</thead>
+<tbody>
+  {% for producto in carrito %}
+  <tr>
+    <td>
+      <div class="d-flex align-items-center">
+        <img src="{% static 'images/'|add:producto.imagen %}" alt="{{ producto.nombre }}" style="width:32px; height:32px; object-fit:cover; border-radius:8px; margin-right:10px;">
+        <strong>
+          {{ producto.nombre }}{% if producto.cantidad and producto.cantidad|add:0 >= 2 %} x {{ producto.cantidad }}{% endif %}
+        </strong>
+      </div>
+    </td>
+    <td class="text-center">${{ producto.precio }}</td>
+    <td class="text-center">${{ producto.subtotal|floatformat:2 }}</td>
+    <td class="text-center">
+      <button
+  onclick="aumentarCantidad('{{ producto.id }}')"
+  class="btn btn-sm mx-1 btn-pink"
+  style="font-size:1.3rem;"
+  {% if producto.cantidad >= producto.stock %}disabled{% endif %}
+>+</button>
+      <button onclick="disminuirCantidad('{{ producto.id }}', '{{ producto.cantidad }}')" class="btn btn-sm mx-1 btn-pink" style="font-size:1.3rem;">-</button>
+      <button onclick="eliminarProducto('{{ producto.id }}')" class="btn btn-sm mx-1 btn-eliminar" style="font-size:1rem;">Eliminar</button>
+    </td>
+  </tr>
+  {% endfor %}
+</tbody>
+  </table>
+</div>
+<div class="mb-4">
+  <form id="envioForm" method="get" action="">
+    <label class="me-3 fw-bold">¿Cómo deseas recibir tu pedido?</label>
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="radio" name="envio" id="retiro" value="0" {% if not envio_costo or envio_costo == 0 %}checked{% endif %} onchange="this.form.submit()">
+      <label class="form-check-label" for="retiro">Retiro en Tienda</label>
+    </div>
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="radio" name="envio" id="envio" value="1" {% if envio_costo and envio_costo > 0 %}checked{% endif %} onchange="this.form.submit()">
+      <label class="form-check-label" for="envio">Envío a Domicilio (+$3000)</label>
+    </div>
+  </form>
+</div>
+      <div class="total-section text-end mt-4">
+      {% if descuento and descuento > 0 %}
+        <h5>
+          <span style="color:#d6336c;">Descuento:</span>
+          <span style="color:#007bff;">-${{ descuento|floatformat:2 }}</span>
+        </h5>
+      {% endif %}
+      <h4>Total: <span id="total" class="text-primary">${{ total|floatformat:2 }}</span></h4>
+      <a href="{% url 'pago' %}" class="btn btn-success btn-lg mt-2">
+        <i class="bi bi-credit-card"></i> Proceder al Pago
+      </a>
+    </div>
+    {% else %}
+    <div class="empty-cart d-flex flex-column justify-content-center align-items-center">
+      <p class="fs-4 text-secondary mb-3">Parece que tu carrito está vacío :c</p>
+      <p>Continúa navegando <a href="{% url 'productos' %}" class="text-decoration-none">aquí :3</a></p>
+    </div>
+    {% endif %}
+  </div>
+
+    <!-- footer section -->
+   <footer class="container-fluid footer_section" style="background-color: #111; padding: 20px 0;">
+    <div class="container">
+        <div class="col-md-11 col-lg-8 mx-auto">
+        <p style="color: white;">
+            &copy; <span id="displayYear"></span> Todos los derechos reservados a 
+            <a href="https://html.design/" style="color: white;">SanrioDreams &lt;3</a>
+        </p>
+        </div>
+    </div>
+    </footer>
+
+  </div>
+
+  <!-- Optional JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Funciones para modificar carrito
+    function actualizarCantidad(nombre, delta) {
+      fetch(`/carrito/actualizar/?producto=${encodeURIComponent(nombre)}&delta=${delta}`)
+        .then(response => response.json())
+        .then(data => {
+          if(data.status === 'ok') {
+            location.reload();
+          }
+        });
+    }
+    function eliminarProducto(nombre) {
+      fetch(`/carrito/eliminar/?producto=${encodeURIComponent(nombre)}`)
+        .then(response => response.json())
+        .then(data => {
+          if(data.status === 'ok') {
+            location.reload();
+          }
+        });
+    }
+  </script>
+<script>
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  function aumentarCantidad(id) {
+    fetch(`/carrito/aumentar/${id}/`, {
+      method: 'POST',
+      headers: {'X-CSRFToken': getCookie('csrftoken')}
+    }).then(() => location.reload());
+  }
+
+  function disminuirCantidad(id, cantidad) {
+    if (cantidad > 1) {
+      fetch(`/carrito/disminuir/${id}/`, {
+        method: 'POST',
+        headers: {'X-CSRFToken': getCookie('csrftoken')}
+      }).then(() => location.reload());
+    } else {
+      eliminarProducto(id);
+    }
+  }
+
+  function eliminarProducto(id) {
+    fetch(`/carrito/quitar/${id}/`, {
+      method: 'POST',
+      headers: {'X-CSRFToken': getCookie('csrftoken')}
+    }).then(() => location.reload());
+  }
+</script>
+
+
+
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+
+<!-- Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script> 
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script> 
+
+</body>
+
+
+
+
+</html>

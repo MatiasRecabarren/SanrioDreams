@@ -1,0 +1,297 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Panel Bodeguero - Pedidos</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    body {
+      background-color: #fff4f8;
+      font-family: 'Nunito', sans-serif;
+      color: #6b4c6b;
+    }
+    h2 {
+      color: #d66a9f;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      text-shadow: 1px 1px 3px #f8cde7;
+    }
+    .card {
+      background-color: #ffe4f0;
+      border: none;
+      border-radius: 25px;
+      box-shadow: 0 8px 20px rgba(214, 102, 154, 0.25);
+      padding: 20px;
+    }
+    .card-header {
+      background-color: #ffcee7;
+      color: #a63f69;
+      font-weight: 700;
+      font-size: 1.3rem;
+      border-radius: 25px 25px 0 0;
+      text-align: center;
+      box-shadow: inset 0 -3px 6px rgba(255, 255, 255, 0.7);
+    }
+    .list-group-item {
+      background-color: #fff0fa;
+      border: none;
+      border-radius: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 3px 6px rgba(214, 102, 154, 0.1);
+      padding: 15px 20px;
+      font-weight: 600;
+      color: #7a476d;
+      transition: background-color 0.3s ease;
+    }
+    .list-group-item:hover {
+      background-color: #ffd3e8;
+      cursor: pointer;
+    }
+    .btn {
+      border-radius: 30px;
+      font-weight: 600;
+      padding: 6px 14px;
+      box-shadow: 0 3px 5px rgba(214, 102, 154, 0.2);
+      transition: background-color 0.3s ease, color 0.3s ease;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.9rem;
+      border: 2px solid transparent;
+    }
+    .btn-success {
+      background-color: #f8cee7;
+      color: #a8457e;
+      border-color: #dda1bb;
+    }
+    .btn-success:hover {
+      background-color: #d285ad;
+      color: white;
+      border-color: #c966a6;
+    }
+    .btn-warning {
+      background-color: #fff1c8;
+      color: #8d7d45;
+      border-color: #e6d287;
+    }
+    .btn-warning:hover {
+      background-color: #d9c669;
+      color: white;
+      border-color: #c1b24a;
+    }
+    .btn-danger {
+      background-color: #f9b9cc;
+      color: #7b304d;
+      border-color: #e385a6;
+    }
+    .btn-danger:hover {
+      background-color: #d15c7e;
+      color: white;
+      border-color: #b3486d;
+    }
+    .btn-outline-secondary {
+      border-color: #d6a6bf;
+      color: #82497b;
+    }
+    .btn-outline-secondary:hover {
+      background-color: #ffd3e8;
+      color: #a63f69;
+      border-color: #a45b8c;
+    }
+    .alert-warning {
+      background-color: #fff3cd;
+      border: none;
+      color: #856404;
+      border-radius: 20px;
+      padding: 10px 15px;
+      font-weight: 600;
+    }
+    table th {
+      background-color: #ffdbe9;
+      color: #b3005c;
+      font-weight: 700;
+      border-radius: 12px;
+    }
+    table td {
+      background-color: #fffdfd;
+      vertical-align: middle;
+    }
+    .img-producto {
+      width: 60px;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 2px 5px rgba(214, 102, 154, 0.15);
+    }
+  </style>
+</head>
+<body class="container mt-4">
+
+  <h2>Panel del Bodeguero - Pedidos</h2>
+
+  <div class="card mb-4">
+    <div class="card-header">Pedidos en Preparación</div>
+    <div class="card-body">
+      <ul class="list-group mb-3" id="lista-pedidos"></ul>
+    </div>
+  </div>
+
+  <script>
+    const pedidos = [
+      {
+        id: 11111,
+        cliente: "Valentina Soto",
+        fecha: "2025-07-15",
+        estado: "En preparación",
+        stockOk: true,
+        productos: [
+          {
+            nombre: "Peluche Hello Kitty",
+            descripcion: "Peluche de felpa rosa 25cm",
+            precio: 12990,
+            cantidad: 2,
+            imagen: "{% static 'img/kitty.png' %}"
+          },
+          {
+            nombre: "Taza rosa",
+            descripcion: "Taza cerámica temática",
+            precio: 4990,
+            cantidad: 1,
+            imagen: "{% static 'img/taza.png' %}"
+          }
+        ]
+      },
+      {
+        id: 12345,
+        cliente: "Camila Álvarez",
+        fecha: "2025-07-14",
+        estado: "En preparación",
+        stockOk: false,
+        productos: [
+          {
+            nombre: "Almohada Kuromi",
+            descripcion: "Almohada suave con diseño Kuromi",
+            precio: 15990,
+            cantidad: 1,
+            imagen: "{% static 'img/kuromi.png' %}"
+          },
+          {
+            nombre: "Set lápices",
+            descripcion: "Estuche con lápices de colores pastel",
+            precio: 2990,
+            cantidad: 3,
+            imagen: "{% static 'img/lapices.png' %}"
+          }
+        ]
+      }
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      mostrarPedidos();
+    });
+
+    function mostrarPedidos() {
+      const lista = document.getElementById("lista-pedidos");
+      lista.innerHTML = "";
+
+      pedidos.forEach(p => {
+        const li = document.createElement("li");
+        li.className = "list-group-item shadow-sm";
+        li.innerHTML = `
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <strong>Pedido #${p.id}</strong><br>
+              <small>Cliente: ${p.cliente} | Fecha: ${p.fecha}</small>
+            </div>
+            <button class="btn btn-warning btn-sm" onclick="toggleDetalle(${p.id})">Ver detalles</button>
+          </div>
+          <div id="detalle-${p.id}" style="display: none; margin-top: 15px;"></div>
+        `;
+        lista.appendChild(li);
+      });
+    }
+
+    function toggleDetalle(id) {
+      const div = document.getElementById(`detalle-${id}`);
+      if (div.style.display === "none" || div.innerHTML === "") {
+        mostrarDetalle(id);
+        div.style.display = "block";
+      } else {
+        div.style.display = "none";
+      }
+    }
+
+    function mostrarDetalle(id) {
+      const pedido = pedidos.find(p => p.id === id);
+      const detalle = document.getElementById(`detalle-${id}`);
+      const total = pedido.productos.reduce((sum, prod) => sum + prod.precio * prod.cantidad, 0);
+
+      detalle.innerHTML = `
+        <div class="card p-3" style="border-radius: 20px;">
+          <h6 class="mb-3" style="color:#a63f69; font-weight:700;">Detalle del Pedido #${pedido.id}</h6>
+          <p><strong>Cliente:</strong> ${pedido.cliente}</p>
+          <p><strong>Fecha:</strong> ${pedido.fecha}</p>
+
+          <table class="table table-bordered table-striped align-middle" style="border-radius:12px; overflow:hidden;">
+            <thead>
+              <tr>
+                <th>Imagen</th>
+                <th>Producto</th>
+                <th>Descripción</th>
+                <th>Precio</th>
+                <th>Cantidad</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${pedido.productos.map(prod => `
+                <tr>
+                  <td><img src="${prod.imagen}" alt="${prod.nombre}" class="img-producto"></td>
+                  <td>${prod.nombre}</td>
+                  <td>${prod.descripcion}</td>
+                  <td>$${prod.precio.toLocaleString()}</td>
+                  <td>${prod.cantidad}</td>
+                  <td>$${(prod.precio * prod.cantidad).toLocaleString()}</td>
+                </tr>`).join("")}
+            </tbody>
+            <tfoot>
+              <tr>
+                <th colspan="5" class="text-end">Total</th>
+                <th>$${total.toLocaleString()}</th>
+              </tr>
+            </tfoot>
+          </table>
+
+          <div class="mt-3">
+            ${pedido.stockOk
+              ? `<button class="btn btn-success me-2" onclick="marcarPreparado(${pedido.id})">Marcar como Preparado</button>`
+              : `
+                <div class="alert alert-warning">Stock insuficiente para completar el pedido</div>
+                <button class="btn btn-danger me-2" onclick="rechazarPedido(${pedido.id})">Rechazar Pedido</button>
+                <button class="btn btn-outline-secondary" onclick="notificarVendedor(${pedido.id})">Notificar al Vendedor</button>
+              `
+            }
+          </div>
+        </div>
+      `;
+    }
+
+    function marcarPreparado(id) {
+      alert(`Pedido ${id} fue marcado como "Listo para entrega"`);
+      document.getElementById(`detalle-${id}`).style.display = "none";
+    }
+
+    function rechazarPedido(id) {
+      alert(`Pedido ${id} fue rechazado por falta de stock`);
+      document.getElementById(`detalle-${id}`).style.display = "none";
+    }
+
+    function notificarVendedor(id) {
+      alert(`Vendedor notificado del problema en el pedido ${id}`);
+    }
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,225 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Panel Vendedor - Gestión de Pedidos</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #fff4f8;
+      font-family: 'Nunito', sans-serif;
+      color: #6b4c6b;
+    }
+    h2 {
+      color: #d66a9f;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      text-shadow: 1px 1px 3px #f8cde7;
+    }
+    .card {
+      background-color: #ffe4f0;
+      border: none;
+      border-radius: 25px;
+      box-shadow: 0 8px 20px rgba(214, 102, 154, 0.25);
+      padding: 20px;
+    }
+    .card-header {
+      background-color: #ffcee7;
+      color: #a63f69;
+      font-weight: 700;
+      font-size: 1.3rem;
+      border-radius: 25px 25px 0 0;
+      text-align: center;
+      box-shadow: inset 0 -3px 6px rgba(255, 255, 255, 0.7);
+    }
+    .list-group-item {
+      background-color: #fff0fa;
+      border: none;
+      border-radius: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 3px 6px rgba(214, 102, 154, 0.1);
+      padding: 15px 20px;
+      font-weight: 600;
+      color: #7a476d;
+      transition: background-color 0.3s ease;
+    }
+    .list-group-item:hover {
+      background-color: #ffd3e8;
+      cursor: pointer;
+    }
+    .btn {
+      border-radius: 30px;
+      font-weight: 600;
+      padding: 6px 14px;
+      box-shadow: 0 3px 5px rgba(214, 102, 154, 0.2);
+      transition: background-color 0.3s ease, color 0.3s ease;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.9rem;
+    }
+    .btn-approve {
+      background-color: #f8cee7;
+      color: #a8457e;
+      border: 2px solid #dda1bb;
+    }
+    .btn-approve:hover {
+      background-color: #d285ad;
+      color: white;
+      border-color: #c966a6;
+    }
+    .btn-reject {
+      background-color: #f9b9cc;
+      color: #7b304d;
+      border: 2px solid #e385a6;
+    }
+    .btn-reject:hover {
+      background-color: #d15c7e;
+      color: white;
+      border-color: #b3486d;
+    }
+    .btn-send {
+      background-color: #fff1c8;
+      color: #8d7d45;
+      border: 2px solid #e6d287;
+    }
+    .btn-send:hover {
+      background-color: #d9c669;
+      color: white;
+      border-color: #c1b24a;
+    }
+    .btn-complete {
+      background-color: #c7dbf0;
+      color: #336691;
+      border: 2px solid #92b2d6;
+    }
+    .btn-complete:hover {
+      background-color: #6794cb;
+      color: white;
+      border-color: #4a76a1;
+    }
+    .form-select, .form-control {
+      margin-bottom: 12px;
+      border-radius: 20px;
+      border: 2px solid #e1b6d1;
+      background-color: #fff3fb;
+      color: #82497b;
+      font-weight: 600;
+      box-shadow: inset 1px 1px 4px #ffd6ef;
+      transition: border-color 0.3s ease;
+    }
+    .form-select:focus, .form-control:focus {
+      border-color: #ca82b7;
+      box-shadow: 0 0 8px #ca82b7;
+      outline: none;
+      background-color: #fff8fd;
+      color: #732e62;
+    }
+    .badge.text-bg-warning {
+      background-color: #f9c5d1;
+      color: #7a3b5b;
+      font-weight: 700;
+      font-size: 0.85rem;
+      border-radius: 15px;
+      padding: 5px 12px;
+      box-shadow: 0 2px 5px rgba(214, 102, 154, 0.15);
+    }
+  </style>
+</head>
+<body class="container mt-4">
+
+  <h2>Panel del Vendedor - Gestión de Pedidos</h2>
+
+  <div class="card mb-4">
+    <div class="card-header">Pedidos Pendientes</div>
+    <div class="card-body">
+      <ul class="list-group">
+        <li class="list-group-item">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <strong>Pedido #11111</strong><br>
+              <small>Cliente: Valentina Soto | Estado: <span class="badge text-bg-warning">Pendiente</span></small>
+            </div>
+            <div>
+              <button class="btn btn-approve btn-sm me-2" onclick="aprobarPedido('11111')">Aprobar</button>
+              <button class="btn btn-reject btn-sm" onclick="rechazarPedido('11111')">Rechazar</button>
+            </div>
+          </div>
+        </li>
+        <li class="list-group-item">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <strong>Pedido #12345</strong><br>
+              <small>Cliente: Camila Álvarez | Estado: <span class="badge text-bg-warning">Pendiente</span></small>
+            </div>
+            <div>
+              <button class="btn btn-approve btn-sm me-2" onclick="aprobarPedido('12345')">Aprobar</button>
+              <button class="btn btn-reject btn-sm" onclick="mostrarMotivoRechazo('12345')">Rechazar</button>
+            </div>
+          </div>
+          <div id="motivo-rechazo-12345" style="display: none; margin-top: 8px;">
+            <select class="form-select" id="motivo-select-12345">
+              <option value="">Seleccionar motivo</option>
+              <option value="Producto no disponible">Producto no disponible</option>
+              <option value="Datos del cliente incompletos">Datos del cliente incompletos</option>
+            </select>
+            <button class="btn btn-reject btn-sm" onclick="confirmarRechazo('12345')">Confirmar rechazo</button>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header">Pedidos Listos para Entrega</div>
+    <div class="card-body">
+      <ul class="list-group">
+        <li class="list-group-item">
+          <div><strong>Pedido #22222</strong> - Cliente: Diego Reyes</div>
+          <label for="fecha-entrega-22222" class="form-label mt-2">Fecha y hora entrega:</label>
+          <input type="datetime-local" id="fecha-entrega-22222" class="form-control">
+          <label class="form-label">Método:</label>
+          <select class="form-select" id="metodo-entrega-22222">
+            <option value="presencial">Entrega presencial</option>
+            <option value="envio">Envío por empresa</option>
+          </select>
+          <button class="btn btn-send btn-sm mt-2" onclick="marcarEnCamino('22222')">En camino</button>
+          <button class="btn btn-complete btn-sm mt-2" onclick="marcarEntregado('22222')">Entregado</button>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    function aprobarPedido(id) {
+      alert(`Pedido ${id} aprobado y enviado a bodega.`);
+    }
+
+    function rechazarPedido(id) {
+      alert(`Pedido ${id} rechazado.`);
+    }
+
+    function mostrarMotivoRechazo(id) {
+      document.getElementById(`motivo-rechazo-${id}`).style.display = 'block';
+    }
+
+    function confirmarRechazo(id) {
+      const motivo = document.getElementById(`motivo-select-${id}`).value;
+      if (motivo) {
+        alert(`Pedido ${id} fue rechazado por: ${motivo}`);
+      } else {
+        alert('Debes seleccionar un motivo para rechazar.');
+      }
+    }
+
+    function marcarEnCamino(id) {
+      alert(`Pedido ${id} marcado como "En camino".`);
+    }
+
+    function marcarEntregado(id) {
+      alert(`Pedido ${id} fue entregado correctamente.`);
+    }
+  </script>
+</body>
+</html>
