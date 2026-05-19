@@ -9,6 +9,7 @@
   <meta name="keywords" content="" />
   <meta name="description" content="" />
   <meta name="author" content="" />
+  {% csrf_token %}
   <title>SanrioDreams - Tienda de artículos</title>
   <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.9/slick.min.css"  />
@@ -746,6 +747,22 @@
       }
       return cookieValue;
     }
+    
+    function getCSRFToken() {
+      // Try to get from cookie first
+      let token = getCookie('csrftoken');
+      if (token) return token;
+      
+      // Try to get from input field
+      const tokenInput = document.querySelector('[name="csrfmiddlewaretoken"]');
+      if (tokenInput) return tokenInput.value;
+      
+      // Try to get from meta tag
+      const tokenMeta = document.querySelector('[name="csrf-token"]');
+      if (tokenMeta) return tokenMeta.getAttribute('content');
+      
+      return '';
+    }
 
     function abrirModalCarrito() {
       const cartModal = document.getElementById('cartModal');
@@ -850,7 +867,7 @@
 
         if (btn.classList.contains('aumentar')) {
           if (cantidad < stockMax) {
-            fetch(`/carrito/aumentar/${id}/`, {method: 'POST', headers: {'X-CSRFToken': getCookie('csrftoken')}})
+            fetch(`/carrito/aumentar/${id}/`, {method: 'POST', headers: {'X-CSRFToken': getCSRFToken()}})
               .then(() => obtenerYMostrarCarrito());
           } else {
             alert('No puedes agregar más de lo disponible en stock.');
@@ -858,15 +875,15 @@
         }
         if (btn.classList.contains('disminuir')) {
           if (cantidad > 1) {
-            fetch(`/carrito/disminuir/${id}/`, {method: 'POST', headers: {'X-CSRFToken': getCookie('csrftoken')}})
+            fetch(`/carrito/disminuir/${id}/`, {method: 'POST', headers: {'X-CSRFToken': getCSRFToken()}})
               .then(() => obtenerYMostrarCarrito());
           } else {
-            fetch(`/carrito/quitar/${id}/`, {method: 'POST', headers: {'X-CSRFToken': getCookie('csrftoken')}})
+            fetch(`/carrito/quitar/${id}/`, {method: 'POST', headers: {'X-CSRFToken': getCSRFToken()}})
               .then(() => obtenerYMostrarCarrito());
           }
         }
         if (btn.classList.contains('eliminar')) {
-          fetch(`/carrito/quitar/${id}/`, {method: 'POST', headers: {'X-CSRFToken': getCookie('csrftoken')}})
+          fetch(`/carrito/quitar/${id}/`, {method: 'POST', headers: {'X-CSRFToken': getCSRFToken()}})
             .then(() => obtenerYMostrarCarrito());
         }
       });
@@ -875,7 +892,7 @@
 
     function agregarAlCarrito(id_producto) {
       const url = `/agregar-al-carrito/${id_producto}/`;
-      const csrftoken = getCookie('csrftoken');
+      const csrftoken = getCSRFToken();
       fetch(url, {
         method: 'POST',
         headers: {

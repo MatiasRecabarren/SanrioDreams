@@ -430,9 +430,8 @@ from django.views.decorators.http import require_POST
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from .models import Producto
-@require_POST
 
-
+@csrf_exempt
 @require_POST
 def agregar_al_carrito(request, id_producto):
     if request.method == 'POST':
@@ -492,6 +491,7 @@ def ver_carrito(request):
     return render(request, 'carrito.html', context)
 
 
+@csrf_exempt
 @require_POST
 def quitar_del_carrito(request, id_producto):
     carrito = request.session.get('carrito', [])
@@ -500,6 +500,7 @@ def quitar_del_carrito(request, id_producto):
     request.session.modified = True
     return JsonResponse({'success': True})
 
+@csrf_exempt
 @require_POST
 def aumentar_cantidad_carrito(request, id_producto):
     carrito = request.session.get('carrito', [])
@@ -512,6 +513,7 @@ def aumentar_cantidad_carrito(request, id_producto):
     request.session.modified = True
     return JsonResponse({'success': True})
 
+@csrf_exempt
 @require_POST
 def disminuir_cantidad_carrito(request, id_producto):
     carrito = request.session.get('carrito', [])
