@@ -45,30 +45,22 @@ def preparar_pedido(request):
     return render(request, 'bodeguero.html')  
 
 def productos(request):
-
-    categorias = {
-        "Peluches": Producto.objects.filter(categoria='peluche'),
-        "Botellas": Producto.objects.filter(categoria='botella'),
-        "Termos": Producto.objects.filter(categoria='termo'),
-        "Pines": Producto.objects.filter(categoria='pin'),
-        "Llaveros": Producto.objects.filter(categoria='llavero'),
-        "Lámparas": Producto.objects.filter(categoria='lampara'),
-    }
+    peluches = Producto.objects.filter(categoria='peluche')
+    botellas = Producto.objects.filter(categoria='botella')
+    termos = Producto.objects.filter(categoria='termo')
+    pines = Producto.objects.filter(categoria='pin')
+    llaveros = Producto.objects.filter(categoria='llavero')
+    lamparas = Producto.objects.filter(categoria='lampara')
 
     return render(request, 'productos.html', {
-        'categorias': categorias
+        'peluches': peluches,
+        'botellas': botellas,
+        'termos': termos,
+        'pines': pines,
+        'llaveros': llaveros,
+        'lamparas': lamparas,
     })
-    
 
-    return render(request, 'productos.html', {
-        'peluches': peluches,  
-        'botellas': botellas, 
-        'termos': termos, 
-        'pines': pines, 
-        'llaveros': llaveros, 
-        'lamparas': lamparas, 
-        'cart_count': cart_count,
-    })
 # Vistas generales
 def loading(request):
     return render(request, 'loading.html')
@@ -81,34 +73,6 @@ def index(request):
         'productos': destacados,
     }
     return render(request, 'index.html', context)
-
-def productos(request):
-    productos = Producto.objects.all()
-    print(f"Consulta SQL generada: {Producto.objects.all().query}")  # Ver consulta SQL
-    print(f"Todos los productos: {productos}")  # Depuración
-
-    peluches = [p for p in productos if 1000 <= p.id_producto < 2000]
-    botellas = [p for p in productos if 2000 <= p.id_producto < 3000]
-    termos = [p for p in productos if 3000 <= p.id_producto < 4000]
-    pines = [p for p in productos if 4000 <= p.id_producto < 5000]
-    llaveros = [p for p in productos if 5000 <= p.id_producto < 6000]
-    lamparas = [p for p in productos if 6000 <= p.id_producto < 7000]
-
-    print(f"Peluches: {peluches}")  # Depuración
-    print(f"Botellas: {botellas}")  # Depuración
-    print(f"Termos: {termos}")  # Depuración
-    print(f"Pines: {pines}")  # Depuración
-    print(f"Llaveros: {llaveros}")  # Depuración
-    print(f"Lámparas: {lamparas}")  # Depuración
-
-    return render(request, 'productos.html', {
-        'peluches': peluches,
-        'botellas': botellas,
-        'termos': termos,
-        'pines': pines,
-        'llaveros': llaveros,
-        'lamparas': lamparas
-    })
 
 
 def carrito(request):
