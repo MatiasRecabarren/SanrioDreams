@@ -1,7 +1,7 @@
 from pathlib import Path
 import os
 from django.contrib.messages import constants as messages_constants
-import oracledb
+
 import dj_database_url
 
 # Base Directory
@@ -9,9 +9,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Seguridad
 SECRET_KEY = os.environ.get('SECRET_KEY', 'tu-clave-secreta-de-desarrollo')
-DEBUG = os.getenv('DJANGO_DEBUG', 'false') == 'false'
+DEBUG = os.getenv('DJANGO_DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['.onrender.com']
 
 # Aplicaciones instaladas
 INSTALLED_APPS = [
@@ -68,10 +68,10 @@ TEMPLATES = [
 DATABASES = {
     'default': dj_database_url.config(
         default=os.environ.get('DATABASE_URL'),
-        conn_max_age=600
+        conn_max_age=600,
+        ssl_require=True
     )
 }
-DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Validación de contraseñas
 AUTH_PASSWORD_VALIDATORS = [

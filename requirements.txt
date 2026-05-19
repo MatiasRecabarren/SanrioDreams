@@ -1,8 +1,7 @@
-django
+Django
 dj-database-url
 gunicorn
 whitenoise
 psycopg2-binary
-oracledb
 django-cors-headers
 djangorestframework
