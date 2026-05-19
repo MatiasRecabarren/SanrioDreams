@@ -115,13 +115,8 @@ class Producto(models.Model):
     imagen = models.CharField(max_length=255)
     disponible = models.CharField(max_length=2)
 
-    class Meta:
-        db_table = 'PRODUCTO'
-        managed = True
-
     def __str__(self):
         return self.nombre
-
 
 class Stock(models.Model):
     id_stock = models.AutoField(primary_key=True)
