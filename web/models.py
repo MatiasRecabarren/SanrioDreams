@@ -97,12 +97,30 @@ class MetodoPago(models.Model):
 
 
 class Producto(models.Model):
+    CATEGORIAS = (
+        ('peluche', 'Peluche'),
+        ('botella', 'Botella'),
+        ('termo', 'Termo'),
+        ('pin', 'Pin'),
+        ('llavero', 'Llavero'),
+        ('lampara', 'Lámpara'),
+    )
+
     id_producto = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField()
     precio = models.DecimalField(max_digits=10, decimal_places=0)
     imagen = models.CharField(max_length=255)
     disponible = models.CharField(max_length=2)
+
+    categoria = models.CharField(
+        max_length=20,
+        choices=CATEGORIAS,
+        default='peluche'
+    )
+
+    class Meta:
+        db_table = 'PRODUCTO'
 
     def __str__(self):
         return self.nombre
