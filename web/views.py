@@ -434,29 +434,42 @@ from .models import Producto
 @csrf_exempt
 @require_POST
 def agregar_al_carrito(request, id_producto):
-    if request.method == 'POST':
-        carrito = request.session.get('carrito', [])
-        encontrado = False
-        for item in carrito:
-            if item['id'] == id_producto:
-                item['cantidad'] += 1
-                encontrado = True
-                break
-        if not encontrado:
-            # Busca el producto en la base de datos y agrega con cantidad 1
-            producto = Producto.objects.get(id_producto=id_producto)
-            carrito.append({
-                'id': producto.id_producto,
-                'nombre': producto.nombre,
-                'precio': producto.precio,
-                'cantidad': 1,
-                'imagen': producto.imagen,
-                'subtotal': producto.precio,
-                'stock': producto.stock_set.first().cantidad,
-            })
-        request.session['carrito'] = carrito
-        return JsonResponse({'success': True})
-    return JsonResponse({'success': False, 'error': 'Método no permitido'})
+    try:
+        if request.method == 'POST':
+            carrito = request.session.get('carrito', [])
+            encontrado = False
+            for item in carrito:
+                if item['id'] == id_producto:
+                    item['cantidad'] += 1
+                    encontrado = True
+                    break
+            if not encontrado:
+                # Busca el producto en la base de datos y agrega con cantidad 1
+                try:
+                    producto = Producto.objects.get(id_producto=id_producto)
+                    stock_obj = producto.stock_set.first()
+                    stock_cantidad = stock_obj.cantidad if stock_obj else 0
+                    
+                    carrito.append({
+                        'id': producto.id_producto,
+                        'nombre': producto.nombre,
+                        'precio': float(producto.precio),
+                        'cantidad': 1,
+                        'imagen': producto.imagen,
+                        'subtotal': float(producto.precio),
+                        'stock': stock_cantidad,
+                    })
+                except Producto.DoesNotExist:
+                    return JsonResponse({'success': False, 'error': 'Producto no encontrado'}, status=404)
+                except Exception as e:
+                    return JsonResponse({'success': False, 'error': f'Error al obtener producto: {str(e)}'}, status=500)
+            
+            request.session['carrito'] = carrito
+            request.session.modified = True
+            return JsonResponse({'success': True})
+        return JsonResponse({'success': False, 'error': 'Método no permitido'}, status=405)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': f'Error: {str(e)}'}, status=500)
 
 def obtener_carrito(request):
     carrito = request.session.get('carrito', [])
