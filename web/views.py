@@ -45,16 +45,30 @@ def preparar_pedido(request):
     return render(request, 'bodeguero.html')  
 
 def productos(request):
-    productos = Producto.objects.all()
-    # ...tu lógica de categorías...
+
+    peluches = Producto.objects.filter(Q(nombre__icontains='peluche') | Q(descripcion__icontains='peluche'))
+    botellas = Producto.objects.filter(Q(nombre__icontains='botella') | Q(descripcion__icontains='botella'))
+    termos = Producto.objects.filter(Q(nombre__icontains='termo') | Q(descripcion__icontains='termo'))
+    pines = Producto.objects.filter(Q(nombre__icontains='pin') | Q(descripcion__icontains='pin'))
+    llaveros = Producto.objects.filter(Q(nombre__icontains='llavero') | Q(descripcion__icontains='llavero'))
+    
+  
+    lamparas = Producto.objects.filter(
+        Q(nombre__icontains='lampara') | Q(descripcion__icontains='lampara') |
+        Q(nombre__icontains='lámpara') | Q(descripcion__icontains='lámpara')
+    )
+    
+
     cart_count = sum(item['cantidad'] for item in request.session.get('carrito', []))
+    
+
     return render(request, 'productos.html', {
-        'peluches': peluches,  # type: ignore
-        'botellas': botellas, # type: ignore
-        'termos': termos, # type: ignore
-        'pines': pines, # type: ignore
-        'llaveros': llaveros, # type: ignore
-        'lamparas': lamparas, # type: ignore
+        'peluches': peluches,  
+        'botellas': botellas, 
+        'termos': termos, 
+        'pines': pines, 
+        'llaveros': llaveros, 
+        'lamparas': lamparas, 
         'cart_count': cart_count,
     })
 # Vistas generales
