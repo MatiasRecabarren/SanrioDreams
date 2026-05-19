@@ -1,4 +1,3 @@
-
 {% load static %}
 {% load humanize %}
 <!DOCTYPE html>
@@ -23,15 +22,15 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
     .cart-modal {
-  display: none;
-  position: fixed;
-  z-index: 99999; /* más alto para asegurar que esté encima */
-  left: 0;
-  top: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0,0,0,0.45); /* más oscuro para tapar mejor */
-}
+      display: none;
+      position: fixed;
+      z-index: 99999;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.45);
+    }
     .cart-modal.open, .cart-modal[style*="block"] { display: flex !important; align-items: center; justify-content: center;}
     .cart-modal-content { background: #fff; border-radius: 14px; padding: 2em; width: 100%; max-width: 520px; max-height: 95vh; overflow-y: auto; box-shadow: 0 0 20px #0002; position: relative;}
     .close-button { position: absolute; right: 1em; top: 1em; background: none; border: none; font-size: 2em; color: #444; cursor: pointer;}
@@ -39,68 +38,166 @@
     .cart-item-image { width: 64px; height: 64px; object-fit: contain; border-radius: 7px; border: 1px solid #ddd; background: #fafafa;}
     .cart-item-details { flex: 1; min-width: 0; }
     .cart-item-actions {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 7px;
-  min-width: 80px;
-}
-.cart-item-actions .acciones-cantidad {
-  display: flex;
-  flex-direction: row;
-  gap: 7px;
-  margin-bottom: 5px;
-}
-.cart-item-actions button {
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  font-size: 1.2em;
-  border-radius: 6px;
-  background: #ff69b4;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-}
-.cart-item-actions button.eliminar {
-  background: #eee;
-  color: #b00;
-  width: auto;
-  padding: 5px 10px;
-  margin-top: 5px;
-}
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 7px;
+      min-width: 80px;
+    }
+    .cart-item-actions .acciones-cantidad {
+      display: flex;
+      flex-direction: row;
+      gap: 7px;
+      margin-bottom: 5px;
+    }
+    .cart-item-actions button {
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      font-size: 1.2em;
+      border-radius: 6px;
+      background: #ff69b4;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+    .cart-item-actions button.eliminar {
+      background: #eee;
+      color: #b00;
+      width: auto;
+      padding: 5px 10px;
+      margin-top: 5px;
+    }
     .cart-total { font-weight: bold; text-align: right; margin: 1em 0 0.5em 0;}
     .view-cart-button { display: block; width: 100%; background: #ff69b4; color: #fff; border: none; border-radius: 6px; padding: 13px 0; margin-top: 1em; font-weight: 700; letter-spacing: 1px; font-size: 1.1em; text-align: center;}
     .cart-count-badge { position: absolute; top: -5px; right: -10px; background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem;}
     body.modal-abierto {
-  overflow: hidden;
-  pointer-events: none;
-}
-.cart-modal.open, .cart-modal[style*="block"] {
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-  pointer-events: auto;
-}
-.cart-modal-content {
-  pointer-events: auto;
-}
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .cart-modal.open, .cart-modal[style*="block"] {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      pointer-events: auto;
+    }
+    .cart-modal-content {
+      pointer-events: auto;
+    }
+
+    /* --- NUEVOS ESTILOS PARA LAS TARJETAS (IGUAL A LA IMAGEN 3) --- */
+    .tarjetas-contenedor {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 25px;
+      padding: 30px 15px;
+    }
+
+    .tarjeta {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border: 1px solid #e2e2e2;
+      background-color: #ffffff;
+      width: 290px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+      border-radius: 4px;
+      position: relative;
+    }
+
+    .tarjeta-img-container {
+      padding: 25px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 240px;
+      width: 100%;
+      background: #ffffff;
+    }
+
+    .tarjeta img {
+      max-height: 100%;
+      max-width: 100%;
+      object-fit: contain;
+    }
+
+    .tarjeta-info-adicional {
+      padding: 5px 15px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #666;
+      width: 100%;
+      background-color: #fafafa;
+      border-top: 1px solid #f0f0f0;
+    }
+
+    .tarjeta-info-adicional p {
+      margin: 2px 0;
+    }
+
+    .tarjeta-pie-marron {
+      background-color: #4A2312; /* Color marrón oscuro idéntico a la imagen */
+      width: 100%;
+      padding: 14px 10px;
+      text-align: center;
+    }
+
+    .tarjeta-pie-marron h3 {
+      margin: 0 0 6px 0;
+      font-size: 1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tarjeta-pie-marron h3 .cat-lbl {
+      color: #ffffff; /* Texto blanco */
+    }
+
+    .tarjeta-pie-marron h3 .nom-lbl {
+      color: #FF7A00; /* Texto naranjo llamativo */
+      margin-left: 4px;
+    }
+
+    .tarjeta-pie-marron .precio-producto {
+      margin: 0;
+      color: #A4B0BE; /* Color grisáceo/plateado para el precio */
+      font-size: 0.95rem;
+      font-weight: bold;
+    }
+
+    .tarjeta button.btn-agregar {
+      background-color: #ff69b4;
+      color: white;
+      border: none;
+      padding: 12px;
+      width: 100%;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 0.95rem;
+      transition: background-color 0.2s;
+    }
+
+    .tarjeta button.btn-agregar:hover {
+      background-color: #e0529c;
+    }
   </style>
 </head>
 <body>
   <div class="main_body_content">
     <div class="hero_area">
-      <!-- Header Inicio -->
       <header class="header_section">
         <div class="container-fluid">
           <nav class="navbar navbar-expand-lg custom_nav-container">
             <a class="navbar-brand" href="{% url 'index' %}">SanrioDreams</a>
             <div style="display: flex; align-items: center; gap: 1.2em; margin: 2em 0 1em 0; justify-content: center;">
-  <button id="toggle-moneda" style="background: #ff69b4; color: white; border: none; border-radius: 6px; padding: 7px 18px; font-weight: bold; cursor:pointer;">
-    Mostrar en USD
-  </button>
-  <span id="dolar-valor" style="font-weight:bold; color:#444;">Cargando USD...</span>
-</div>
+              <button id="toggle-moneda" style="background: #ff69b4; color: white; border: none; border-radius: 6px; padding: 7px 18px; font-weight: bold; cursor:pointer;">
+                Mostrar en USD
+              </button>
+              <span id="dolar-valor" style="font-weight:bold; color:#444;">Cargando USD...</span>
+            </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse"
               data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" 
               aria-expanded="false" aria-label="Toggle navigation">
@@ -161,165 +258,328 @@
           </div>
         </div>
       </header>
-      
-      <!-- Fin de Header -->
-
-      <!-- Sección Peluches -->
-
-    <section id="peluches" class="peluches">
-      <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Peluches</h3>
-      <div class="tarjetas-contenedor">
-        {% for producto in peluches %}
-          <div class="tarjeta producto" data-precio="{{ producto.precio }}">
-            <img src="{% static 'images/'|add:producto.imagen %}" alt="{{ producto.nombre }}">
-            <div class="detail-box mt-3">
-              <h6>{{ producto.get_categoria_display }} <span>{{ producto.nombre }}</span></h6>
-              <h5 class="precio-producto">$ {{ producto.precio|intcomma }} CLP</h5>
-              <p>{{ producto.descripcion }}</p>
-              <p class="stock-info">Cantidad disponible: {{ producto.stock_set.first.cantidad }}</p>
-              <div class="botones-producto">
-                <a href="#peluches" class="btn-ver-producto">Ver producto</a>
-                <button onclick="agregarAlCarrito('{{ producto.id_producto }}')" class="btn-agregar-carrito" {% if producto.stock_set.first.cantidad == 0 %}disabled{% endif %}>
-                  {% if producto.stock_set.first.cantidad == 0 %}Sin stock{% else %}Agregar al carrito{% endif %}
-                </button>
-              </div>
+      <section id="peluches" class="peluches">
+        <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif; margin-top: 20px;">Nuestros Peluches</h3>
+        <div class="tarjetas-contenedor">
+          
+          <div class="tarjeta producto" data-precio="12990">
+            <div class="tarjeta-img-container">
+              <img src="{% static 'images/Peluche_HelloKitty.png' %}" alt="Peluche Hello Kitty">
             </div>
+            <div class="tarjeta-info-adicional">
+              <p>Peluche original de Hello Kitty</p>
+              <p>Cantidad: 12</p>
+            </div>
+            <div class="tarjeta-pie-marron">
+              <h3><span class="cat-lbl">Peluche</span><span class="nom-lbl">Hello Kitty</span></h3>
+              <p class="precio-producto">$12.990 CLP</p>
+            </div>
+            <button onclick="agregarAlCarrito('1')" class="btn-agregar">Agregar al carrito</button>
           </div>
-       {% endfor %}
-    </div>
-    </section>
+
+          <div class="tarjeta producto" data-precio="12990">
+            <div class="tarjeta-img-container">
+              <img src="{% static 'images/Peluche_MyMelody.png' %}" alt="Peluche My Melody">
+            </div>
+            <div class="tarjeta-info-adicional">
+              <p>Peluche My Melody de Sanrio</p>
+              <p>Cantidad: 8</p>
+            </div>
+            <div class="tarjeta-pie-marron">
+              <h3><span class="cat-lbl">Peluche</span><span class="nom-lbl">My Melody</span></h3>
+              <p class="precio-producto">$12.990 CLP</p>
+            </div>
+            <button onclick="agregarAlCarrito('2')" class="btn-agregar">Agregar al carrito</button>
+          </div>
+
+          <div class="tarjeta producto" data-precio="13490">
+            <div class="tarjeta-img-container">
+              <img src="{% static 'images/Peluche_Cinnamoroll.png' %}" alt="Peluche Cinnamoroll">
+            </div>
+            <div class="tarjeta-info-adicional">
+              <p>Peluche Cinnamoroll</p>
+              <p>Cantidad: 5</p>
+            </div>
+            <div class="tarjeta-pie-marron">
+              <h3><span class="cat-lbl">Peluche</span><span class="nom-lbl">Cinnamoroll</span></h3>
+              <p class="precio-producto">$13.490 CLP</p>
+            </div>
+            <button onclick="agregarAlCarrito('3')" class="btn-agregar">Agregar al carrito</button>
+          </div>
+
+          <div class="tarjeta producto" data-precio="13990">
+            <div class="tarjeta-img-container">
+              <img src="{% static 'images/Peluche_Kuromi.png' %}" alt="Peluche Kuromi">
+            </div>
+            <div class="tarjeta-info-adicional">
+              <p>Peluche Kuromi</p>
+              <p>Cantidad: 14</p>
+            </div>
+            <div class="tarjeta-pie-marron">
+              <h3><span class="cat-lbl">Peluche</span><span class="nom-lbl">Kuromi</span></h3>
+              <p class="precio-producto">$13.990 CLP</p>
+            </div>
+            <button onclick="agregarAlCarrito('4')" class="btn-agregar">Agregar al carrito</button>
+          </div>
+
+          <div class="tarjeta producto" data-precio="13490">
+            <div class="tarjeta-img-container">
+              <img src="{% static 'images/Peluche_Pompompurin.png' %}" alt="Peluche Pompompurin">
+            </div>
+            <div class="tarjeta-info-adicional">
+              <p>Peluche Pompompurin</p>
+              <p>Cantidad: 9</p>
+            </div>
+            <div class="tarjeta-pie-marron">
+              <h3><span class="cat-lbl">Peluche</span><span class="nom-lbl">Pompompurin</span></h3>
+              <p class="precio-producto">$13.490 CLP</p>
+            </div>
+            <button onclick="agregarAlCarrito('5')" class="btn-agregar">Agregar al carrito</button>
+          </div>
+
+        </div>
+      </section>
 
       <br>
 
-      <!-- Sección Botellas -->
       <section id="botellas" class="botellas">
         <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestras Botellas</h3>
         <div class="tarjetas-contenedor">
-           {% for producto in botellas %}
-              <div class="tarjeta producto" data-precio="{{ producto.precio }}">
-                <img src="{% static 'images/'|add:producto.imagen %}" alt="{{ producto.nombre }}">
-                <div class="detail-box mt-3">
-                  <h6>{{ producto.get_categoria_display }} <span>{{ producto.nombre }}</span></h6>
-                  <h5 class="precio-producto">$ {{ producto.precio|intcomma }} CLP</h5>
-                  <p>{{ producto.descripcion }}</p>
-                  <p class="stock-info">Cantidad disponible: {{ producto.stock_set.first.cantidad }}</p>
-                  <div class="botones-producto">
-                    <a href="#botellas" class="btn-ver-producto">Ver producto</a>
-                    <button onclick="agregarAlCarrito('{{ producto.id_producto }}')" class="btn-agregar-carrito" {% if producto.stock_set.first.cantidad == 0 %}disabled{% endif %}>
-                      {% if producto.stock_set.first.cantidad == 0 %}Sin stock{% else %}Agregar al carrito{% endif %}
-                    </button>
-                  </div>
-                </div>
-              </div>
-          {% endfor %}
+          
+          <div class="tarjeta producto" data-precio="8990">
+            <div class="tarjeta-img-container">
+              <img src="{% static 'images/Botella_520ml_Pompompurin.png' %}" alt="Botella Pompompurin">
+            </div>
+            <div class="tarjeta-info-adicional">
+              <p>Botella reutilizable Pompompurin</p>
+              <p>Cantidad: 20</p>
+            </div>
+            <div class="tarjeta-pie-marron">
+              <h3><span class="cat-lbl">Botella</span><span class="nom-lbl">Pompompurin</span></h3>
+              <p class="precio-producto">$8.990 CLP</p>
+            </div>
+            <button onclick="agregarAlCarrito('6')" class="btn-agregar">Agregar al carrito</button>
+          </div>
+
+          <div class="tarjeta producto" data-precio="8990">
+            <div class="tarjeta-img-container">
+              <img src="{% static 'images/Botella_520ml_Pochacco.png' %}" alt="Botella Pochacco">
+            </div>
+            <div class="tarjeta-info-adicional">
+              <p>Botella reutilizable Pochacco</p>
+              <p>Cantidad: 15</p>
+            </div>
+            <div class="tarjeta-pie-marron">
+              <h3><span class="cat-lbl">Botella</span><span class="nom-lbl">Pochacco</span></h3>
+              <p class="precio-producto">$8.990 CLP</p>
+            </div>
+            <button onclick="agregarAlCarrito('7')" class="btn-agregar">Agregar al carrito</button>
+          </div>
+
+          <div class="tarjeta producto" data-precio="8990">
+            <div class="tarjeta-img-container">
+              <img src="{% static 'images/Botella_520ml_HelloKitty.png' %}" alt="Botella Hello Kitty">
+            </div>
+            <div class="tarjeta-info-adicional">
+              <p>Botella reutilizable Hello Kitty</p>
+              <p>Cantidad: 11</p>
+            </div>
+            <div class="tarjeta-pie-marron">
+              <h3><span class="cat-lbl">Botella</span><span class="nom-lbl">Hello Kitty</span></h3>
+              <p class="precio-producto">$8.990 CLP</p>
+            </div>
+            <button onclick="agregarAlCarrito('8')" class="btn-agregar">Agregar al carrito</button>
+          </div>
+
+          <div class="tarjeta producto" data-precio="8990">
+            <div class="tarjeta-img-container">
+              <img src="{% static 'images/Botella_520ml_MyMelody.png' %}" alt="Botella My Melody">
+            </div>
+            <div class="tarjeta-info-adicional">
+              <p>Botella reutilizable My Melody</p>
+              <p>Cantidad: 7</p>
+            </div>
+            <div class="tarjeta-pie-marron">
+              <h3><span class="cat-lbl">Botella</span><span class="nom-lbl">My Melody</span></h3>
+              <p class="precio-producto">$8.990 CLP</p>
+            </div>
+            <button onclick="agregarAlCarrito('9')" class="btn-agregar">Agregar al carrito</button>
+          </div>
+
         </div>
       </section>
 
       <br>
 
-      <!-- Sección Termos -->
       <section id="termos" class="termos">
         <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Termos</h3>
         <div class="tarjetas-contenedor">
-           {% for producto in termos %}
-              <div class="tarjeta producto" data-precio="{{ producto.precio }}">
-                <img src="{% static 'images/'|add:producto.imagen %}" alt="{{ producto.nombre }}">
-                <div class="detail-box mt-3">
-                  <h6>{{ producto.get_categoria_display }} <span>{{ producto.nombre }}</span></h6>
-                  <h5 class="precio-producto">$ {{ producto.precio|intcomma }} CLP</h5>
-                  <p>{{ producto.descripcion }}</p>
-                  <p class="stock-info">Cantidad disponible: {{ producto.stock_set.first.cantidad }}</p>
-                  <div class="botones-producto">
-                    <a href="#termos" class="btn-ver-producto">Ver producto</a>
-                    <button onclick="agregarAlCarrito('{{ producto.id_producto }}')" class="btn-agregar-carrito" {% if producto.stock_set.first.cantidad == 0 %}disabled{% endif %}>
-                      {% if producto.stock_set.first.cantidad == 0 %}Sin stock{% else %}Agregar al carrito{% endif %}
-                    </button>
-                  </div>
-                </div>
-              </div>
-          {% endfor %}
+          
+          <div class="tarjeta producto" data-precio="10990">
+            <div class="tarjeta-img-container">
+              <img src="{% static 'images/Termo_200ml_Cinnamoroll.png' %}" alt="Termo Cinnamoroll">
+            </div>
+            <div class="tarjeta-info-adicional">
+              <p>Termo 200ml Cinnamoroll</p>
+              <p>Cantidad: 6</p>
+            </div>
+            <div class="tarjeta-pie-marron">
+              <h3><span class="cat-lbl">Termo</span><span class="nom-lbl">Cinnamoroll</span></h3>
+              <p class="precio-producto">$10.990 CLP</p>
+            </div>
+            <button onclick="agregarAlCarrito('10')" class="btn-agregar">Agregar al carrito</button>
+          </div>
+
+          <div class="tarjeta producto" data-precio="10990">
+            <div class="tarjeta-img-container">
+              <img src="{% static 'images/Termo_200ml_Pompompurin.png' %}" alt="Termo Pompompurin">
+            </div>
+            <div class="tarjeta-info-adicional">
+              <p>Termo 200ml Pompompurin</p>
+              <p>Cantidad: 8</p>
+            </div>
+            <div class="tarjeta-pie-marron">
+              <h3><span class="cat-lbl">Termo</span><span class="nom-lbl">Pompompurin</span></h3>
+              <p class="precio-producto">$10.990 CLP</p>
+            </div>
+            <button onclick="agregarAlCarrito('11')" class="btn-agregar">Agregar al carrito</button>
+          </div>
+
+          <div class="tarjeta producto" data-precio="10990">
+            <div class="tarjeta-img-container">
+              <img src="{% static 'images/Termo_200ml_Kuromi.png' %}" alt="Termo Kuromi">
+            </div>
+            <div class="tarjeta-info-adicional">
+              <p>Termo 200ml Kuromi</p>
+              <p>Cantidad: 10</p>
+            </div>
+            <div class="tarjeta-pie-marron">
+              <h3><span class="cat-lbl">Termo</span><span class="nom-lbl">Kuromi</span></h3>
+              <p class="precio-producto">$10.990 CLP</p>
+            </div>
+            <button onclick="agregarAlCarrito('12')" class="btn-agregar">Agregar al carrito</button>
+          </div>
+
         </div>
       </section>
 
       <br>
 
-      <!-- Sección Pines -->
       <section id="pines" class="pines">
         <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Pines</h3>
         <div class="tarjetas-contenedor">
-             {% for producto in pines %}
-              <div class="tarjeta producto" data-precio="{{ producto.precio }}">
-                <img src="{% static 'images/'|add:producto.imagen %}" alt="{{ producto.nombre }}">
-                <div class="detail-box mt-3">
-                  <h6>{{ producto.get_categoria_display }} <span>{{ producto.nombre }}</span></h6>
-                  <h5 class="precio-producto">$ {{ producto.precio|intcomma }} CLP</h5>
-                  <p>{{ producto.descripcion }}</p>
-                  <p class="stock-info">Cantidad disponible: {{ producto.stock_set.first.cantidad }}</p>
-                  <div class="botones-producto">
-                    <a href="#pines" class="btn-ver-producto">Ver producto</a>
-                    <button onclick="agregarAlCarrito('{{ producto.id_producto }}')" class="btn-agregar-carrito" {% if producto.stock_set.first.cantidad == 0 %}disabled{% endif %}>
-                      {% if producto.stock_set.first.cantidad == 0 %}Sin stock{% else %}Agregar al carrito{% endif %}
-                    </button>
-                  </div>
-                </div>
-              </div>
-          {% endfor %}
+          
+          <div class="tarjeta producto" data-precio="3990">
+            <div class="tarjeta-img-container">
+              <img src="{% static 'images/Pin_Cinnamoroll.png' %}" alt="Pin Cinnamoroll">
+            </div>
+            <div class="tarjeta-info-adicional">
+              <p>Pin decorativo Cinnamoroll</p>
+              <p>Cantidad: 30</p>
+            </div>
+            <div class="tarjeta-pie-marron">
+              <h3><span class="cat-lbl">Pin</span><span class="nom-lbl">Cinnamoroll</span></h3>
+              <p class="precio-producto">$3.990 CLP</p>
+            </div>
+            <button onclick="agregarAlCarrito('13')" class="btn-agregar">Agregar al carrito</button>
+          </div>
+
+          <div class="tarjeta producto" data-precio="3990">
+            <div class="tarjeta-img-container">
+              <img src="{% static 'images/Pin_Kuromi.png' %}" alt="Pin Kuromi">
+            </div>
+            <div class="tarjeta-info-adicional">
+              <p>Pin decorativo Kuromi</p>
+              <p>Cantidad: 25</p>
+            </div>
+            <div class="tarjeta-pie-marron">
+              <h3><span class="cat-lbl">Pin</span><span class="nom-lbl">Kuromi</span></h3>
+              <p class="precio-producto">$3.990 CLP</p>
+            </div>
+            <button onclick="agregarAlCarrito('14')" class="btn-agregar">Agregar al carrito</button>
+          </div>
+
         </div>
       </section>
 
       <br>
 
-      <!-- Sección Llaveros -->
       <section id="llaveros" class="llaveros">
         <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Llaveros</h3>
         <div class="tarjetas-contenedor">
-           {% for producto in llaveros %}
-              <div class="tarjeta producto" data-precio="{{ producto.precio }}">
-                <img src="{% static 'images/'|add:producto.imagen %}" alt="{{ producto.nombre }}">
-                <div class="detail-box mt-3">
-                  <h6>{{ producto.get_categoria_display }} <span>{{ producto.nombre }}</span></h6>
-                  <h5 class="precio-producto">$ {{ producto.precio|intcomma }} CLP</h5>
-                  <p>{{ producto.descripcion }}</p>
-                  <p class="stock-info">Cantidad disponible: {{ producto.stock_set.first.cantidad }}</p>
-                  <div class="botones-producto">
-                    <a href="#llaveros" class="btn-ver-producto">Ver producto</a>
-                    <button onclick="agregarAlCarrito('{{ producto.id_producto }}')" class="btn-agregar-carrito" {% if producto.stock_set.first.cantidad == 0 %}disabled{% endif %}>
-                      {% if producto.stock_set.first.cantidad == 0 %}Sin stock{% else %}Agregar al carrito{% endif %}
-                    </button>
-                  </div>
-                </div>
-              </div>
-          {% endfor %}
+          
+          <div class="tarjeta producto" data-precio="4990">
+            <div class="tarjeta-img-container">
+              <img src="{% static 'images/Llavero_Cinnamoroll.png' %}" alt="Llavero Cinnamoroll">
+            </div>
+            <div class="tarjeta-info-adicional">
+              <p>Llavero Cinnamoroll</p>
+              <p>Cantidad: 18</p>
+            </div>
+            <div class="tarjeta-pie-marron">
+              <h3><span class="cat-lbl">Llavero</span><span class="nom-lbl">Cinnamoroll</span></h3>
+              <p class="precio-producto">$4.990 CLP</p>
+            </div>
+            <button onclick="agregarAlCarrito('15')" class="btn-agregar">Agregar al carrito</button>
+          </div>
+
+          <div class="tarjeta producto" data-precio="4990">
+            <div class="tarjeta-img-container">
+              <img src="{% static 'images/Llavero_Kuromi.png' %}" alt="Llavero Kuromi">
+            </div>
+            <div class="tarjeta-info-adicional">
+              <p>Llavero Kuromi</p>
+              <p>Cantidad: 22</p>
+            </div>
+            <div class="tarjeta-pie-marron">
+              <h3><span class="cat-lbl">Llavero</span><span class="nom-lbl">Kuromi</span></h3>
+              <p class="precio-producto">$4.990 CLP</p>
+            </div>
+            <button onclick="agregarAlCarrito('16')" class="btn-agregar">Agregar al carrito</button>
+          </div>
+
         </div>
       </section>
 
       <br>
 
-      <!-- Sección Lámparas -->
       <section id="lamparas" class="lamparas">
         <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestras Lámparas</h3>
         <div class="tarjetas-contenedor">
-           {% for producto in lamparas %}
-              <div class="tarjeta producto" data-precio="{{ producto.precio }}">
-                <img src="{% static 'images/'|add:producto.imagen %}" alt="{{ producto.nombre }}">
-                <div class="detail-box mt-3">
-                  <h6>{{ producto.get_categoria_display }} <span>{{ producto.nombre }}</span></h6>
-                  <h5 class="precio-producto">$ {{ producto.precio|intcomma }} CLP</h5>
-                  <p>{{ producto.descripcion }}</p>
-                  <p class="stock-info">Cantidad disponible: {{ producto.stock_set.first.cantidad }}</p>
-                  <div class="botones-producto">
-                    <a href="#lamparas" class="btn-ver-producto">Ver producto</a>
-                    <button onclick="agregarAlCarrito('{{ producto.id_producto }}')" class="btn-agregar-carrito" {% if producto.stock_set.first.cantidad == 0 %}disabled{% endif %}>
-                      {% if producto.stock_set.first.cantidad == 0 %}Sin stock{% else %}Agregar al carrito{% endif %}
-                    </button>
-                  </div>
-                </div>
-              </div>
-          {% endfor %}
+          
+          <div class="tarjeta producto" data-precio="19990">
+            <div class="tarjeta-img-container">
+              <img src="{% static 'images/Lampara_Cinnamoroll.png' %}" alt="Lampara Cinnamoroll">
+            </div>
+            <div class="tarjeta-info-adicional">
+              <p>Lampara decorativa Cinnamoroll</p>
+              <p>Cantidad: 4</p>
+            </div>
+            <div class="tarjeta-pie-marron">
+              <h3><span class="cat-lbl">Lampara</span><span class="nom-lbl">Cinnamoroll</span></h3>
+              <p class="precio-producto">$19.990 CLP</p>
+            </div>
+            <button onclick="agregarAlCarrito('17')" class="btn-agregar">Agregar al carrito</button>
+          </div>
+
+          <div class="tarjeta producto" data-precio="19990">
+            <div class="tarjeta-img-container">
+              <img src="{% static 'images/Lampara_HelloKitty.png' %}" alt="Lampara Hello Kitty">
+            </div>
+            <div class="tarjeta-info-adicional">
+              <p>Lampara decorativa Hello Kitty</p>
+              <p>Cantidad: 3</p>
+            </div>
+            <div class="tarjeta-pie-marron">
+              <h3><span class="cat-lbl">Lampara</span><span class="nom-lbl">Hello Kitty</span></h3>
+              <p class="precio-producto">$19.990 CLP</p>
+            </div>
+            <button onclick="agregarAlCarrito('18')" class="btn-agregar">Agregar al carrito</button>
+          </div>
+
         </div>
       </section>
 
-      <!-- Info Section -->
       <section class="info_section layout_padding2">
         <div class="container">
           <div class="row info_main_row">
@@ -353,126 +613,16 @@
         </div>
       </section>
 
-      <!-- Footer -->
       <footer class="container-fluid footer_section">
         <div class="container">
           <div class="col-md-11 col-lg-8 mx-auto">
             <p>&copy; <span id="displayYear"></span> Todos los derechos reservados a <a href="#">SanrioDreams</a></p>
           </div>
         </div>
-      </footer>
+      </footer
     </div>
   </div>
 
-  <style>
-    /* Estilo general para las tarjetas */
-.tarjeta {
-  display: flex;
-  flex-direction: column; /* Alinea los elementos verticalmente */
-  align-items: center; /* Centra horizontalmente los elementos */
-  border: 1px solid #ccc;
-  padding: 10px;
-  margin: 10px;
-  text-align: center;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
-}
-
-/* Estilo para la imagen */
-.tarjeta img {
-  max-width: 100%;
-  height: auto;
-  margin-bottom: 10px;
-  border-radius: 14px;
-  object-fit: cover;
-}
-
-/* Estilo para el título */
-.tarjeta h3 {
-  margin: 0;
-}
-
-/* Estilo para la descripción */
-.tarjeta p {
-  margin: 5px 0;
-}
-
-.detail-box {
-  width: 100%;
-  padding: 15px;
-  border-radius: 16px;
-  background: #fafafa;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
-  text-align: left;
-}
-
-.detail-box h6 {
-  margin: 0 0 10px;
-  font-size: 0.95rem;
-  color: #333;
-  font-weight: 700;
-}
-
-.detail-box h6 span {
-  display: block;
-  margin-top: 6px;
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #222;
-}
-
-.detail-box .precio-producto {
-  margin: 10px 0;
-  color: #ff69b4;
-  font-size: 1.1rem;
-  font-weight: 800;
-}
-
-.stock-info {
-  margin: 0.5rem 0 1rem;
-  font-size: 0.95rem;
-  color: #555;
-}
-
-.botones-producto {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
-}
-
-.btn-ver-producto,
-.btn-agregar-carrito {
-  display: inline-block;
-  padding: 10px 18px;
-  border-radius: 12px;
-  text-decoration: none;
-  font-weight: 700;
-  font-size: 0.95rem;
-}
-
-.btn-ver-producto {
-  border: 2px solid #ff69b4;
-  color: #ff69b4;
-  background: #fff;
-}
-
-.btn-agregar-carrito {
-  border: none;
-  background: #ff69b4;
-  color: #fff;
-  cursor: pointer;
-}
-
-.btn-agregar-carrito:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-  </style>
-
-  <!-- Script para búsqueda -->
   <script>
     document.getElementById('searchForm').addEventListener('submit', function(e) {
       e.preventDefault();
@@ -529,66 +679,60 @@
       }
       alert("No se encontró la categoría.");
     });
-let valorDolar = null; // Valor del dólar en CLP (1 USD = X CLP)
-let mostrandoDolares = false;
 
-// Obtener el valor del dólar desde la API de mindicador.cl
-async function obtenerDolar() {
-    try {
-        const res = await fetch('https://mindicador.cl/api/dolar');
-        const data = await res.json();
-        return data.serie[0].valor;
-    } catch (e) {
-        console.error("No se pudo obtener el valor del dólar:", e);
-        return null;
-    }
-}
+    let valorDolar = null;
+    let mostrandoDolares = false;
 
-// Formatear precios
-function formatearCLP(valor) {
-    return '$' + valor.toLocaleString('es-CL') + ' CLP';
-}
-function formatearUSD(valor) {
-    return '$' + valor.toFixed(2) + ' USD';
-}
-
-// Actualizar precios según la moneda seleccionada
-function actualizarPrecios() {
-    const productos = document.querySelectorAll('.producto');
-    productos.forEach(producto => {
-        const precioCLP = Number(producto.dataset.precio);
-        const precioElem = producto.querySelector('.precio-producto');
-        if (mostrandoDolares && valorDolar) {
-            // Convertir de CLP a USD: precioCLP / valorDolar
-            const precioUSD = precioCLP / valorDolar;
-            precioElem.textContent = formatearUSD(precioUSD);
-        } else {
-            precioElem.textContent = formatearCLP(precioCLP);
+    async function obtenerDolar() {
+        try {
+            const res = await fetch('https://mindicador.cl/api/dolar');
+            const data = await res.json();
+            return data.serie[0].valor;
+        } catch (e) {
+            console.error("No se pudo obtener el valor del dólar:", e);
+            return null;
         }
-    });
-}
-
-// Evento al cargar la página
-document.addEventListener('DOMContentLoaded', async () => {
-    valorDolar = await obtenerDolar();
-    if (valorDolar) {
-        document.getElementById('dolar-valor').textContent = `1 USD ≈ $${Math.round(valorDolar).toLocaleString('es-CL')} CLP`;
-    } else {
-        document.getElementById('dolar-valor').textContent = "Error al cargar USD";
     }
 
-    actualizarPrecios();
+    function formatearCLP(valor) {
+        return '$' + valor.toLocaleString('es-CL') + ' CLP';
+    }
+    function formatearUSD(valor) {
+        return '$' + valor.toFixed(2) + ' USD';
+    }
 
-    document.getElementById('toggle-moneda').addEventListener('click', () => {
-        mostrandoDolares = !mostrandoDolares;
-        document.getElementById('toggle-moneda').textContent = mostrandoDolares ? 'Mostrar en CLP' : 'Mostrar en USD';
+    function actualizarPrecios() {
+        const productos = document.querySelectorAll('.producto');
+        productos.forEach(producto => {
+            const precioCLP = Number(producto.dataset.precio);
+            const precioElem = producto.querySelector('.precio-producto');
+            if (mostrandoDolares && valorDolar) {
+                const precioUSD = precioCLP / valorDolar;
+                precioElem.textContent = formatearUSD(precioUSD);
+            } else {
+                precioElem.textContent = formatearCLP(precioCLP);
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        valorDolar = await obtenerDolar();
+        if (valorDolar) {
+            document.getElementById('dolar-valor').textContent = `1 USD ≈ $${Math.round(valorDolar).toLocaleString('es-CL')} CLP`;
+        } else {
+            document.getElementById('dolar-valor').textContent = "Error al cargar USD";
+        }
+
         actualizarPrecios();
+
+        document.getElementById('toggle-moneda').addEventListener('click', () => {
+            mostrandoDolares = !mostrandoDolares;
+            document.getElementById('toggle-moneda').textContent = mostrandoDolares ? 'Mostrar en CLP' : 'Mostrar en USD';
+            actualizarPrecios();
+        });
     });
-});
- 
 
-
- function getCookie(name) {
+    function getCookie(name) {
       let cookieValue = null;
       if (document.cookie && document.cookie !== '') {
         const cookies = document.cookie.split(';');
@@ -602,23 +746,26 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
       return cookieValue;
     }
+
     function abrirModalCarrito() {
-  const cartModal = document.getElementById('cartModal');
-  if (cartModal) {
-    obtenerYMostrarCarrito();
-    cartModal.style.display = 'block';
-    cartModal.classList.add('open');
-    document.body.classList.add('modal-abierto');
-  }
-}
-function cerrarModalCarrito() {
-  const cartModal = document.getElementById('cartModal');
-  if (cartModal) {
-    cartModal.style.display = 'none';
-    cartModal.classList.remove('open');
-    document.body.classList.remove('modal-abierto');
-  }
-}
+      const cartModal = document.getElementById('cartModal');
+      if (cartModal) {
+        obtenerYMostrarCarrito();
+        cartModal.style.display = 'block';
+        cartModal.classList.add('open');
+        document.body.classList.add('modal-abierto');
+      }
+    }
+
+    function cerrarModalCarrito() {
+      const cartModal = document.getElementById('cartModal');
+      if (cartModal) {
+        cartModal.style.display = 'none';
+        cartModal.classList.remove('open');
+        document.body.classList.remove('modal-abierto');
+      }
+    }
+
     function actualizarContadorCarrito(carrito) {
       const cartCountBadge = document.getElementById('cart-count-badge');
       let count = 0;
@@ -630,6 +777,7 @@ function cerrarModalCarrito() {
         cartCountBadge.style.display = count > 0 ? 'inline-block' : 'none';
       }
     }
+
     function actualizarCarritoModal(carrito) {
       const cartItemsContainer = document.getElementById('cartItemsContainer');
       cartItemsContainer.innerHTML = '';
@@ -653,10 +801,10 @@ function cerrarModalCarrito() {
           </div>
           <div class="cart-item-actions">
             <div class="acciones-cantidad">
-      <button class="action-button aumentar">+</button>
-      <button class="action-button disminuir">-</button>
-    </div>
-    <button class="action-button eliminar">Eliminar</button>
+              <button class="action-button aumentar">+</button>
+              <button class="action-button disminuir">-</button>
+            </div>
+            <button class="action-button eliminar">Eliminar</button>
           </div>
         `;
         cartItemsContainer.appendChild(cartItem);
@@ -664,6 +812,7 @@ function cerrarModalCarrito() {
       const subtotalTotal = carrito.reduce((acc, item) => acc + Number(item.subtotal), 0);
       document.getElementById('subtotal').textContent = `$${subtotalTotal.toFixed(2)}`;
     }
+
     function obtenerYMostrarCarrito() {
       fetch('/obtener-carrito/', {
         method: 'GET',
@@ -680,6 +829,7 @@ function cerrarModalCarrito() {
         console.error('🚨 Error al obtener el carrito:', err);
       });
     }
+
     document.addEventListener('DOMContentLoaded', function() {
       const cartIcon = document.querySelector('.cart-icon');
       if (cartIcon) {
@@ -723,7 +873,6 @@ function cerrarModalCarrito() {
       obtenerYMostrarCarrito();
     });
 
-    // Agregar producto al carrito desde las tarjetas
     function agregarAlCarrito(id_producto) {
       const url = `/agregar-al-carrito/${id_producto}/`;
       const csrftoken = getCookie('csrftoken');
@@ -749,14 +898,12 @@ function cerrarModalCarrito() {
     }
   </script>
 
-  <!-- Scripts -->
- <script src="https://cdn.jsdelivr.net/npm/@formatjs/intl-numberformat-polyfill@4/dist/formatjs-intl-numberformat.min.js"></script> 
+  <script src="https://cdn.jsdelivr.net/npm/@formatjs/intl-numberformat-polyfill@4/dist/formatjs-intl-numberformat.min.js"></script> 
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script> 
   <script src="{% static 'js/custom.js' %}"></script>
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"> 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> 
-
 </body>
 </html>
