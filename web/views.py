@@ -435,39 +435,51 @@ from .models import Producto
 @require_POST
 def agregar_al_carrito(request, id_producto):
     try:
-        if request.method == 'POST':
-            carrito = request.session.get('carrito', [])
-            encontrado = False
-            for item in carrito:
-                if item['id'] == id_producto:
-                    item['cantidad'] += 1
-                    encontrado = True
-                    break
-            if not encontrado:
-                # Busca el producto en la base de datos y agrega con cantidad 1
-                try:
-                    producto = Producto.objects.get(id_producto=id_producto)
-                    stock_obj = producto.stock_set.first()
-                    stock_cantidad = stock_obj.cantidad if stock_obj else 0
-                    
-                    carrito.append({
-                        'id': producto.id_producto,
-                        'nombre': producto.nombre,
-                        'precio': float(producto.precio),
-                        'cantidad': 1,
-                        'imagen': producto.imagen,
-                        'subtotal': float(producto.precio),
-                        'stock': stock_cantidad,
-                    })
-                except Producto.DoesNotExist:
-                    return JsonResponse({'success': False, 'error': 'Producto no encontrado'}, status=404)
-                except Exception as e:
-                    return JsonResponse({'success': False, 'error': f'Error al obtener producto: {str(e)}'}, status=500)
-            
-            request.session['carrito'] = carrito
-            request.session.modified = True
-            return JsonResponse({'success': True})
-        return JsonResponse({'success': False, 'error': 'Método no permitido'}, status=405)
+        # Obtener datos del JSON del request
+        try:
+            data = json.loads(request.body)
+            nombre = data.get('nombre', 'Producto sin nombre')
+            precio = float(data.get('precio', 0))
+            imagen = data.get('imagen', 'default.png')
+        except:
+            # Si no hay JSON, intentar obtener de la BD
+            try:
+                producto = Producto.objects.get(id_producto=id_producto)
+                nombre = producto.nombre
+                precio = float(producto.precio)
+                imagen = producto.imagen
+                stock_obj = producto.stock_set.first()
+                stock_cantidad = stock_obj.cantidad if stock_obj else 0
+            except Producto.DoesNotExist:
+                return JsonResponse({'success': False, 'error': 'Producto no encontrado'}, status=404)
+        
+        carrito = request.session.get('carrito', [])
+        encontrado = False
+        
+        # Verificar si el producto ya está en el carrito
+        for item in carrito:
+            if item['id'] == id_producto:
+                item['cantidad'] += 1
+                item['subtotal'] = item['precio'] * item['cantidad']
+                encontrado = True
+                break
+        
+        # Si no está, agregarlo
+        if not encontrado:
+            carrito.append({
+                'id': id_producto,
+                'nombre': nombre,
+                'precio': precio,
+                'cantidad': 1,
+                'imagen': imagen,
+                'subtotal': precio,
+                'stock': 99,  # Stock por defecto si no viene del frontend
+            })
+        
+        request.session['carrito'] = carrito
+        request.session.modified = True
+        return JsonResponse({'success': True})
+        
     except Exception as e:
         return JsonResponse({'success': False, 'error': f'Error: {str(e)}'}, status=500)
 
