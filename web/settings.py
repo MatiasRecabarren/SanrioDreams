@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 from django.contrib.messages import constants as messages_constants
+import oracledb
 import dj_database_url
 
 # Base Directory
@@ -70,8 +71,6 @@ DATABASES = {
         conn_max_age=600
     )
 }
-# Forzar a Django a usar el backend de PostgreSQL explícitamente
-DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Validación de contraseñas
