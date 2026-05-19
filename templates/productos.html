@@ -127,7 +127,7 @@
         <div class="tarjetas-contenedor">
           {% for producto in peluches %}
             <div class="tarjeta producto" data-precio="{{ producto.precio }}">
-        
+              <img src="{% static 'images/'|add:producto.imagen %}" alt="{{ producto.nombre }}">
               <h3>{{ producto.nombre }}</h3>
               <p>{{ producto.descripcion }}</p>
               <p class="precio-producto">{{ producto.precio|intcomma }}</p>
@@ -151,7 +151,7 @@
         <div class="tarjetas-contenedor">
           {% for producto in botellas %}
             <div class="tarjeta">
-     
+              <img src="{% static 'images/'|add:producto.imagen %}" alt="{{ producto.nombre }}">
               <h3>{{ producto.nombre }}</h3>
               <p>{{ producto.descripcion }}</p>
               <p class="precio-producto">{{ producto.precio|intcomma }}</p>
@@ -169,7 +169,7 @@
         <div class="tarjetas-contenedor">
           {% for producto in termos %}
             <div class="tarjeta">
-       
+              <img src="{% static 'images/'|add:producto.imagen %}" alt="{{ producto.nombre }}">
               <h3>{{ producto.nombre }}</h3>
               <p>{{ producto.descripcion }}</p>
               <p>$ {{ producto.precio | intcomma }}</p>
@@ -187,7 +187,7 @@
         <div class="tarjetas-contenedor">
           {% for producto in pines %}
             <div class="tarjeta">
-           
+              <img src="{% static 'images/'|add:producto.imagen %}" alt="{{ producto.nombre }}">
               <h3>{{ producto.nombre }}</h3>
               <p>{{ producto.descripcion }}</p>
               <p>$ {{ producto.precio | intcomma }}</p>
@@ -205,7 +205,7 @@
         <div class="tarjetas-contenedor">
           {% for producto in llaveros %}
             <div class="tarjeta">
-            
+              <img src="{% static 'images/'|add:producto.imagen %}" alt="{{ producto.nombre }}">
               <h3>{{ producto.nombre }}</h3>
               <p>{{ producto.descripcion }}</p>
               <p>$ {{ producto.precio | intcomma }}</p>
@@ -223,7 +223,7 @@
         <div class="tarjetas-contenedor">
           {% for producto in lamparas %}
             <div class="tarjeta">
-           
+              <img src="{% static 'images/'|add:producto.imagen %}" alt="{{ producto.nombre }}">
               <h3>{{ producto.nombre }}</h3>
               <p>{{ producto.descripcion }}</p>
               <p>$ {{ producto.precio | intcomma }}</p>
