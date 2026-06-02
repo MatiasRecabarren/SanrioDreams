@@ -466,11 +466,13 @@ def agregar_al_carrito(request, id_producto):
                 break
         
         # Validar que no exceda el stock disponible
-        if cantidad_en_carrito >= stock_disponible:
-            return JsonResponse({
-                'success': False, 
-                'error': f'No hay suficiente stock. Disponible: {stock_disponible}, en carrito: {cantidad_en_carrito}'
-            }, status=400)
+        # Solo validar si hay stock disponible > 0
+        if stock_disponible > 0:
+            if cantidad_en_carrito >= stock_disponible:
+                return JsonResponse({
+                    'success': False, 
+                    'error': f'No hay suficiente stock. Disponible: {stock_disponible}, en carrito: {cantidad_en_carrito}'
+                }, status=400)
         
         # Si el producto ya está en el carrito, aumentar cantidad
         if encontrado:
@@ -555,12 +557,13 @@ def aumentar_cantidad_carrito(request, id_producto):
     
     for item in carrito:
         if int(item['id']) == int(id_producto):
-            # Validar que no exceda el stock disponible
-            if item['cantidad'] >= stock_disponible:
-                return JsonResponse({
-                    'success': False, 
-                    'error': f'No hay suficiente stock. Disponible: {stock_disponible}'
-                }, status=400)
+            # Solo validar si hay stock disponible > 0
+            if stock_disponible > 0:
+                if item['cantidad'] >= stock_disponible:
+                    return JsonResponse({
+                        'success': False, 
+                        'error': f'No hay suficiente stock. Disponible: {stock_disponible}'
+                    }, status=400)
             item['cantidad'] += 1
             item['subtotal'] = float(item['precio']) * item['cantidad']
             break
