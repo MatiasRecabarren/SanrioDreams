@@ -32,6 +32,7 @@ urlpatterns = [
     path('perfil/', views.perfil, name='perfil'),
     path('pago/', views.pago, name='pago'),
     path('actualizar-stock/<int:id>/', views.actualizar_stock, name='actualizar_stock'),
+    path('api/productos/', views.productos_api, name='productos_api'),
     path('usuarios/', views.usuarios_api, name='usuarios_api'),
     path('usuarios/<str:id_usuario>', views.usuario_detalle_api, name='usuario_detalle_api'),
     path('bodeguero/', views.preparar_pedido, name='bodeguero'),

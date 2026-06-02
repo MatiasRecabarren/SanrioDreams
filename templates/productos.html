@@ -933,6 +933,99 @@
         alert('❌ Hubo un problema al agregar el producto. Revisa la consola.');
       });
     }
+
+    // Función para cargar dinámicamente los productos desde la API y generar las tarjetas
+    async function cargarProductosDinamicamente() {
+      try {
+        const response = await fetch('/api/productos/');
+        const data = await response.json();
+        
+        if (!data.productos) {
+          console.error('No se recibieron productos');
+          return;
+        }
+        
+        const productos = data.productos;
+        const categorias = {
+          'peluche': 'peluches',
+          'botella': 'botellas',
+          'termo': 'termos',
+          'pin': 'pines',
+          'llavero': 'llaveros',
+          'lampara': 'lamparas'
+        };
+        
+        // Agrupar productos por categoría
+        const productosPorCategoria = {};
+        productos.forEach(producto => {
+          const catKey = categorias[producto.categoria] || producto.categoria;
+          if (!productosPorCategoria[catKey]) {
+            productosPorCategoria[catKey] = [];
+          }
+          productosPorCategoria[catKey].push(producto);
+        });
+        
+        // Llenar cada sección con sus productos
+        Object.entries(productosPorCategoria).forEach(([categoria, items]) => {
+          const contenedor = document.querySelector(`#${categoria} .tarjetas-contenedor`);
+          if (contenedor) {
+            contenedor.innerHTML = '';
+            items.forEach(producto => {
+              const tarjeta = crearTarjetaProducto(producto);
+              contenedor.appendChild(tarjeta);
+            });
+          }
+        });
+        
+        // Actualizar los precios en USD/CLP después de crear las tarjetas
+        actualizarPrecios();
+      } catch (error) {
+        console.error('Error al cargar productos:', error);
+      }
+    }
+    
+    function crearTarjetaProducto(producto) {
+      const div = document.createElement('div');
+      div.className = 'tarjeta producto';
+      div.setAttribute('data-precio', producto.precio);
+      div.setAttribute('data-stock', producto.stock);
+      
+      const categoriaMap = {
+        'peluche': 'Peluche',
+        'botella': 'Botella',
+        'termo': 'Termo',
+        'pin': 'Pin',
+        'llavero': 'Llavero',
+        'lampara': 'Lámpara'
+      };
+      
+      const catLabel = categoriaMap[producto.categoria] || producto.categoria;
+      
+      div.innerHTML = `
+        <div class="tarjeta-img-container">
+          <img src="{% static 'images/' %}${producto.imagen}" alt="${producto.nombre}">
+        </div>
+        <div class="tarjeta-info-adicional">
+          <p>${producto.descripcion}</p>
+          <p>Cantidad: ${producto.stock}</p>
+        </div>
+        <div class="tarjeta-pie-marron">
+          <h3><span class="cat-lbl">${catLabel}</span><span class="nom-lbl">${producto.nombre}</span></h3>
+          <p class="precio-producto">$${Number(producto.precio).toLocaleString('es-CL')} CLP</p>
+        </div>
+        <button class="btn-agregar" data-id="${producto.id_producto}" data-nombre="${producto.nombre}" data-precio="${producto.precio}" data-imagen="${producto.imagen}">Agregar al carrito</button>
+      `;
+      
+      const boton = div.querySelector('.btn-agregar');
+      boton.addEventListener('click', function() {
+        agregarAlCarrito(this);
+      });
+      
+      return div;
+    }
+    
+    // Cargar productos cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', cargarProductosDinamicamente);
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/@formatjs/intl-numberformat-polyfill@4/dist/formatjs-intl-numberformat.min.js"></script> 

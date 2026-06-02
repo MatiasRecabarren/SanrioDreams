@@ -147,7 +147,7 @@ def pago_tarjeta(request):
         # expira = request.POST.get('expira')
         # cvv = request.POST.get('cvv')
         # Procesa el pago o muestra mensaje de éxito
-        return render(request, 'pago_exito.html')
+        return redirect('pago_exito')
     return render(request, 'pago_tarjeta.html')
 
 def pago_exito(request):
@@ -638,6 +638,37 @@ def descontar_stock_y_limpiar_carrito(request):
             pass  # O maneja el error como prefieras
     request.session['carrito'] = {}
     request.session.modified = True
+
+@csrf_exempt
+def productos_api(request):
+    """
+    API endpoint que retorna todos los productos con su stock actual.
+    GET /api/productos/ retorna JSON con lista de productos y sus cantidades en stock.
+    """
+    if request.method == "GET":
+        try:
+            productos = Producto.objects.all()
+            productos_data = []
+            
+            for producto in productos:
+                stock_obj = producto.stock_set.first()
+                stock_cantidad = stock_obj.cantidad if stock_obj else 0
+                
+                productos_data.append({
+                    'id_producto': producto.id_producto,
+                    'nombre': producto.nombre,
+                    'descripcion': producto.descripcion,
+                    'precio': float(producto.precio),
+                    'imagen': producto.imagen,
+                    'categoria': producto.categoria,
+                    'stock': stock_cantidad,
+                })
+            
+            return JsonResponse({'productos': productos_data})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    else:
+        return JsonResponse({"detail": "Método no permitido"}, status=405)
 
 @csrf_exempt
 def usuarios_api(request):
