@@ -124,26 +124,10 @@ def pago_transferencia(request):
     mensaje = None
     if request.method == 'POST':
         comprobante = request.FILES.get('comprobante')
-        # Descontar stock
-        carrito = request.session.get('carrito', [])
-        for item in carrito:
-            try:
-                producto = Producto.objects.get(id_producto=item['id'])
-                stock_obj = producto.stock_set.first()
-                if stock_obj:
-                    # Convierte ambos a int para evitar problemas de tipo
-                    cantidad_actual = int(stock_obj.cantidad)
-                    cantidad_comprada = int(item['cantidad'])
-                    nueva_cantidad = max(cantidad_actual - cantidad_comprada, 0)
-                    stock_obj.cantidad = nueva_cantidad
-                    stock_obj.save()
-            except Producto.DoesNotExist:
-                pass
-        # Limpiar el carrito
-        request.session['carrito'] = []
+        # El descuento de stock se realiza en pago_exito después de redirigir
         request.session.modified = True
         mensaje = "¡Pago recibido con éxito! Pronto confirmaremos tu pago."
-        return redirect('pago_exito')  # Esto es correcto
+        return redirect('pago_exito')
     return render(request, 'pago_transferencia.html', {'mensaje': mensaje})
 
 def pago_tarjeta(request):
@@ -158,6 +142,8 @@ def pago_tarjeta(request):
 
 def pago_exito(request):
     carrito = request.session.get('carrito', [])
+    
+    # Descontar stock de cada item en el carrito
     for item in carrito:
         try:
             producto = Producto.objects.get(id_producto=item['id'])
@@ -171,6 +157,7 @@ def pago_exito(request):
                 stock_obj.save()
         except Producto.DoesNotExist:
             continue
+    
     # Vacía el carrito después del pago
     request.session['carrito'] = []
     request.session.modified = True
@@ -459,19 +446,41 @@ def agregar_al_carrito(request, id_producto):
             except Producto.DoesNotExist:
                 return JsonResponse({'success': False, 'error': 'Producto no encontrado'}, status=404)
         
+        # Obtener stock disponible del producto
+        try:
+            producto = Producto.objects.get(id_producto=id_producto)
+            stock_obj = producto.stock_set.first()
+            stock_disponible = stock_obj.cantidad if stock_obj else 0
+        except Producto.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Producto no encontrado'}, status=404)
+        
         carrito = request.session.get('carrito', [])
         encontrado = False
         
         # Verificar si el producto ya está en el carrito
+        cantidad_en_carrito = 0
         for item in carrito:
             if item['id'] == id_producto:
-                item['cantidad'] += 1
-                item['subtotal'] = item['precio'] * item['cantidad']
+                cantidad_en_carrito = item['cantidad']
                 encontrado = True
                 break
         
-        # Si no está, agregarlo
-        if not encontrado:
+        # Validar que no exceda el stock disponible
+        if cantidad_en_carrito >= stock_disponible:
+            return JsonResponse({
+                'success': False, 
+                'error': f'No hay suficiente stock. Disponible: {stock_disponible}, en carrito: {cantidad_en_carrito}'
+            }, status=400)
+        
+        # Si el producto ya está en el carrito, aumentar cantidad
+        if encontrado:
+            for item in carrito:
+                if item['id'] == id_producto:
+                    item['cantidad'] += 1
+                    item['subtotal'] = item['precio'] * item['cantidad']
+                    break
+        else:
+            # Si no está, agregarlo
             carrito.append({
                 'id': id_producto,
                 'nombre': nombre,
@@ -479,12 +488,12 @@ def agregar_al_carrito(request, id_producto):
                 'cantidad': 1,
                 'imagen': imagen,
                 'subtotal': precio,
-                'stock': 99,  # Stock por defecto si no viene del frontend
+                'stock': stock_disponible,
             })
         
         request.session['carrito'] = carrito
         request.session.modified = True
-        return JsonResponse({'success': True})
+        return JsonResponse({'success': True, 'stock_disponible': stock_disponible})
         
     except Exception as e:
         return JsonResponse({'success': False, 'error': f'Error: {str(e)}'}, status=500)
@@ -535,8 +544,23 @@ def quitar_del_carrito(request, id_producto):
 @require_POST
 def aumentar_cantidad_carrito(request, id_producto):
     carrito = request.session.get('carrito', [])
+    
+    # Obtener stock disponible
+    try:
+        producto = Producto.objects.get(id_producto=id_producto)
+        stock_obj = producto.stock_set.first()
+        stock_disponible = stock_obj.cantidad if stock_obj else 0
+    except Producto.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Producto no encontrado'}, status=404)
+    
     for item in carrito:
         if int(item['id']) == int(id_producto):
+            # Validar que no exceda el stock disponible
+            if item['cantidad'] >= stock_disponible:
+                return JsonResponse({
+                    'success': False, 
+                    'error': f'No hay suficiente stock. Disponible: {stock_disponible}'
+                }, status=400)
             item['cantidad'] += 1
             item['subtotal'] = float(item['precio']) * item['cantidad']
             break
@@ -575,24 +599,28 @@ def informes_stock(request):
         stock_obj = producto.stock_set.first()
 
         if stock_obj:
-            stock_actual = int(stock_obj.cantidad)  # Asegura que sea un entero
+            stock_actual = int(stock_obj.cantidad)
             ubicacion = stock_obj.ubicacion_detalle
+        else:
+            # Si no hay stock registrado, crear uno por defecto con 0
+            stock_actual = 0
+            ubicacion = "No especificada"
 
-            # Actualizar o crear AlertaStock
-            alerta, created = AlertaStock.objects.get_or_create(
-                producto=producto,
-                defaults={
-                    'stock_actual': stock_actual,
-                    'ubicacion_detalle': ubicacion
-                }
-            )
+        # Actualizar o crear AlertaStock
+        alerta, created = AlertaStock.objects.get_or_create(
+            producto=producto,
+            defaults={
+                'stock_actual': stock_actual,
+                'ubicacion_detalle': ubicacion
+            }
+        )
 
-            if not created:
-                alerta.stock_actual = stock_actual
-                alerta.save()
+        if not created:
+            alerta.stock_actual = stock_actual
+            alerta.ubicacion_detalle = ubicacion
+            alerta.save()
 
-            print(f"Producto: {producto.nombre}, Stock Actual: {stock_actual}")  # Depuración
-            alertas.append(alerta)
+        alertas.append(alerta)
 
     return render(request, 'informes_stock.html', {'alertas': alertas})
 
