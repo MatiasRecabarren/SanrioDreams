@@ -637,13 +637,11 @@ def actualizar_stock(request, id):
             # Actualiza el stock real
             stock = alerta.producto.stock_set.first()
             if stock:
-                # Si viene cantidad, se establece directamente (no suma)
-                # Esto es para el bodeguero que puede actualizar el stock a un valor específico
-                stock.cantidad = cantidad
+                stock.cantidad += cantidad
                 stock.save()
                 alerta.stock_actual = stock.cantidad
                 alerta.save()
-                return JsonResponse({"success": True})
+                return JsonResponse({"success": True, "nuevo_stock": stock.cantidad})
             else:
                 return JsonResponse({"success": False, "error": "No hay stock asociado."})
         except Exception as e:
