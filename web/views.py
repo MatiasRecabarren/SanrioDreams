@@ -129,8 +129,14 @@ def pago_transferencia(request):
         for item in carrito:
             try:
                 producto = Producto.objects.get(id_producto=item['id'])
-                producto.stock_set.first().cantidad -= item['cantidad']
-                producto.stock_set.first().save()
+                stock_obj = producto.stock_set.first()
+                if stock_obj:
+                    # Convierte ambos a int para evitar problemas de tipo
+                    cantidad_actual = int(stock_obj.cantidad)
+                    cantidad_comprada = int(item['cantidad'])
+                    nueva_cantidad = max(cantidad_actual - cantidad_comprada, 0)
+                    stock_obj.cantidad = nueva_cantidad
+                    stock_obj.save()
             except Producto.DoesNotExist:
                 pass
         # Limpiar el carrito
@@ -600,7 +606,9 @@ def actualizar_stock(request, id):
             # Actualiza el stock real
             stock = alerta.producto.stock_set.first()
             if stock:
-                stock.cantidad += cantidad
+                # Si viene cantidad, se establece directamente (no suma)
+                # Esto es para el bodeguero que puede actualizar el stock a un valor específico
+                stock.cantidad = cantidad
                 stock.save()
                 alerta.stock_actual = stock.cantidad
                 alerta.save()
