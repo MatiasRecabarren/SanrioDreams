@@ -598,15 +598,15 @@ def informes_stock(request):
     for producto in productos:
         stock_obj = producto.stock_set.first()
 
+        # Debug: mostrar qué encontramos
         if stock_obj:
             stock_actual = int(stock_obj.cantidad)
             ubicacion = stock_obj.ubicacion_detalle
         else:
-            # Si no hay stock registrado, crear uno por defecto con 0
             stock_actual = 0
             ubicacion = "No especificada"
 
-        # Actualizar o crear AlertaStock
+        # Crear o actualizar AlertaStock
         alerta, created = AlertaStock.objects.get_or_create(
             producto=producto,
             defaults={
