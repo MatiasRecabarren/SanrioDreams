@@ -259,328 +259,202 @@
           </div>
         </div>
       </header>
-      <section id="peluches" class="peluches">
-        <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif; margin-top: 20px;">Nuestros Peluches</h3>
-        <div class="tarjetas-contenedor">
-          
-          <div class="tarjeta producto" data-precio="12990">
-            <div class="tarjeta-img-container">
-              <img src="{% static 'images/Peluche_HelloKitty.png' %}" alt="Peluche Hello Kitty">
-            </div>
-            <div class="tarjeta-info-adicional">
-              <p>Peluche original de Hello Kitty</p>
-              <p>Stock disponible: {{ producto.stock_set.first.cantidad|default:"0" }}</p>
-            </div>
-            <div class="tarjeta-pie-marron">
-              <h3><span class="cat-lbl">Peluche</span><span class="nom-lbl">Hello Kitty</span></h3>
-              <p class="precio-producto">$12.990 CLP</p>
-            </div>
-            <button onclick="agregarAlCarrito(this)" class="btn-agregar" data-id="1" data-nombre="Peluche Hello Kitty" data-precio="12990" data-imagen="Peluche_HelloKitty.png">Agregar al carrito</button>
-          </div>
+<section id="peluches" class="peluches">
+  <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif; margin-top: 20px;">Nuestros Peluches</h3>
+  <div class="tarjetas-contenedor">
+    
+    {% for producto in peluches %}
+    <div class="tarjeta producto" data-precio="{{ producto.precio }}">
+      <div class="tarjeta-img-container">
+        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+      </div>
+      <div class="tarjeta-info-adicional">
+        <p>{{ producto.nombre }}</p>
+        <p>Stock disponible: {{ producto.stock_set.first.cantidad|default:"0" }}</p>
+      </div>
+      <div class="tarjeta-pie-marron">
+        <h3><span class="cat-lbl">Peluche</span><span class="nom-lbl">{{ producto.nombre }}</span></h3>
+        <p class="precio-producto">${{ producto.precio }} CLP</p>
+      </div>
+      <button onclick="agregarAlCarrito(this)" class="btn-agregar" 
+              data-id="{{ producto.id_producto }}" 
+              data-nombre="{{ producto.nombre }}" 
+              data-precio="{{ producto.precio }}" 
+              data-imagen="{{ producto.imagen }}">
+        Agregar al carrito
+      </button>
+    </div>
+    {% empty %}
+      <p style="text-align: center; width: 100%;">No hay peluches disponibles en este momento.</p>
+    {% endfor %}
 
-          <div class="tarjeta producto" data-precio="12990">
-            <div class="tarjeta-img-container">
-              <img src="{% static 'images/Peluche_MyMelody.png' %}" alt="Peluche My Melody">
-            </div>
-            <div class="tarjeta-info-adicional">
-              <p>Peluche My Melody de Sanrio</p>
-              <p>Stock disponible: {{ producto.stock_set.first.cantidad|default:"0" }}</p>
-            </div>
-            <div class="tarjeta-pie-marron">
-              <h3><span class="cat-lbl">Peluche</span><span class="nom-lbl">My Melody</span></h3>
-              <p class="precio-producto">$12.990 CLP</p>
-            </div>
-            <button onclick="agregarAlCarrito(this)" class="btn-agregar" data-id="2" data-nombre="Peluche My Melody" data-precio="12990" data-imagen="Peluche_MyMelody.png">Agregar al carrito</button>
-          </div>
+  </div>
+</section>
+<br>
 
-          <div class="tarjeta producto" data-precio="13490">
-            <div class="tarjeta-img-container">
-              <img src="{% static 'images/Peluche_Cinnamoroll.png' %}" alt="Peluche Cinnamoroll">
-            </div>
-            <div class="tarjeta-info-adicional">
-              <p>Peluche Cinnamoroll</p>
-             <p>Stock disponible: {{ producto.stock_set.first.cantidad|default:"0" }}</p>
-            </div>
-            <div class="tarjeta-pie-marron">
-              <h3><span class="cat-lbl">Peluche</span><span class="nom-lbl">Cinnamoroll</span></h3>
-              <p class="precio-producto">$13.490 CLP</p>
-            </div>
-            <button onclick="agregarAlCarrito(this)" class="btn-agregar" data-id="3" data-nombre="Peluche Cinnamoroll" data-precio="13490" data-imagen="Peluche_Cinnamoroll.png">Agregar al carrito</button>
-          </div>
+<section id="botellas" class="botellas">
+  <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestras Botellas</h3>
+  <div class="tarjetas-contenedor">
+    
+    {% for producto in botellas %}
+    <div class="tarjeta producto" data-precio="{{ producto.precio }}">
+      <div class="tarjeta-img-container">
+        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+      </div>
+      <div class="tarjeta-info-adicional">
+        <p>{{ producto.nombre }}</p>
+        <p>Stock disponible: {{ producto.stock_set.first.cantidad|default:"0" }}</p>
+      </div>
+      <div class="tarjeta-pie-marron">
+        <h3><span class="cat-lbl">Botella</span><span class="nom-lbl">{{ producto.nombre }}</span></h3>
+        <p class="precio-producto">${{ producto.precio }} CLP</p>
+      </div>
+      <button onclick="agregarAlCarrito(this)" class="btn-agregar" 
+              data-id="{{ producto.id_producto }}" 
+              data-nombre="{{ producto.nombre }}" 
+              data-precio="{{ producto.precio }}" 
+              data-imagen="{{ producto.imagen }}">
+        Agregar al carrito
+      </button>
+    </div>
+    {% empty %}
+      <p style="text-align: center; width: 100%;">No hay botellas disponibles en este momento.</p>
+    {% endfor %}
 
-          <div class="tarjeta producto" data-precio="13990">
-            <div class="tarjeta-img-container">
-              <img src="{% static 'images/Peluche_Kuromi.png' %}" alt="Peluche Kuromi">
-            </div>
-            <div class="tarjeta-info-adicional">
-              <p>Peluche Kuromi</p>
-              <p>Stock disponible: {{ producto.stock_set.first.cantidad|default:"0" }}</p>
-            </div>
-            <div class="tarjeta-pie-marron">
-              <h3><span class="cat-lbl">Peluche</span><span class="nom-lbl">Kuromi</span></h3>
-              <p class="precio-producto">$13.990 CLP</p>
-            </div>
-            <button onclick="agregarAlCarrito(this)" class="btn-agregar" data-id="2" data-nombre="Peluche My Melody" data-precio="12990" data-imagen="Peluche_MyMelody.png">Agregar al carrito</button>
-          </div>
+  </div>
+</section>
+<br>
 
-          <div class="tarjeta producto" data-precio="13490">
-            <div class="tarjeta-img-container">
-              <img src="{% static 'images/Peluche_Pompompurin.png' %}" alt="Peluche Pompompurin">
-            </div>
-            <div class="tarjeta-info-adicional">
-              <p>Peluche Pompompurin</p>
-             <p>Stock disponible: {{ producto.stock_set.first.cantidad|default:"0" }}</p>
-            </div>
-            <div class="tarjeta-pie-marron">
-              <h3><span class="cat-lbl">Peluche</span><span class="nom-lbl">Pompompurin</span></h3>
-              <p class="precio-producto">$13.490 CLP</p>
-            </div>
-            <button onclick="agregarAlCarrito(this)" class="btn-agregar" data-id="5" data-nombre="Peluche Pompompurin" data-precio="12990" data-imagen="Peluche_Pompompurin.png">Agregar al carrito</button>
-          </div>
+<section id="termos" class="termos">
+  <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Termos</h3>
+  <div class="tarjetas-contenedor">
+    
+    {% for producto in termos %}
+    <div class="tarjeta producto" data-precio="{{ producto.precio }}">
+      <div class="tarjeta-img-container">
+        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+      </div>
+      <div class="tarjeta-info-adicional">
+        <p>{{ producto.nombre }}</p>
+        <p>Stock disponible: {{ producto.stock_set.first.cantidad|default:"0" }}</p>
+      </div>
+      <div class="tarjeta-pie-marron">
+        <h3><span class="cat-lbl">Termo</span><span class="nom-lbl">{{ producto.nombre }}</span></h3>
+        <p class="precio-producto">${{ producto.precio }} CLP</p>
+      </div>
+      <button onclick="agregarAlCarrito(this)" class="btn-agregar" 
+              data-id="{{ producto.id_producto }}" 
+              data-nombre="{{ producto.nombre }}" 
+              data-precio="{{ producto.precio }}" 
+              data-imagen="{{ producto.imagen }}">
+        Agregar al carrito
+      </button>
+    </div>
+    {% empty %}
+      <p style="text-align: center; width: 100%;">No hay termos disponibles en este momento.</p>
+    {% endfor %}
 
-        </div>
-      </section>
+  </div>
+</section>
+<br>
 
-      <br>
+<section id="pines" class="pines">
+  <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Pines</h3>
+  <div class="tarjetas-contenedor">
+    
+    {% for producto in pines %}
+    <div class="tarjeta producto" data-precio="{{ producto.precio }}">
+      <div class="tarjeta-img-container">
+        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+      </div>
+      <div class="tarjeta-info-adicional">
+        <p>{{ producto.nombre }}</p>
+        <p>Stock disponible: {{ producto.stock_set.first.cantidad|default:"0" }}</p>
+      </div>
+      <div class="tarjeta-pie-marron">
+        <h3><span class="cat-lbl">Pin</span><span class="nom-lbl">{{ producto.nombre }}</span></h3>
+        <p class="precio-producto">${{ producto.precio }} CLP</p>
+      </div>
+      <button onclick="agregarAlCarrito(this)" class="btn-agregar" 
+              data-id="{{ producto.id_producto }}" 
+              data-nombre="{{ producto.nombre }}" 
+              data-precio="{{ producto.precio }}" 
+              data-imagen="{{ producto.imagen }}">
+        Agregar al carrito
+      </button>
+    </div>
+    {% empty %}
+      <p style="text-align: center; width: 100%;">No hay pines disponibles en este momento.</p>
+    {% endfor %}
 
-      <section id="botellas" class="botellas">
-        <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestras Botellas</h3>
-        <div class="tarjetas-contenedor">
-          
-          <div class="tarjeta producto" data-precio="8990">
-            <div class="tarjeta-img-container">
-              <img src="{% static 'images/Botella_520ml_Pompompurin.png' %}" alt="Botella Pompompurin">
-            </div>
-            <div class="tarjeta-info-adicional">
-              <p>Botella reutilizable Pompompurin</p>
-             <p>Stock disponible: {{ producto.stock_set.first.cantidad|default:"0" }}</p>
-            </div>
-            <div class="tarjeta-pie-marron">
-              <h3><span class="cat-lbl">Botella</span><span class="nom-lbl">Pompompurin</span></h3>
-              <p class="precio-producto">$8.990 CLP</p>
-            </div>
-            <button onclick="agregarAlCarrito(this)" class="btn-agregar" data-id="6" data-nombre="Botella Sanrio" data-precio="12990" data-imagen="Botella_Sanrio.png">Agregar al carrito</button>
-          </div>
+  </div>
+</section>
+<br>
 
-          <div class="tarjeta producto" data-precio="8990">
-            <div class="tarjeta-img-container">
-              <img src="{% static 'images/Botella_520ml_Pochacco.png' %}" alt="Botella Pochacco">
-            </div>
-            <div class="tarjeta-info-adicional">
-              <p>Botella reutilizable Pochacco</p>
-              <p>Stock disponible: {{ producto.stock_set.first.cantidad|default:"0" }}</p>
-            </div>
-            <div class="tarjeta-pie-marron">
-              <h3><span class="cat-lbl">Botella</span><span class="nom-lbl">Pochacco</span></h3>
-              <p class="precio-producto">$8.990 CLP</p>
-            </div>
-            <button onclick="agregarAlCarrito(this)" class="btn-agregar" data-id="6" data-nombre="Botella Sanrio" data-precio="8990" data-imagen="Botella_Sanrio.png">Agregar al carrito</button>
-          </div>
+<section id="llaveros" class="llaveros">
+  <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Llaveros</h3>
+  <div class="tarjetas-contenedor">
+    
+    {% for producto in llaveros %}
+    <div class="tarjeta producto" data-precio="{{ producto.precio }}">
+      <div class="tarjeta-img-container">
+        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+      </div>
+      <div class="tarjeta-info-adicional">
+        <p>{{ producto.nombre }}</p>
+        <p>Stock disponible: {{ producto.stock_set.first.cantidad|default:"0" }}</p>
+      </div>
+      <div class="tarjeta-pie-marron">
+        <h3><span class="cat-lbl">Llavero</span><span class="nom-lbl">{{ producto.nombre }}</span></h3>
+        <p class="precio-producto">${{ producto.precio }} CLP</p>
+      </div>
+      <button onclick="agregarAlCarrito(this)" class="btn-agregar" 
+              data-id="{{ producto.id_producto }}" 
+              data-nombre="{{ producto.nombre }}" 
+              data-precio="{{ producto.precio }}" 
+              data-imagen="{{ producto.imagen }}">
+        Agregar al carrito
+      </button>
+    </div>
+    {% empty %}
+      <p style="text-align: center; width: 100%;">No hay llaveros disponibles en este momento.</p>
+    {% endfor %}
 
-          <div class="tarjeta producto" data-precio="8990">
-            <div class="tarjeta-img-container">
-              <img src="{% static 'images/Botella_520ml_HelloKitty.png' %}" alt="Botella Hello Kitty">
-            </div>
-            <div class="tarjeta-info-adicional">
-              <p>Botella reutilizable Hello Kitty</p>
-             <p>Stock disponible: {{ producto.stock_set.first.cantidad|default:"0" }}</p>
-            </div>
-            <div class="tarjeta-pie-marron">
-              <h3><span class="cat-lbl">Botella</span><span class="nom-lbl">Hello Kitty</span></h3>
-              <p class="precio-producto">$8.990 CLP</p>
-            </div>
-            <button onclick="agregarAlCarrito(this)" class="btn-agregar" data-id="8" data-nombre="Botella Kuromi" data-precio="8990" data-imagen="Botella_Kuromi.png">Agregar al carrito</button>
-          </div>
+  </div>
+</section>
+<br>
 
-          <div class="tarjeta producto" data-precio="8990">
-            <div class="tarjeta-img-container">
-              <img src="{% static 'images/Botella_520ml_MyMelody.png' %}" alt="Botella My Melody">
-            </div>
-            <div class="tarjeta-info-adicional">
-              <p>Botella reutilizable My Melody</p>
-              <p>Stock disponible: {{ producto.stock_set.first.cantidad|default:"0" }}</p>
-            </div>
-            <div class="tarjeta-pie-marron">
-              <h3><span class="cat-lbl">Botella</span><span class="nom-lbl">My Melody</span></h3>
-              <p class="precio-producto">$8.990 CLP</p>
-            </div>
-            <button onclick="agregarAlCarrito(this)" class="btn-agregar" data-id="9" data-nombre="Botella My Melody" data-precio="8990" data-imagen="Botella_MyMelody.png">Agregar al carrito</button>
-          </div>
+<section id="lamparas" class="lamparas">
+  <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestras Lámparas</h3>
+  <div class="tarjetas-contenedor">
+    
+    {% for producto in lamparas %}
+    <div class="tarjeta producto" data-precio="{{ producto.precio }}">
+      <div class="tarjeta-img-container">
+        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+      </div>
+      <div class="tarjeta-info-adicional">
+        <p>{{ producto.nombre }}</p>
+        <p>Stock disponible: {{ producto.stock_set.first.cantidad|default:"0" }}</p>
+      </div>
+      <div class="tarjeta-pie-marron">
+        <h3><span class="cat-lbl">Lámpara</span><span class="nom-lbl">{{ producto.nombre }}</span></h3>
+        <p class="precio-producto">${{ producto.precio }} CLP</p>
+      </div>
+      <button onclick="agregarAlCarrito(this)" class="btn-agregar" 
+              data-id="{{ producto.id_producto }}" 
+              data-nombre="{{ producto.nombre }}" 
+              data-precio="{{ producto.precio }}" 
+              data-imagen="{{ producto.imagen }}">
+        Agregar al carrito
+      </button>
+    </div>
+    {% empty %}
+      <p style="text-align: center; width: 100%;">No hay lámparas disponibles en este momento.</p>
+    {% endfor %}
 
-        </div>
-      </section>
-
-      <br>
-
-      <section id="termos" class="termos">
-        <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Termos</h3>
-        <div class="tarjetas-contenedor">
-          
-          <div class="tarjeta producto" data-precio="10990">
-            <div class="tarjeta-img-container">
-              <img src="{% static 'images/Termo_200ml_Cinnamoroll.png' %}" alt="Termo Cinnamoroll">
-            </div>
-            <div class="tarjeta-info-adicional">
-              <p>Termo 200ml Cinnamoroll</p>
-             <p>Stock disponible: {{ producto.stock_set.first.cantidad|default:"0" }}</p>
-            </div>
-            <div class="tarjeta-pie-marron">
-              <h3><span class="cat-lbl">Termo</span><span class="nom-lbl">Cinnamoroll</span></h3>
-              <p class="precio-producto">$10.990 CLP</p>
-            </div>
-            <button onclick="agregarAlCarrito(this)" class="btn-agregar" data-id="10" data-nombre="Termo Cinnamoroll" data-precio="10990" data-imagen="Termo_200ml_Cinnamoroll.png">Agregar al carrito</button>
-          </div>
-
-          <div class="tarjeta producto" data-precio="10990">
-            <div class="tarjeta-img-container">
-              <img src="{% static 'images/Termo_200ml_Pompompurin.png' %}" alt="Termo Pompompurin">
-            </div>
-            <div class="tarjeta-info-adicional">
-              <p>Termo 200ml Pompompurin</p>
-             <p>Stock disponible: {{ producto.stock_set.first.cantidad|default:"0" }}</p>
-            </div>
-            <div class="tarjeta-pie-marron">
-              <h3><span class="cat-lbl">Termo</span><span class="nom-lbl">Pompompurin</span></h3>
-              <p class="precio-producto">$10.990 CLP</p>
-            </div>
-            <button onclick="agregarAlCarrito(this)" class="btn-agregar" data-id="11" data-nombre="Termo Pompompurin" data-precio="10990" data-imagen="Termo_200ml_Pompompurin.png">Agregar al carrito</button>
-          </div>
-
-          <div class="tarjeta producto" data-precio="10990">
-            <div class="tarjeta-img-container">
-              <img src="{% static 'images/Termo_200ml_Kuromi.png' %}" alt="Termo Kuromi">
-            </div>
-            <div class="tarjeta-info-adicional">
-              <p>Termo 200ml Kuromi</p>
-             <p>Stock disponible: {{ producto.stock_set.first.cantidad|default:"0" }}</p>
-            </div>
-            <div class="tarjeta-pie-marron">
-              <h3><span class="cat-lbl">Termo</span><span class="nom-lbl">Kuromi</span></h3>
-              <p class="precio-producto">$10.990 CLP</p>
-            </div>
-            <button onclick="agregarAlCarrito(this)" class="btn-agregar" data-id="4" data-nombre="Peluche Kuromi" data-precio="14990" data-imagen="Peluche_Kuromi.png">Agregar al carrito</button>
-          </div>
-
-        </div>
-      </section>
-
-      <br>
-
-      <section id="pines" class="pines">
-        <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Pines</h3>
-        <div class="tarjetas-contenedor">
-          
-          <div class="tarjeta producto" data-precio="3990">
-            <div class="tarjeta-img-container">
-              <img src="{% static 'images/Pin_Cinnamoroll.png' %}" alt="Pin Cinnamoroll">
-            </div>
-            <div class="tarjeta-info-adicional">
-              <p>Pin decorativo Cinnamoroll</p>
-             <p>Stock disponible: {{ producto.stock_set.first.cantidad|default:"0" }}</p>
-            </div>
-            <div class="tarjeta-pie-marron">
-              <h3><span class="cat-lbl">Pin</span><span class="nom-lbl">Cinnamoroll</span></h3>
-              <p class="precio-producto">$3.990 CLP</p>
-            </div>
-            <button onclick="agregarAlCarrito(this)" class="btn-agregar" data-id="3" data-nombre="Peluche Cinnamoroll" data-precio="13490" data-imagen="Peluche_Cinnamoroll.png">Agregar al carrito</button>
-          </div>
-
-          <div class="tarjeta producto" data-precio="3990">
-            <div class="tarjeta-img-container">
-              <img src="{% static 'images/Pin_Kuromi.png' %}" alt="Pin Kuromi">
-            </div>
-            <div class="tarjeta-info-adicional">
-              <p>Pin decorativo Kuromi</p>
-            <p>Stock disponible: {{ producto.stock_set.first.cantidad|default:"0" }}</p>
-            </div>
-            <div class="tarjeta-pie-marron">
-              <h3><span class="cat-lbl">Pin</span><span class="nom-lbl">Kuromi</span></h3>
-              <p class="precio-producto">$3.990 CLP</p>
-            </div>
-            <button onclick="agregarAlCarrito(this)" class="btn-agregar" data-id="14" data-nombre="Pin Kuromi" data-precio="3990" data-imagen="Pin_Kuromi.png">Agregar al carrito</button>
-          </div>
-
-        </div>
-      </section>
-
-      <br>
-
-      <section id="llaveros" class="llaveros">
-        <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestros Llaveros</h3>
-        <div class="tarjetas-contenedor">
-          
-          <div class="tarjeta producto" data-precio="4990">
-            <div class="tarjeta-img-container">
-              <img src="{% static 'images/Llavero_Cinnamoroll.png' %}" alt="Llavero Cinnamoroll">
-            </div>
-            <div class="tarjeta-info-adicional">
-              <p>Llavero Cinnamoroll</p>
-             <p>Stock disponible: {{ producto.stock_set.first.cantidad|default:"0" }}</p>
-            </div>
-            <div class="tarjeta-pie-marron">
-              <h3><span class="cat-lbl">Llavero</span><span class="nom-lbl">Cinnamoroll</span></h3>
-              <p class="precio-producto">$4.990 CLP</p>
-            </div>
-            <button onclick="agregarAlCarrito('15')" class="btn-agregar">Agregar al carrito</button>
-          </div>
-
-          <div class="tarjeta producto" data-precio="4990">
-            <div class="tarjeta-img-container">
-              <img src="{% static 'images/Llavero_Kuromi.png' %}" alt="Llavero Kuromi">
-            </div>
-            <div class="tarjeta-info-adicional">
-              <p>Llavero Kuromi</p>
-             <p>Stock disponible: {{ producto.stock_set.first.cantidad|default:"0" }}</p>
-            </div>
-            <div class="tarjeta-pie-marron">
-              <h3><span class="cat-lbl">Llavero</span><span class="nom-lbl">Kuromi</span></h3>
-              <p class="precio-producto">$4.990 CLP</p>
-            </div>
-            <button onclick="agregarAlCarrito(this)" class="btn-agregar" data-id="11" data-nombre="Termo Pompompurin" data-precio="10990" data-imagen="Termo_200ml_Pompompurin.png">Agregar al carrito</button>
-          </div>
-
-        </div>
-      </section>
-
-      <br>
-
-      <section id="lamparas" class="lamparas">
-        <h3 style="text-align: center; font-family: Georgia, 'Times New Roman', Times, serif;">Nuestras Lámparas</h3>
-        <div class="tarjetas-contenedor">
-          
-          <div class="tarjeta producto" data-precio="19990">
-            <div class="tarjeta-img-container">
-              <img src="{% static 'images/Lampara_Cinnamoroll.png' %}" alt="Lampara Cinnamoroll">
-            </div>
-            <div class="tarjeta-info-adicional">
-              <p>Lampara decorativa Cinnamoroll</p>
-              <p>Stock disponible: {{ producto.stock_set.first.cantidad|default:"0" }}</p>
-            </div>
-            <div class="tarjeta-pie-marron">
-              <h3><span class="cat-lbl">Lampara</span><span class="nom-lbl">Cinnamoroll</span></h3>
-              <p class="precio-producto">$19.990 CLP</p>
-            </div>
-            <button onclick="agregarAlCarrito('17')" class="btn-agregar">Agregar al carrito</button>
-          </div>
-
-          <div class="tarjeta producto" data-precio="19990">
-            <div class="tarjeta-img-container">
-              <img src="{% static 'images/Lampara_HelloKitty.png' %}" alt="Lampara Hello Kitty">
-            </div>
-            <div class="tarjeta-info-adicional">
-              <p>Lampara decorativa Hello Kitty</p>
-             <p>Stock disponible: {{ producto.stock_set.first.cantidad|default:"0" }}</p>
-            </div>
-            <div class="tarjeta-pie-marron">
-              <h3><span class="cat-lbl">Lampara</span><span class="nom-lbl">Hello Kitty</span></h3>
-              <p class="precio-producto">$19.990 CLP</p>
-            </div>
-            <button onclick="agregarAlCarrito('18')" class="btn-agregar">Agregar al carrito</button>
-          </div>
-
-        </div>
-      </section>
-
+  </div>
+</section>
       <section class="info_section layout_padding2">
         <div class="container">
           <div class="row info_main_row">
