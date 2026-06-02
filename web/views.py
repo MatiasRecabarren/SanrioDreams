@@ -45,12 +45,14 @@ def preparar_pedido(request):
     return render(request, 'bodeguero.html')  
 
 def productos(request):
-    peluches = Producto.objects.filter(categoria='peluche')
-    botellas = Producto.objects.filter(categoria='botella')
-    termos = Producto.objects.filter(categoria='termo')
-    pines = Producto.objects.filter(categoria='pin')
-    llaveros = Producto.objects.filter(categoria='llavero')
-    lamparas = Producto.objects.filter(categoria='lampara')
+    # Usar __icontains hace que ignore mayúsculas y minúsculas.
+    # Por ejemplo, encontrará "Peluche", "peluche", "Peluches", etc.
+    peluches = Producto.objects.filter(categoria__icontains='peluche')
+    botellas = Producto.objects.filter(categoria__icontains='botella')
+    termos = Producto.objects.filter(categoria__icontains='termo')
+    pines = Producto.objects.filter(categoria__icontains='pin')
+    llaveros = Producto.objects.filter(categoria__icontains='llavero')
+    lamparas = Producto.objects.filter(categoria__icontains='lampara')
 
     return render(request, 'productos.html', {
         'peluches': peluches,
