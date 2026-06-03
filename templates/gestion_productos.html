@@ -1,25 +1,338 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Gestionar Productos</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>SanrioDreams ✨ | Panel de Administración</title>
+  <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}" />
+  <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet" />
+  <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" />
+  
+  <style>
+    body {
+      background-color: #fcf6f8;
+      font-family: 'Poppins', sans-serif;
+    }
+    h2, h4 {
+      color: #b03a5b;
+      font-weight: 700;
+    }
+    .navbar-brand {
+      color: #b03a5b !important;
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+    /* Estilos de Control de Acceso y Tarjetas */
+    .admin-container {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 4px 15px rgba(255, 182, 193, 0.15);
+      border: 1px solid #ffb6d5;
+      margin-bottom: 2.5rem;
+    }
+    .nav-tabs-gestion {
+      border-bottom: 2px solid #ffb6d5;
+    }
+    .nav-tabs-gestion .nav-link {
+      color: #b03a5b;
+      font-weight: 600;
+      border: 1px solid transparent;
+      border-radius: 12px 12px 0 0;
+      margin-right: 5px;
+      transition: all 0.2s;
+    }
+    .nav-tabs-gestion .nav-link.active {
+      background-color: #ff69b4;
+      color: white !important;
+      border-color: #ff69b4 #ff69b4 transparent;
+    }
+    .nav-tabs-gestion .nav-link:hover:not(.active) {
+      background-color: #fff0f6;
+      border-color: #ffb6d5;
+    }
+    /* Formularios y Tablas */
+    .form-control, .form-control-file {
+      border-radius: 8px;
+      border-color: #ffb6d5;
+    }
+    .form-control:focus {
+      border-color: #ff69b4;
+      box-shadow: 0 0 0 0.2rem rgba(255, 105, 180, 0.25);
+    }
+    label {
+      color: #b03a5b;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+    .table-sanrio {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .table-sanrio th {
+      background-color: #ffb6d5;
+      color: #b03a5b;
+      font-weight: 700;
+      border: none;
+    }
+    /* Botones temáticos */
+    .btn-sanrio {
+      background-color: #ff69b4;
+      color: white;
+      border: none;
+      font-weight: 600;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+    .btn-sanrio:hover {
+      background-color: #d6336c;
+      color: white;
+    }
+    .btn-edit {
+      background-color: #4da6ff;
+      color: white;
+      border-radius: 6px;
+    }
+    .btn-edit:hover {
+      background-color: #007bff;
+      color: white;
+    }
+    .btn-delete {
+      background-color: #ff4d6d;
+      color: white;
+      border-radius: 6px;
+    }
+    .btn-delete:hover {
+      background-color: #dc3545;
+      color: white;
+    }
+    /* Alerta de acceso denegado */
+    .access-denied {
+      max-width: 550px;
+      margin: 100px auto;
+      text-align: center;
+      background: #fff5f5;
+      border: 2px dashed #ff4d6d;
+      border-radius: 20px;
+      padding: 3rem 2rem;
+    }
+  </style>
 </head>
 <body>
-    <h1>Gestión de Productos</h1>
-    <button onclick="obtenerProductos()">Obtener Productos</button>
-    <div id="productos"></div>
 
-    <script>
-        function obtenerProductos() {
-            fetch('/api/productos/')  // Tu API local o externa
-                .then(response => response.json())
-                .then(data => {
-                    const contenedor = document.getElementById('productos');
-                    contenedor.innerHTML = '<ul>' +
-                        data.map(p => `<li>${p.nombre} - $${p.precio}</li>`).join('') +
-                        '</ul>';
-                });
-        }
-    </script>
+  <header class="bg-white shadow-sm mb-4">
+    <div class="container">
+      <nav class="navbar navbar-expand-lg navbar-light px-0">
+        <a class="navbar-brand" href="{% url 'index' %}">🎀 SanrioDreams</a>
+        <div class="collapse navbar-collapse">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link style-link" href="{% url 'index' %}" style="color: #b03a5b; font-weight:600;">Volver al Inicio</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    
+    {% if request.session.es_admin %}
+    
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>✨ Panel de Control de Productos</h2>
+        <span class="badge p-2" style="background: #ffb6d5; color: #b03a5b; font-weight:700; border-radius:8px;">Modo: Administrador</span>
+      </div>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <div class="admin-container">
+        <ul class="nav nav-tabs nav-tabs-gestion mb-4" id="gestionTab" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="lista-tab" data-toggle="tab" href="#lista" role="tab" aria-controls="lista" aria-selected="true">
+              <i class="fa fa-list-ul"></i> Inventario Actual
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="nuevo-tab" data-toggle="tab" href="#nuevo" role="tab" aria-controls="nuevo" aria-selected="false">
+              <i class="fa fa-plus-circle"></i> Añadir Nuevo Producto
+            </a>
+          </li>
+        </ul>
+
+        <div class="tab-content" id="gestionTabContent">
+          
+          <div class="tab-pane fade show active" id="lista" role="tabpanel" aria-labelledby="lista-tab">
+            <h4 class="mb-3">Productos en el Sistema</h4>
+            <div class="table-responsive">
+              <table class="table table-hover table-sanrio border">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Categoría</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                    <th class="text-center">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for prod in productos %}
+                    <tr>
+                      <td>#{{ prod.id }}</td>
+                      <td><strong>{{ prod.nombre }}</strong></td>
+                      <td><span class="badge badge-light border px-2 py-1">{{ prod.categoria }}</span></td>
+                      <td>${{ prod.precio }}</td>
+                      <td>
+                        <span class="font-weight-bold {% if prod.stock < 16 %}text-danger{% else %}text-success{% endif %}">
+                          {{ prod.stock }} u.
+                        </span>
+                      </td>
+                      <td class="text-center">
+                        <div class="btn-group btn-group-sm">
+                          <button class="btn btn-edit mr-2" onclick="cargarDatosEdicion('{{ prod.id }}', '{{ prod.nombre }}', '{{ prod.categoria }}', '{{ prod.precio }}', '{{ prod.stock }}', '{{ prod.descripcion }}')" title="Modificar Producto">
+                            <i class="fa fa-edit"></i> Editar
+                          </button>
+                          <a href="{% url 'eliminar_producto' prod.id %}" class="btn btn-delete" onclick="return confirm('¿Estás seguro de que deseas eliminar permanentemente este producto de SanrioDreams?');" title="Eliminar Producto">
+                            <i class="fa fa-trash"></i> Borrar
+                          </a>
+                        </div>
+                      </td>
+                    </tr>
+                  {% empty %}
+                    <tr>
+                      <td colspan="6" class="text-center text-muted py-4">No hay productos registrados en el catálogo.</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="nuevo" role="tabpanel" aria-labelledby="nuevo-tab">
+            <h4 class="mb-4" id="titulo-formulario">Registrar Nuevo Artículo</h4>
+            
+            <form id="form-producto" method="POST" enctype="multipart/form-data" action="{% url 'crear_producto' %}">
+              {% csrf_token %}
+              <input type="hidden" id="producto_id" name="producto_id" value="">
+
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="nombre">Nombre del Producto</label>
+                  <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ej: Peluche My Melody Grande" required>
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="categoria">Categoría</label>
+                  <select class="form-control" id="categoria" name="categoria" required>
+                    <option value="" disabled selected>Selecciona una categoría...</option>
+                    <option value="Peluches">Peluches</option>
+                    <option value="Botellas">Botellas</option>
+                    <option value="Termos">Termos</option>
+                    <option value="Pines">Pines</option>
+                    <option value="Llaveros">Llaveros</option>
+                    <option value="Lamparas">Lámparas</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="precio">Precio (CLP)</label>
+                  <input type="number" class="form-control" id="precio" name="precio" min="0" placeholder="Ej: 14990" required>
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="stock">Stock Inicial</label>
+                  <input type="number" class="form-control" id="stock" name="stock" min="0" placeholder="Ej: 25" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="descripcion">Descripción del Producto</label>
+                <textarea class="form-control" id="descripcion" name="descripcion" rows="3" placeholder="Detalles del material, tamaño, etc..." required></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="imagen">Imagen del Producto</label>
+                <input type="file" class="form-control-file" id="imagen" name="imagen">
+                <small class="text-muted d-block mt-1">Formatos permitidos: JPG, PNG. Deja vacío en edición si no deseas cambiarla.</small>
+              </div>
+
+              <div class="mt-4 d-flex justify-content-end">
+                <button type="button" id="btn-cancelar-edicion" class="btn btn-secondary mr-2" style="display: none;" onclick="limpiarFormulario()">
+                  Cancelar Edición
+                </button>
+                <button type="submit" id="btn-guardar" class="btn btn-sanrio px-4 py-2">
+                  <i class="fa fa-save"></i> Guardar Producto
+                </button>
+              </div>
+            </form>
+          </div>
+
+        </div>
+      </div>
+
+    {% else %}
+      <div class="access-denied shadow-sm">
+        <i class="fa fa-lock text-danger mb-3" style="font-size: 3.5rem;"></i>
+        <h2 class="text-danger font-weight-bold">Acceso Restringido</h2>
+        <p class="text-muted mt-2">Lo sentimos, esta sección está reservada exclusivamente para cuentas de tipo <b>Administrador</b> del sistema SanrioDreams.</p>
+        <hr style="border-color: #ffb6d5;">
+        <a href="{% url 'login' %}" class="btn btn-sanrio mt-2 px-4">Iniciar sesión como Admin</a>
+      </div>
+    {% endif %}
+
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    function cargarDatosEdicion(id, nombre, categoria, precio, stock, descripcion) {
+      // 1. Cambiar los textos informativos del formulario
+      document.getElementById('titulo-formulario').innerHTML = '📝 Modificar Producto #' + id;
+      document.getElementById('btn-guardar').innerHTML = '<i class="fa fa-refresh"></i> Actualizar Cambios';
+      
+      // 2. Rellenar los inputs con los valores correspondientes
+      document.getElementById('producto_id').value = id;
+      document.getElementById('nombre').value = nombre;
+      document.getElementById('categoria').value = categoria;
+      document.getElementById('precio').value = precio;
+      document.getElementById('stock').value = stock;
+      document.getElementById('descripcion').value = descripcion;
+      
+      // 3. Modificar el action de destino para que apunte a tu view de modificar
+      document.getElementById('form-producto').action = "/modificar-producto/" + id + "/";
+      
+      // 4. Hacer visible el botón de cancelar cambios
+      document.getElementById('btn-cancelar-edicion').style.display = 'inline-block';
+      
+      // 5. Mover el foco del usuario automáticamente a la pestaña del formulario
+      $('#gestionTab a[href="#nuevo"]').tab('show');
+    }
+
+    function limpiarFormulario() {
+      // Restablecer valores base del formulario para que vuelva a comportarse como un creador
+      document.getElementById('titulo-formulario').innerHTML = 'Registrar Nuevo Artículo';
+      document.getElementById('btn-guardar').innerHTML = '<i class="fa fa-save"></i> Guardar Producto';
+      document.getElementById('producto_id').value = '';
+      document.getElementById('form-producto').reset();
+      document.getElementById('form-producto').action = "{% url 'crear_producto' %}";
+      document.getElementById('btn-cancelar-edicion').style.display = 'none';
+      
+      // Regresar a la pestaña de listado
+      $('#gestionTab a[href="#lista"]').tab('show');
+    }
+  </script>
 </body>
 </html>
