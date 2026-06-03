@@ -713,22 +713,18 @@ def informes_stock(request):
         stock_obj = producto.stock
         if stock_obj:
             stock_actual = int(stock_obj)
-            ubicacion = stock_obj.ubicacion_detalle
         else:
             stock_actual = 0
-            ubicacion = "No especificada"
 
         alerta, created = AlertaStock.objects.get_or_create(
             producto=producto,
             defaults={
                 'stock_actual': stock_actual,
-                'ubicacion_detalle': ubicacion
             }
         )
 
         if not created:
             alerta.stock_actual = stock_actual
-            alerta.ubicacion_detalle = ubicacion
             alerta.save()
 
         alertas.append(alerta)
