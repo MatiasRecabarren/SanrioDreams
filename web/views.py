@@ -71,8 +71,8 @@ def gestion_usuarios(request):
             return redirect('gestion_usuarios') # Cambia esto por el name exacto de tu URL
 
     # Rescatamos todos los usuarios para listarlos en la tabla
-    usuarios = User.objects.all()
-    return render(request, "gestion_usuario.html", {"usuarios": usuarios})
+    usuarios = Usuario.objects.all()
+    return render(request, 'gestion_usuario.html', {'usuarios': usuarios})
 
 
 # 2. MODIFICAR USUARIO
