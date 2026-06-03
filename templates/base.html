@@ -1,4 +1,15 @@
-<!-- HEADER INICIO -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SanrioDreams</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
 <header class="header_section">
   <div class="container-fluid">
     <nav class="navbar navbar-expand-lg custom_nav-container">
@@ -48,16 +59,17 @@
               <i class="fa fa-search" aria-hidden="true"></i>
             </button>
           </form>
-          <!-- ICONO DE USUARIO CON LÓGICA DE SESIÓN -->
-{% if request.session.usuario_id %}
-  <a href="{% url 'perfil' %}" class="ml-3" title="Perfil">
-    <i class="fa fa-user-circle" aria-hidden="true" style="font-size: 1.7rem;"></i>
-  </a>
-{% else %}
-  <a href="{% url 'login' %}" class="ml-3" title="Iniciar sesión">
-    <i class="fa fa-user" aria-hidden="true" style="font-size: 1.7rem;"></i>
-  </a>
-{% endif %}
+          
+          {% if request.session.usuario_id %}
+            <a href="{% url 'perfil' %}" class="ml-3" title="Perfil">
+              <i class="fa fa-user-circle" aria-hidden="true" style="font-size: 1.7rem;"></i>
+            </a>
+          {% else %}
+            <a href="{% url 'login' %}" class="ml-3" title="Iniciar sesión">
+              <i class="fa fa-user" aria-hidden="true" style="font-size: 1.7rem;"></i>
+            </a>
+          {% endif %}
+          
           <button type="button" class="ml-3 position-relative cart-icon" style="background: none; border: none; padding: 0; cursor: pointer;" title="Ver carrito">
             <i class="fas fa-shopping-cart" style="font-size: 1.5rem; margin-left: -25px;color: black;"></i>
             {% with request.session.carrito|length as cart_count %}
@@ -73,8 +85,10 @@
     </nav>
   </div>
 </header>
-<!-- HEADER FIN -->
- <!-- FOOTER INICIO -->
+<main>
+    {% block content %}
+    {% endblock %}
+</main>
 <footer class="container-fluid footer_section">
   <div class="container">
     <div class="col-md-11 col-lg-8 mx-auto">
@@ -85,4 +99,8 @@
     </div>
   </div>
 </footer>
-<!-- FOOTER FIN -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
