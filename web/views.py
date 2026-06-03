@@ -47,7 +47,62 @@ def panel_contador(request):
 
 @verificar_rol(['admin']) # Vista EXCLUSIVA para el admin
 def gestion_usuarios(request):
-    return render(request, 'gestion_usuarios.html')
+    if request.method == "POST":
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+        first_name = request.POST.get("first_name")
+        last_name = request.POST.get("last_name")
+        
+        # Validación básica para que no se repita el nombre de usuario
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "El nombre de usuario ya existe.")
+        else:
+            # Creamos el usuario en la base de datos
+            user = User.objects.create_user(
+                username=username, 
+                email=email, 
+                password=password,
+                first_name=first_name,
+                last_name=last_name
+            )
+            messages.success(request, f"Usuario {username} creado con éxito.")
+            return redirect('gestion_usuarios') # Cambia esto por el name exacto de tu URL
+
+    # Rescatamos todos los usuarios para listarlos en la tabla
+    usuarios = User.objects.all()
+    return render(request, "gestion_usuario.html", {"usuarios": usuarios})
+
+
+# 2. MODIFICAR USUARIO
+def editar_usuario(request, user_id):
+    usuario = get_object_or_404(User, id=user_id)
+    
+    if request.method == "POST":
+        usuario.username = request.POST.get("username")
+        usuario.email = request.POST.get("email")
+        usuario.first_name = request.POST.get("first_name")
+        usuario.last_name = request.POST.get("last_name")
+        
+        # Si pusieron una contraseña nueva, la cambiamos
+        nueva_pass = request.POST.get("password")
+        if nueva_pass and nueva_pass.strip() != "":
+            usuario.set_password(nueva_pass)
+            
+        usuario.save()
+        messages.success(request, "Usuario actualizado correctamente.")
+        return redirect('gestion_usuarios')
+        
+    return render(request, "editar_usuario.html", {"usuario": usuario})
+
+
+# 3. ELIMINAR USUARIO
+def eliminar_usuario(request, user_id):
+    usuario = get_object_or_404(User, id=user_id)
+    username = usuario.username
+    usuario.delete()
+    messages.success(request, f"Usuario {username} eliminado del sistema.")
+    return redirect('gestion_usuarios')
 
 @verificar_rol(['admin']) 
 def gestion_productos(request):
