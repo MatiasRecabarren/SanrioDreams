@@ -6,6 +6,7 @@
   <title>🧾 Panel Contador - Informes y Pagos</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <style>
     body {
       background-color: #fffaf9;
@@ -59,17 +60,16 @@
 
   <h2 class="text-center">📚 Panel del Contador - Informes y Validación</h2>
 
-  <!-- Generar informe -->
   <div class="card mb-4">
     <div class="card-header text-center">Generar Informe Financiero</div>
     <div class="card-body">
-      <form>
+      <form id="form-informes">
         <div class="mb-3">
           <label for="tipo-informe" class="form-label">Tipo de Informe:</label>
           <select class="form-select" id="tipo-informe">
-            <option>Ventas Mensuales</option>
-            <option>Ingresos Totales</option>
-            <option>Pagos Pendientes</option>
+            <option value="Ventas Mensuales">Ventas Mensuales</option>
+            <option value="Ingresos Totales">Ingresos Totales</option>
+            <option value="Pagos Pendientes">Pagos Pendientes</option>
           </select>
         </div>
         <div class="row">
@@ -82,14 +82,13 @@
             <input type="date" class="form-control" id="fecha-fin">
           </div>
         </div>
-        <button type="button" class="btn btn-primary">Generar</button>
-        <button type="button" class="btn btn-success">Descargar PDF</button>
-        <button type="button" class="btn btn-outline-secondary">Descargar Excel</button>
+        <button type="button" class="btn btn-primary" onclick="alertaInforme('generar')">Generar</button>
+        <button type="button" class="btn btn-success" onclick="alertaInforme('pdf')">Descargar PDF</button>
+        <button type="button" class="btn btn-outline-secondary" onclick="alertaInforme('excel')">Descargar Excel</button>
       </form>
     </div>
   </div>
 
-  <!-- Validación de pagos -->
   <div class="card mb-4">
     <div class="card-header text-center">Validar Pagos por Transferencia</div>
     <div class="card-body">
@@ -99,8 +98,8 @@
           Cliente: Mariana Fuentes
           <div class="mt-2">
             <p><strong>Banco:</strong> Banco Estado | <strong>Monto:</strong> $18.990</p>
-            <p><strong>Comprobante:</strong> <a href="#">Ver archivo</a></p>
-            <button class="btn btn-success btn-sm">Aprobar Pago</button>
+            <p><strong>Comprobante:</strong> <a href="#" onclick="alertaComprobante(event)">Ver archivo</a></p>
+            <button class="btn btn-success btn-sm" onclick="alertaAprobar('#112233')">Aprobar Pago</button>
           </div>
         </li>
         <li class="list-group-item">
@@ -108,18 +107,89 @@
           Cliente: Samuel Ríos
           <div class="mt-2">
             <p><strong>Banco:</strong> Santander | <strong>Monto:</strong> $12.500</p>
-            <p><strong>Comprobante:</strong> <a href="#">Ver archivo</a></p>
-            <select class="form-select mb-2">
+            <p><strong>Comprobante:</strong> <a href="#" onclick="alertaComprobante(event)">Ver archivo</a></p>
+            <select class="form-select mb-2" id="motivo-rechazo">
               <option value="">Seleccionar motivo de rechazo</option>
               <option value="Datos no coinciden">Datos no coinciden</option>
               <option value="Archivo ilegible">Archivo ilegible</option>
             </select>
-            <button class="btn btn-danger btn-sm">Rechazar Pago</button>
+            <button class="btn btn-danger btn-sm" onclick="alertaRechazar('#112234')">Rechazar Pago</button>
           </div>
         </li>
       </ul>
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    // Configuración global para mantener la estética rosa/pastel del proyecto
+    const swalEstilo = Swal.mixin({
+      confirmButtonColor: '#ffc2d1',
+      customClass: {
+        confirmButton: 'text-dark font-weight-bold'
+      }
+    });
+
+    function alertaInforme(accion) {
+      const tipo = document.getElementById('tipo-informe').value;
+      let titulo = "";
+      let texto = "";
+
+      if (accion === 'generar') {
+        titulo = "¡Informe Generado!";
+        texto = `El reporte de "${tipo}" se ha estructurado en pantalla correctamente.`;
+      } else if (accion === 'pdf') {
+        titulo = "¡Descarga de PDF Iniciada!";
+        texto = `El archivo PDF de "${tipo}" se ha compilado y descargado con éxito.`;
+      } else if (accion === 'excel') {
+        titulo = "¡Descarga de Excel Iniciada!";
+        texto = `La plantilla Excel de "${tipo}" se ha exportado con éxito.`;
+      }
+
+      swalEstilo.fire({
+        icon: 'success',
+        title: titulo,
+        text: texto
+      });
+    }
+
+    function alertaAprobar(idPedido) {
+      swalEstilo.fire({
+        icon: 'success',
+        title: '¡Pago Aprobado!',
+        text: `El pedido ${idPedido} cambió su estado a "Pagado" y se notificó al cliente.`
+      });
+    }
+
+    function alertaRechazar(idPedido) {
+      const motivo = document.getElementById('motivo-rechazo').value;
+      
+      if (!motivo) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Atención',
+          text: 'Por favor, selecciona un motivo de rechazo antes de cancelar el pago.',
+          confirmButtonColor: '#f59fb4'
+        });
+        return;
+      }
+
+      Swal.fire({
+        icon: 'error',
+        title: 'Pago Rechazado',
+        text: `El pedido ${idPedido} fue cancelado debido a: "${motivo}".`,
+        confirmButtonColor: '#f59fb4'
+      });
+    }
+
+    function alertaComprobante(event) {
+      event.preventDefault();
+      swalEstilo.fire({
+        title: 'Comprobante de Transferencia',
+        text: 'Aquí se abriría la previsualización del archivo de depósito adjunto por el cliente.',
+        icon: 'info'
+      });
+    }
+  </script>
 </body>
 </html>
