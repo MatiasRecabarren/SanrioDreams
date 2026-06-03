@@ -521,7 +521,7 @@ def ver_carrito(request):
     subtotal = sum(item['precio'] * item['cantidad'] for item in carrito)
     cantidad_total = sum(item['cantidad'] for item in carrito)
     descuento = 0
-    if cantidad_total >= 4:
+    if cantidad_total >= 6:
         descuento = subtotal * 0.10  # 10% de descuento
 
     total = subtotal + envio_costo - descuento
