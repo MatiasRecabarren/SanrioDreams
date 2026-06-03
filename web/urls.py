@@ -38,6 +38,7 @@ urlpatterns = [
     path('bodeguero/', views.preparar_pedido, name='bodeguero'),
     path('vendedor/', views.panel_vendedor, name='panel_vendedor'),
     path('contador/', views.panel_contador, name='panel_contador'),
+    path('cambio-rapido-test/', views.cambio_rapido_test, name='cambio_rapido_test'),
     
 
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

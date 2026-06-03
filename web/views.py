@@ -1,37 +1,59 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import Usuario
+from .models import Usuario, Producto, Stock, AlertaStock, Carrito, Pedido
 from django.contrib.auth.hashers import make_password, check_password
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 import re
+import json
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
-import json
-from django.contrib.auth import authenticate, login
-from .models import Producto, Stock, AlertaStock, Carrito
-from django.shortcuts import get_object_or_404
-from django.contrib.auth import login as auth_login
-from .models import Producto
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import Pedido
 from django.utils import timezone
-from django.http import JsonResponse
+from django.core.signing import TimestampSigner, BadSignature, SignatureExpired
+from django.template.loader import render_to_string
+from django.core.mail import send_mail
+from django.conf import settings
 
 
+def verificar_rol(roles_permitidos):
+    """
+    Etiqueta que restringe el acceso a vistas basándose en la sesión personalizada.
+    Permite que el 'admin' entre a todo de manera automática.
+    """
+    def decorador(view_func):
+        def wrapper(request, *args, **kwargs):
+            # 1. Comprobar si hay una sesión iniciada
+            rol_actual = request.session.get('usuario_rol')
+            if not rol_actual:
+                messages.error(request, "Debes iniciar sesión para acceder a esta página.")
+                return redirect('login')
+            
+            # 2. El administrador siempre tiene acceso a todo. 
+            # Si no es admin y su rol no está en la lista permitida, se bloquea.
+            if rol_actual != 'admin' and rol_actual not in roles_permitidos:
+                messages.error(request, "Acceso denegado. No tienes permisos para ver esta sección.")
+                return redirect('index') # Lo regresa a la página de inicio
+                
+            return view_func(request, *args, **kwargs)
+        return wrapper
+    return decorador
 
+@verificar_rol(['contador','admin']) # Solo entran: contador (y admin por defecto)
 def panel_contador(request):
     return render(request, 'panel_contador.html')
 
+@verificar_rol(['admin']) # Vista EXCLUSIVA para el admin
 def gestion_usuarios(request):
     return render(request, 'gestion_usuarios.html')
 
+@verificar_rol(['admin']) # Vista EXCLUSIVA para el admin
 def gestion_productos(request):
     return render(request, 'gestion_productos.html')
 
+@verificar_rol(['vendedor', 'admin']) # Solo entran: vendedor (y admin)
 def panel_vendedor(request):
     pedidos_pendientes = Pedido.objects.filter(estado='pendiente')
     pedidos_listos = Pedido.objects.filter(estado='preparado')
@@ -40,9 +62,9 @@ def panel_vendedor(request):
         'listos': pedidos_listos
     })
 
-
+@verificar_rol(['bodeguero']) # Solo entran: bodeguero (y admin)
 def preparar_pedido(request):
-    return render(request, 'bodeguero.html')  
+    return render(request, 'bodeguero.html')
 
 def productos(request):
     # Usar __icontains hace que ignore mayúsculas y minúsculas.
@@ -177,6 +199,34 @@ def validar_contrasenna(contrasenna):
 
 def validar_telefono(telefono):
     return telefono.isdigit() and len(telefono) == 9 and telefono.startswith('9')
+
+def cambio_rapido_test(request):
+    if request.method == 'POST':
+        correo = request.POST.get('email', '').strip()
+        contrasenna = request.POST.get('contrasenna', '').strip()
+        
+        try:
+            # 1. Buscar al usuario de prueba
+            usuario = Usuario.objects.get(correo=correo)
+            
+            # 2. Validar que la contraseña cumpla tus requisitos básicos
+            error_pass = validar_contrasenna(contrasenna)
+            if error_pass:
+                messages.error(request, f"[MODO TEST] {error_pass}")
+                return render(request, 'cambio_rapido_test.html', {'email': correo})
+            
+            # 3. Guardar directamente aplicando el hash de Django
+            usuario.contrasenna = make_password(contrasenna)
+            usuario.save()
+            
+            messages.success(request, f"¡[TEST] Contraseña cambiada con éxito para {usuario.nombre} ({correo})!")
+            return redirect('login')
+            
+        except Usuario.DoesNotExist:
+            messages.error(request, "[MODO TEST] El correo ingresado no existe en la base de datos.")
+            return render(request, 'cambio_rapido_test.html', {'email': correo})
+
+    return render(request, 'cambio_rapido_test.html')
 
 # Registro
 def registro(request):
@@ -596,14 +646,13 @@ def disminuir_cantidad_carrito(request, id_producto):
 def nosotros(request):
     return render(request, 'nosotros.html')
 
+@verificar_rol(['bodeguero', 'admin']) 
 def informes_stock(request):
     productos = Producto.objects.all()
     alertas = []
 
     for producto in productos:
         stock_obj = producto.stock_set.first()
-
-        # Debug: mostrar qué encontramos
         if stock_obj:
             stock_actual = int(stock_obj.cantidad)
             ubicacion = stock_obj.ubicacion_detalle
@@ -611,7 +660,6 @@ def informes_stock(request):
             stock_actual = 0
             ubicacion = "No especificada"
 
-        # Crear o actualizar AlertaStock
         alerta, created = AlertaStock.objects.get_or_create(
             producto=producto,
             defaults={
@@ -629,6 +677,7 @@ def informes_stock(request):
 
     return render(request, 'informes_stock.html', {'alertas': alertas})
 
+@verificar_rol(['bodeguero'])
 @csrf_exempt
 def actualizar_stock(request, id):
     if request.method == "POST":
@@ -636,7 +685,6 @@ def actualizar_stock(request, id):
             data = json.loads(request.body)
             cantidad = int(data.get("cantidad", 0))
             alerta = AlertaStock.objects.get(id=id)
-            # Actualiza el stock real
             stock = alerta.producto.stock_set.first()
             if stock:
                 stock.cantidad += cantidad
@@ -662,6 +710,7 @@ def perfil(request):
             return redirect('index')
     return render(request, 'perfil.html')
 
+@verificar_rol(['admin'])
 def admin_index(request):
     productos = Producto.objects.all()
     return render(request, "admin.html", {"productos": productos})
