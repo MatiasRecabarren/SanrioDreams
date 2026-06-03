@@ -232,10 +232,10 @@ def pago_exito(request):
             stock_obj = producto.stock
             if stock_obj:
                 # Convierte ambos a int para evitar problemas de tipo
-                cantidad_actual = int(stock_obj.cantidad)
+                cantidad_actual = int(stock_obj)
                 cantidad_comprada = int(item['cantidad'])
                 nueva_cantidad = max(cantidad_actual - cantidad_comprada, 0)
-                stock_obj.cantidad = nueva_cantidad
+                stock_obj = nueva_cantidad
                 stock_obj.save()
         except Producto.DoesNotExist:
             continue
@@ -552,7 +552,7 @@ def agregar_al_carrito(request, id_producto):
                 precio = float(producto.precio)
                 imagen = producto.imagen
                 stock_obj = producto.stock
-                stock_cantidad = stock_obj.cantidad if stock_obj else 0
+                stock_cantidad = stock_obj if stock_obj else 0
             except Producto.DoesNotExist:
                 return JsonResponse({'success': False, 'error': 'Producto no encontrado'}, status=404)
         
@@ -560,7 +560,7 @@ def agregar_al_carrito(request, id_producto):
         try:
             producto = Producto.objects.get(id_producto=id_producto)
             stock_obj = producto.stock
-            stock_disponible = stock_obj.cantidad if stock_obj else 0
+            stock_disponible = stock_obj if stock_obj else 0
         except Producto.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Producto no encontrado'}, status=404)
         
@@ -661,7 +661,7 @@ def aumentar_cantidad_carrito(request, id_producto):
     try:
         producto = Producto.objects.get(id_producto=id_producto)
         stock_obj = producto.stock
-        stock_disponible = stock_obj.cantidad if stock_obj else 0
+        stock_disponible = stock_obj if stock_obj else 0
     except Producto.DoesNotExist:
         return JsonResponse({'success': False, 'error': 'Producto no encontrado'}, status=404)
     
@@ -712,7 +712,7 @@ def informes_stock(request):
     for producto in productos:
         stock_obj = producto.stock
         if stock_obj:
-            stock_actual = int(stock_obj.cantidad)
+            stock_actual = int(stock_obj)
             ubicacion = stock_obj.ubicacion_detalle
         else:
             stock_actual = 0
@@ -745,11 +745,11 @@ def actualizar_stock(request, id):
             alerta = AlertaStock.objects.get(id=id)
             stock = alerta.producto.stock
             if stock:
-                stock.cantidad += cantidad
+                stock += cantidad
                 stock.save()
-                alerta.stock_actual = stock.cantidad
+                alerta.stock_actual = stock
                 alerta.save()
-                return JsonResponse({"success": True, "nuevo_stock": stock.cantidad})
+                return JsonResponse({"success": True, "nuevo_stock": stock})
             else:
                 return JsonResponse({"success": False, "error": "No hay stock asociado."})
         except Exception as e:
@@ -798,7 +798,7 @@ def productos_api(request):
             
             for producto in productos:
                 stock_obj = producto.stock
-                stock_cantidad = stock_obj.cantidad if stock_obj else 0
+                stock_cantidad = stock_obj if stock_obj else 0
                 
                 productos_data.append({
                     'id_producto': producto.id_producto,
