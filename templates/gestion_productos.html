@@ -139,7 +139,7 @@
 
   <div class="container">
     
-    {% if request.session.es_admin %}
+
     
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>✨ Panel de Control de Productos</h2>
@@ -280,15 +280,7 @@
         </div>
       </div>
 
-    {% else %}
-      <div class="access-denied shadow-sm">
-        <i class="fa fa-lock text-danger mb-3" style="font-size: 3.5rem;"></i>
-        <h2 class="text-danger font-weight-bold">Acceso Restringido</h2>
-        <p class="text-muted mt-2">Lo sentimos, esta sección está reservada exclusivamente para cuentas de tipo <b>Administrador</b> del sistema SanrioDreams.</p>
-        <hr style="border-color: #ffb6d5;">
-        <a href="{% url 'login' %}" class="btn btn-sanrio mt-2 px-4">Iniciar sesión como Admin</a>
-      </div>
-    {% endif %}
+  
 
   </div>
 
