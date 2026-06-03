@@ -45,6 +45,10 @@ def verificar_rol(roles_permitidos):
 def panel_contador(request):
     return render(request, 'panel_contador.html')
 
+@verificar_rol(['admin']) # Vista EXCLUSIVA para el admin
+def gestion_usuarios(request):
+    return render(request, 'gestion_usuarios.html')
+
 @verificar_rol(['admin']) 
 def gestion_productos(request):
     productos = Producto.objects.all().order_by('-id_producto') 
