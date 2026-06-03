@@ -101,7 +101,7 @@
                     <table class="table table-hover align-middle mb-0 tabla-sanrio">
                         <thead>
                             <tr>
-                                <th class="py-3 px-4">ID</th>
+                                <th class="py-3 px-4">ID / RUT</th>
                                 <th class="py-3">Username</th>
                                 <th class="py-3">Nombre Completo</th>
                                 <th class="py-3">Email</th>
@@ -110,27 +110,31 @@
                         </thead>
                         <tbody>
                             {% for usuario in usuarios %}
-    <tr>
-      <td>{{ usuario.id_usuario }}</td>
-      
-      <td>{{ usuario.correo }}</td> 
-      
-      <td>{{ usuario.nombre }} {{ usuario.apellido }}</td>
-      
-      <td>{{ usuario.correo }}</td>
-      
-      <td>
-        <a href="#" class="btn btn-sm btn-warning">Editar</a>
-        <a href="#" class="btn btn-sm btn-danger">Eliminar</a>
-      </td>
-    </tr>
-  {% empty %}
-    <tr>
-      <td colspan="5" class="text-center">
-        <p>No se encontraron cuentas de usuarios registradas en el sistema.</p>
-      </td>
-    </tr>
-  {% endfor %}
+                            <tr>
+                                <td class="px-4 font-weight-bold">{{ usuario.id_usuario }}</td>
+                                <td>{{ usuario.correo }}</td> 
+                                <td>{{ usuario.nombre }} {{ usuario.apellido }}</td>
+                                <td>{{ usuario.correo }}</td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-sm btn-warning text-white mr-1" 
+                                            onclick="abrirModalEdicion('{{ usuario.id_usuario }}', '{{ usuario.correo }}', '{{ usuario.nombre }}', '{{ usuario.apellido }}', '{{ usuario.correo }}')">
+                                        <i class="fa fa-edit"></i> Editar
+                                    </button>
+                                    
+                                    <a href="{% url 'eliminar_usuario' usuario.id_usuario %}" 
+                                       class="btn btn-sm btn-danger" 
+                                       onclick="return confirm('¿Estás seguro de que deseas eliminar al usuario con RUT {{ usuario.id_usuario }}?');">
+                                        <i class="fa fa-trash"></i> Eliminar
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center py-4">
+                                    <p class="text-muted mb-0">No se encontraron cuentas de usuarios registradas en el sistema.</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
@@ -152,6 +156,10 @@
             <form method="POST" action="{% url 'gestion_usuario' %}">
                 {% csrf_token %}
                 <div class="modal-body p-4">
+                    <div class="form-group mb-3">
+                        <label class="font-weight-500">RUT / ID Usuario *</label>
+                        <input type="text" name="id_usuario" class="form-control" required placeholder="ej: 21392915-1">
+                    </div>
                     <div class="form-group mb-3">
                         <label class="font-weight-500">Username (Login corporativo) *</label>
                         <input type="text" name="username" class="form-control" required placeholder="ej: cinnamoroll_admin">
@@ -237,7 +245,6 @@
         document.getElementById('edit_last_name').value = lastName;
         
         // 2. Construimos dinámicamente la URL para enviar el formulario a la vista de edición correcta
-        // Reemplaza 'editar_usuario' si el nombre del path en tu urls.py es diferente
         var actionUrl = "/editar_usuario/" + id + "/";
         document.getElementById('formEditarUsuario').action = actionUrl;
         
