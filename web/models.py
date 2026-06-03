@@ -132,10 +132,7 @@ class Stock(models.Model):
     cantidad = models.PositiveIntegerField()
     ubicacion_detalle = models.CharField(max_length=255)
 
-    producto = models.ForeignKey(
-        Producto,
-        on_delete=models.CASCADE
-    )
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name='detalles_stock')
 
     def __str__(self):
         return f"{self.producto.nombre} - {self.cantidad} en {self.ubicacion_detalle}"
