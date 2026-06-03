@@ -190,16 +190,14 @@
                 <tbody>
                   {% for prod in productos %}
                     <tr>
-                      <td>#{{ prod.id_producto }}</td>  <td><strong>{{ prod.nombre }}</strong></td>
-                      <td><span class="badge badge-light border px-2 py-1">{{ prod.categoria }}</span></td>
-                      <td>${{ prod.precio }}</td>
                       <td>
-                        <span class="font-weight-bold {% if prod.stock_set.first.cantidad < 16 %}text-danger{% else %}text-success{% endif %}">
-                          {{ prod.stock_set.first.cantidad|default:"0" }} u.  </span>
+                        <span class="font-weight-bold {% if prod.stock < 16 %}text-danger{% else %}text-success{% endif %}">
+                          {{ prod.stock|default:"0" }} u.
+                        </span>
                       </td>
                       <td class="text-center">
                         <div class="btn-group btn-group-sm">
-                          <button class="btn btn-edit mr-2" onclick="cargarDatosEdicion('{{ prod.id_producto }}', '{{ prod.nombre|escapejs }}', '{{ prod.categoria|escapejs }}', '{{ prod.precio }}', '{{ prod.stock_set.first.cantidad|default:0 }}', '{{ prod.descripcion|escapejs }}')" title="Modificar Producto">
+                          <button class="btn btn-edit mr-2" onclick="cargarDatosEdicion('{{ prod.id_producto }}', '{{ prod.nombre|escapejs }}', '{{ prod.categoria|escapejs }}', '{{ prod.precio }}', '{{ prod.stock }}', '{{ prod.descripcion|escapejs }}')" title="Modificar Producto">
                             <i class="fa fa-edit"></i> Editar
                           </button>
                           <a href="{% url 'eliminar_producto' prod.id_producto %}" class="btn btn-delete" onclick="return confirm('¿Estás seguro de que deseas eliminar permanentemente este producto?');" title="Eliminar Producto">

@@ -45,35 +45,22 @@ def verificar_rol(roles_permitidos):
 def panel_contador(request):
     return render(request, 'panel_contador.html')
 
-@verificar_rol(['admin']) # Vista EXCLUSIVA para el admin
-def gestion_usuarios(request):
-    return render(request, 'gestion_usuarios.html')
-
-@verificar_rol(['admin']) # Vista EXCLUSIVA para el admin
-def gestion_productos(request):
-    productos = Producto.objects.all().order_by('-id_producto') # <-- AQUÍ ESTÁ EL CAMBIO
-    return render(request, 'gestion_productos.html', {'productos': productos})
-
-
-# 2. Guardar un nuevo producto
+@verificar_rol(['admin']) # <-- Agregamos el decorador correcto
 def crear_producto(request):
-    if not request.session.get('es_admin'):
-        return redirect('login')
-
     if request.method == 'POST':
         nombre = request.POST.get('nombre')
         categoria = request.POST.get('categoria')
         precio = request.POST.get('precio')
         stock = request.POST.get('stock')
         descripcion = request.POST.get('descripcion')
-        imagen = request.FILES.get('imagen') # Captura de archivos multimedia
+        imagen = request.FILES.get('imagen')
 
         try:
             nuevo_prod = Producto(
                 nombre=nombre,
                 categoria=categoria,
                 precio=precio,
-                stock=stock,
+                stock=stock, # Guardado directo en el producto
                 descripcion=descripcion,
                 imagen=imagen
             )
@@ -86,19 +73,15 @@ def crear_producto(request):
 
 
 # 3. Modificar un producto existente
+@verificar_rol(['admin']) # <-- Agregamos el decorador
 def modificar_producto(request, id_producto):
-    producto = get_object_or_404(Producto, id_producto=id_producto) # <-- AQUÍ ESTÁ EL CAMBIO
+    producto = get_object_or_404(Producto, id_producto=id_producto)
 
     if request.method == 'POST':
         producto.nombre = request.POST.get('nombre')
         producto.categoria = request.POST.get('categoria')
         producto.precio = request.POST.get('precio')
-        # Buscamos el stock en la tabla anexa
-        stock_obj = producto.stock_set.first()
-        if stock_obj:
-            stock_obj.cantidad = request.POST.get('stock')
-            stock_obj.save()
-            
+        producto.stock = request.POST.get('stock') # <-- Arreglado: ahora guarda directo en el modelo
         producto.descripcion = request.POST.get('descripcion')
         
         if request.FILES.get('imagen'):
@@ -108,9 +91,11 @@ def modificar_producto(request, id_producto):
         messages.success(request, f"📝 El producto #{id_producto} fue actualizado.")
     return redirect('gestion_productos')
 
+
 # 4. Eliminar permanentemente un producto
+@verificar_rol(['admin']) # <-- Agregamos el decorador
 def eliminar_producto(request, id_producto):
-    producto = get_object_or_404(Producto, id_producto=id_producto) # <-- AQUÍ ESTÁ EL CAMBIO
+    producto = get_object_or_404(Producto, id_producto=id_producto)
     nombre_eliminado = producto.nombre
 
     producto.delete()
@@ -172,7 +157,7 @@ def carrito(request):
     subtotal = sum(item['precio'] * item['cantidad'] for item in carrito)
     cantidad_total = sum(item['cantidad'] for item in carrito)
     descuento = 0
-    if cantidad_total >= 4:
+    if cantidad_total >= 6:
         descuento = subtotal * 0.10  # 10% de descuento
 
     total = subtotal + envio_costo - descuento
