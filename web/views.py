@@ -51,11 +51,7 @@ def gestion_usuarios(request):
 
 @verificar_rol(['admin']) # Vista EXCLUSIVA para el admin
 def gestion_productos(request):
-    # Doble filtro de seguridad: Si no es admin en sesión, lo redirige al login
-    if not request.session.get('es_admin'):
-        messages.error(request, "Acceso denegado. Se requieren permisos de Administrador.")
-        return redirect('login')
-        
+
     productos = Producto.objects.all().order_by('-id')
     return render(request, 'gestion_productos.html', {'productos': productos})
 
