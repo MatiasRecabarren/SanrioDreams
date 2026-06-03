@@ -47,63 +47,95 @@ def panel_contador(request):
     return render(request, 'panel_contador.html')
 
 @verificar_rol(['admin']) # Vista EXCLUSIVA para el admin
-def gestion_usuarios(request):
-    if request.method == "POST":
-        username = request.POST.get("username")
-        email = request.POST.get("email")
-        password = request.POST.get("password")
-        first_name = request.POST.get("first_name")
-        last_name = request.POST.get("last_name")
-        
-        # Validación básica para que no se repita el nombre de usuario
-        if User.objects.filter(username=username).exists():
-            messages.error(request, "El nombre de usuario ya existe.")
-        else:
-            # Creamos el usuario en la base de datos
-            user = User.objects.create_user(
-                username=username, 
-                email=email, 
-                password=password,
-                first_name=first_name,
-                last_name=last_name
-            )
-            messages.success(request, f"Usuario {username} creado con éxito.")
-            return redirect('gestion_usuarios') # Cambia esto por el name exacto de tu URL
+def gestion_usuario(request):
+    if request.method == 'POST':
+        id_usuario = request.POST.get('id_usuario', '').strip()
+        nombre = request.POST.get('first_name', '').strip()
+        apellido = request.POST.get('last_name', '').strip()
+        correo = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '')
 
-    # Rescatamos todos los usuarios para listarlos en la tabla
+        # 1. Validaciones del Modelo
+        if not Usuario.validar_rut(id_usuario):
+            messages.error(request, "El RUT ingresado no es válido.")
+            return redirect('gestion_usuario')
+
+        error_password = Usuario.validar_contrasenna(password)
+        if error_password:
+            messages.error(request, error_password)
+            return redirect('gestion_usuario')
+
+        # 2. Verificar duplicados
+        if Usuario.objects.filter(id_usuario=id_usuario).exists():
+            messages.error(request, "Ya existe un usuario registrado con este RUT.")
+            return redirect('gestion_usuario')
+
+        if Usuario.objects.filter(correo=correo).exists():
+            messages.error(request, "Ya existe un usuario registrado con este correo electrónico.")
+            return redirect('gestion_usuario')
+
+        try:
+            # 3. Crear el usuario en la base de datos
+            nuevo_usuario = Usuario(
+                id_usuario=id_usuario,
+                nombre=nombre,
+                apellido=apellido,
+                correo=correo,
+                contrasenna=make_password(password), # Ciframos la contraseña de forma segura
+                direccion="No especificada",          # Valores por defecto para evitar errores de BD
+                telefono="999999999",
+                rol="cliente"
+            )
+            nuevo_usuario.save()
+            messages.success(request, f"¡Usuario {nombre} registrado con éxito!")
+        except Exception as e:
+            messages.error(request, f"Error al guardar en la base de datos: {e}")
+        
+        return redirect('gestion_usuario')
+
+    # Si es un método GET, listamos todos los usuarios de la tabla
     usuarios = Usuario.objects.all()
     return render(request, 'gestion_usuario.html', {'usuarios': usuarios})
 
 
-# 2. MODIFICAR USUARIO
 def editar_usuario(request, user_id):
-    usuario = get_object_or_404(User, id=user_id)
-    
-    if request.method == "POST":
-        usuario.username = request.POST.get("username")
-        usuario.email = request.POST.get("email")
-        usuario.first_name = request.POST.get("first_name")
-        usuario.last_name = request.POST.get("last_name")
-        
-        # Si pusieron una contraseña nueva, la cambiamos
-        nueva_pass = request.POST.get("password")
-        if nueva_pass and nueva_pass.strip() != "":
-            usuario.set_password(nueva_pass)
-            
-        usuario.save()
-        messages.success(request, "Usuario actualizado correctamente.")
-        return redirect('gestion_usuarios')
-        
-    return render(request, "editar_usuario.html", {"usuario": usuario})
+    # Buscamos usando el campo exacto 'id_usuario'
+    usuario = get_object_or_404(Usuario, id_usuario=user_id)
+
+    if request.method == 'POST':
+        usuario.correo = request.POST.get('email', usuario.correo).strip()
+        usuario.nombre = request.POST.get('first_name', usuario.nombre).strip()
+        usuario.apellido = request.POST.get('last_name', usuario.apellido).strip()
+
+        # Si el administrador escribió una nueva contraseña, la cambiamos
+        nueva_pass = request.POST.get('password', '')
+        if nueva_pass:
+            error_password = Usuario.validar_contrasenna(nueva_pass)
+            if error_password:
+                messages.error(request, error_password)
+                return redirect('gestion_usuario')
+            usuario.contrasenna = make_password(nueva_pass)
+
+        try:
+            usuario.save()
+            messages.success(request, "Los datos del usuario se actualizaron correctamente.")
+        except Exception as e:
+            messages.error(request, f"Error al actualizar: {e}")
+
+    return redirect('gestion_usuario')
 
 
-# 3. ELIMINAR USUARIO
 def eliminar_usuario(request, user_id):
-    usuario = get_object_or_404(User, id=user_id)
-    username = usuario.username
-    usuario.delete()
-    messages.success(request, f"Usuario {username} eliminado del sistema.")
-    return redirect('gestion_usuarios')
+    # Buscamos usando el campo exacto 'id_usuario'
+    usuario = get_object_or_404(Usuario, id_usuario=user_id)
+    
+    try:
+        usuario.delete()
+        messages.success(request, f"El usuario con RUT {user_id} fue eliminado correctamente.")
+    except Exception as e:
+        messages.error(request, f"No se pudo eliminar al usuario: {e}")
+        
+    return redirect('gestion_usuario')
 
 @verificar_rol(['admin']) 
 def gestion_productos(request):
