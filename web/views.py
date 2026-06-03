@@ -739,17 +739,19 @@ def actualizar_stock(request, id):
             data = json.loads(request.body)
             cantidad = int(data.get("cantidad", 0))
             alerta = AlertaStock.objects.get(id=id)
-            stock = alerta.producto.stock
-            if stock:
-                stock += cantidad
-                stock.save()
-                alerta.stock_actual = stock
-                alerta.save()
-                return JsonResponse({"success": True, "nuevo_stock": stock})
-            else:
-                return JsonResponse({"success": False, "error": "No hay stock asociado."})
+            producto = alerta.producto
+            producto.stock += cantidad
+            producto.save()
+            alerta.stock_actual = producto.stock
+            alerta.save()
+            
+            return JsonResponse({"success": True, "nuevo_stock": producto.stock})
+            
+        except AlertaStock.DoesNotExist:
+            return JsonResponse({"success": False, "error": "La alerta de stock no existe."})
         except Exception as e:
             return JsonResponse({"success": False, "error": str(e)})
+            
     return JsonResponse({"success": False, "error": "Método no permitido"})
 
 def perfil(request):
