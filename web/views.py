@@ -710,7 +710,7 @@ def informes_stock(request):
     alertas = []
 
     for producto in productos:
-        stock_obj = producto.stock_set.first()
+        stock_obj = producto.stock()
         if stock_obj:
             stock_actual = int(stock_obj.cantidad)
             ubicacion = stock_obj.ubicacion_detalle
