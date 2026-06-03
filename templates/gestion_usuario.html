@@ -117,7 +117,7 @@
                                 <td>{{ usuario.correo }}</td>
                                 <td class="text-center">
                                     <button type="button" class="btn btn-sm btn-warning text-white mr-1" 
-                                            onclick="abrirModalEdicion('{{ usuario.id_usuario }}', '{{ usuario.correo }}', '{{ usuario.nombre }}', '{{ usuario.apellido }}', '{{ usuario.correo }}')">
+                                            onclick="abrirModalEdicion('{{ usuario.id_usuario }}', '{{ usuario.correo }}', '{{ usuario.nombre }}', '{{ usuario.apellido }}', '{{ usuario.correo }}', '{{ usuario.rol }}')">
                                         <i class="fa fa-edit"></i> Editar
                                     </button>
                                     
@@ -182,6 +182,16 @@
                             <input type="text" name="last_name" class="form-control" placeholder="Apellido Paterno">
                         </div>
                     </div>
+                    <div class="form-group mb-3">
+    <label class="font-weight-500">Rol del Usuario *</label>
+    <select name="rol" class="form-control" required>
+        <option value="cliente">Cliente</option>
+        <option value="admin">Administrador</option>
+        <option value="vendedor">Vendedor</option>
+        <option value="contador">Contador</option>
+        <option value="bodeguero">Bodeguero</option>
+    </select>
+</div>
                 </div>
                 <div class="modal-footer border-0 p-4 pt-0">
                     <button type="button" class="btn btn-light px-4" data-dismiss="modal" style="border-radius: 10px;">Cancelar</button>
@@ -226,6 +236,16 @@
                         <label class="font-weight-500 text-danger">Establecer Nueva Contraseña</label>
                         <input type="password" name="password" class="form-control" placeholder="Dejar en blanco para conservar la actual">
                     </div>
+                    <div class="form-group mb-3">
+    <label class="font-weight-500">Asignar Nuevo Rol</label>
+    <select id="edit_rol" name="rol" class="form-control" required>
+        <option value="cliente">Cliente</option>
+        <option value="admin">Administrador</option>
+        <option value="vendedor">Vendedor</option>
+        <option value="contador">Contador</option>
+        <option value="bodeguero">Bodeguero</option>
+    </select>
+</div>
                 </div>
                 <div class="modal-footer border-0 p-4 pt-0">
                     <button type="button" class="btn btn-light px-4" data-dismiss="modal" style="border-radius: 10px;">Cancelar</button>
@@ -237,20 +257,22 @@
 </div>
 
 <script>
-    function abrirModalEdicion(id, username, firstName, lastName, email) {
-        // 1. Capturamos los campos del modal de edición
-        document.getElementById('edit_username').value = username;
-        document.getElementById('edit_email').value = email;
-        document.getElementById('edit_first_name').value = firstName;
-        document.getElementById('edit_last_name').value = lastName;
-        
-        // 2. Construimos dinámicamente la URL para enviar el formulario a la vista de edición correcta
-        var actionUrl = "/editar_usuario/" + id + "/";
-        document.getElementById('formEditarUsuario').action = actionUrl;
-        
-        // 3. Desplegamos el modal en pantalla
-        $('#modalEditarUsuario').modal('show');
+function abrirModalEdicion(id, username, firstName, lastName, email, rol) {
+    document.getElementById('edit_username').value = username;
+    document.getElementById('edit_email').value = email;
+    document.getElementById('edit_first_name').value = firstName;
+    document.getElementById('edit_last_name').value = lastName;
+    
+    // Asigna el rol actual para que aparezca seleccionado
+    if(rol) {
+        document.getElementById('edit_rol').value = rol;
     }
+    
+    var actionUrl = "/editar_usuario/" + id + "/";
+    document.getElementById('formEditarUsuario').action = actionUrl;
+    
+    $('#modalEditarUsuario').modal('show');
+}
 </script>
 
 {% endblock %}

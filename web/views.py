@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from rest_framework import request
 from .models import Usuario, Producto, Stock, AlertaStock, Carrito, Pedido
 from django.contrib.auth.hashers import make_password, check_password
 from django.core.validators import validate_email
@@ -54,7 +55,7 @@ def gestion_usuario(request):
         apellido = request.POST.get('last_name', '').strip()
         correo = request.POST.get('email', '').strip()
         password = request.POST.get('password', '')
-
+        rol = request.POST.get('rol', 'cliente')
         # 1. Validaciones del Modelo
         if not Usuario.validar_rut(id_usuario):
             messages.error(request, "El RUT ingresado no es válido.")
@@ -84,8 +85,9 @@ def gestion_usuario(request):
                 contrasenna=make_password(password), # Ciframos la contraseña de forma segura
                 direccion="No especificada",          # Valores por defecto para evitar errores de BD
                 telefono="999999999",
-                rol="cliente"
+                rol=rol
             )
+            nuevo_usuario.rol = request.POST.get('rol', nuevo_usuario.rol)
             nuevo_usuario.save()
             messages.success(request, f"¡Usuario {nombre} registrado con éxito!")
         except Exception as e:
