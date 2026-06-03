@@ -51,8 +51,7 @@ def gestion_usuarios(request):
 
 @verificar_rol(['admin']) # Vista EXCLUSIVA para el admin
 def gestion_productos(request):
-
-    productos = Producto.objects.all().order_by('-id')
+    productos = Producto.objects.all().order_by('-id_producto') # <-- AQUÍ ESTÁ EL CAMBIO
     return render(request, 'gestion_productos.html', {'productos': productos})
 
 
@@ -87,46 +86,35 @@ def crear_producto(request):
 
 
 # 3. Modificar un producto existente
-def modificar_producto(request, id):
-    if not request.session.get('es_admin'):
-        return redirect('login')
-
-    producto = get_object_or_400(Producto, id=id)
+def modificar_producto(request, id_producto):
+    producto = get_object_or_404(Producto, id_producto=id_producto) # <-- AQUÍ ESTÁ EL CAMBIO
 
     if request.method == 'POST':
         producto.nombre = request.POST.get('nombre')
         producto.categoria = request.POST.get('categoria')
         producto.precio = request.POST.get('precio')
-        producto.stock = request.POST.get('stock')
+        # Buscamos el stock en la tabla anexa
+        stock_obj = producto.stock_set.first()
+        if stock_obj:
+            stock_obj.cantidad = request.POST.get('stock')
+            stock_obj.save()
+            
         producto.descripcion = request.POST.get('descripcion')
         
-        # Solo actualiza la imagen si el administrador subió un archivo nuevo
         if request.FILES.get('imagen'):
             producto.imagen = request.FILES.get('imagen')
 
-        try:
-            producto.save()
-            messages.success(request, f"📝 El producto #{id} fue actualizado correctamente.")
-        except Exception as e:
-            messages.error(request, f"❌ Error al intentar modificar el artículo: {e}")
-
+        producto.save()
+        messages.success(request, f"📝 El producto #{id_producto} fue actualizado.")
     return redirect('gestion_productos')
 
-
 # 4. Eliminar permanentemente un producto
-def eliminar_producto(request, id):
-    if not request.session.get('es_admin'):
-        return redirect('login')
-
-    producto = get_object_or_400(Producto, id=id)
+def eliminar_producto(request, id_producto):
+    producto = get_object_or_404(Producto, id_producto=id_producto) # <-- AQUÍ ESTÁ EL CAMBIO
     nombre_eliminado = producto.nombre
 
-    try:
-        producto.delete()
-        messages.success(request, f"🗑️ El producto '{nombre_eliminado}' fue eliminado del inventario.")
-    except Exception as e:
-        messages.error(request, f"❌ No se pudo eliminar el artículo: {e}")
-
+    producto.delete()
+    messages.success(request, f"🗑️ El producto '{nombre_eliminado}' fue eliminado.")
     return redirect('gestion_productos')
 
 @verificar_rol(['vendedor', 'admin']) # Solo entran: vendedor (y admin)
