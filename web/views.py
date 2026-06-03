@@ -51,7 +51,87 @@ def gestion_usuarios(request):
 
 @verificar_rol(['admin']) # Vista EXCLUSIVA para el admin
 def gestion_productos(request):
-    return render(request, 'gestion_productos.html')
+    # Doble filtro de seguridad: Si no es admin en sesión, lo redirige al login
+    if not request.session.get('es_admin'):
+        messages.error(request, "Acceso denegado. Se requieren permisos de Administrador.")
+        return redirect('login')
+        
+    productos = Producto.objects.all().order_by('-id')
+    return render(request, 'gestion_productos.html', {'productos': productos})
+
+
+# 2. Guardar un nuevo producto
+def crear_producto(request):
+    if not request.session.get('es_admin'):
+        return redirect('login')
+
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        categoria = request.POST.get('categoria')
+        precio = request.POST.get('precio')
+        stock = request.POST.get('stock')
+        descripcion = request.POST.get('descripcion')
+        imagen = request.FILES.get('imagen') # Captura de archivos multimedia
+
+        try:
+            nuevo_prod = Producto(
+                nombre=nombre,
+                categoria=categoria,
+                precio=precio,
+                stock=stock,
+                descripcion=descripcion,
+                imagen=imagen
+            )
+            nuevo_prod.save()
+            messages.success(request, f"✨ El producto '{nombre}' ha sido registrado exitosamente.")
+        except Exception as e:
+            messages.error(request, f"❌ Hubo un error al guardar el artículo: {e}")
+            
+    return redirect('gestion_productos')
+
+
+# 3. Modificar un producto existente
+def modificar_producto(request, id):
+    if not request.session.get('es_admin'):
+        return redirect('login')
+
+    producto = get_object_or_400(Producto, id=id)
+
+    if request.method == 'POST':
+        producto.nombre = request.POST.get('nombre')
+        producto.categoria = request.POST.get('categoria')
+        producto.precio = request.POST.get('precio')
+        producto.stock = request.POST.get('stock')
+        producto.descripcion = request.POST.get('descripcion')
+        
+        # Solo actualiza la imagen si el administrador subió un archivo nuevo
+        if request.FILES.get('imagen'):
+            producto.imagen = request.FILES.get('imagen')
+
+        try:
+            producto.save()
+            messages.success(request, f"📝 El producto #{id} fue actualizado correctamente.")
+        except Exception as e:
+            messages.error(request, f"❌ Error al intentar modificar el artículo: {e}")
+
+    return redirect('gestion_productos')
+
+
+# 4. Eliminar permanentemente un producto
+def eliminar_producto(request, id):
+    if not request.session.get('es_admin'):
+        return redirect('login')
+
+    producto = get_object_or_400(Producto, id=id)
+    nombre_eliminado = producto.nombre
+
+    try:
+        producto.delete()
+        messages.success(request, f"🗑️ El producto '{nombre_eliminado}' fue eliminado del inventario.")
+    except Exception as e:
+        messages.error(request, f"❌ No se pudo eliminar el artículo: {e}")
+
+    return redirect('gestion_productos')
 
 @verificar_rol(['vendedor', 'admin']) # Solo entran: vendedor (y admin)
 def panel_vendedor(request):
