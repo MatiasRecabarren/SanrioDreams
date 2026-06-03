@@ -229,7 +229,7 @@ def pago_exito(request):
     for item in carrito:
         try:
             producto = Producto.objects.get(id_producto=item['id'])
-            stock_obj = producto.stock_set.first()
+            stock_obj = producto.stock
             if stock_obj:
                 # Convierte ambos a int para evitar problemas de tipo
                 cantidad_actual = int(stock_obj.cantidad)
@@ -551,7 +551,7 @@ def agregar_al_carrito(request, id_producto):
                 nombre = producto.nombre
                 precio = float(producto.precio)
                 imagen = producto.imagen
-                stock_obj = producto.stock_set.first()
+                stock_obj = producto.stock
                 stock_cantidad = stock_obj.cantidad if stock_obj else 0
             except Producto.DoesNotExist:
                 return JsonResponse({'success': False, 'error': 'Producto no encontrado'}, status=404)
@@ -559,7 +559,7 @@ def agregar_al_carrito(request, id_producto):
         # Obtener stock disponible del producto
         try:
             producto = Producto.objects.get(id_producto=id_producto)
-            stock_obj = producto.stock_set.first()
+            stock_obj = producto.stock
             stock_disponible = stock_obj.cantidad if stock_obj else 0
         except Producto.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Producto no encontrado'}, status=404)
@@ -660,7 +660,7 @@ def aumentar_cantidad_carrito(request, id_producto):
     # Obtener stock disponible
     try:
         producto = Producto.objects.get(id_producto=id_producto)
-        stock_obj = producto.stock_set.first()
+        stock_obj = producto.stock
         stock_disponible = stock_obj.cantidad if stock_obj else 0
     except Producto.DoesNotExist:
         return JsonResponse({'success': False, 'error': 'Producto no encontrado'}, status=404)
@@ -710,7 +710,7 @@ def informes_stock(request):
     alertas = []
 
     for producto in productos:
-        stock_obj = producto.stock()
+        stock_obj = producto.stock
         if stock_obj:
             stock_actual = int(stock_obj.cantidad)
             ubicacion = stock_obj.ubicacion_detalle
@@ -743,7 +743,7 @@ def actualizar_stock(request, id):
             data = json.loads(request.body)
             cantidad = int(data.get("cantidad", 0))
             alerta = AlertaStock.objects.get(id=id)
-            stock = alerta.producto.stock_set.first()
+            stock = alerta.producto.stock
             if stock:
                 stock.cantidad += cantidad
                 stock.save()
@@ -797,7 +797,7 @@ def productos_api(request):
             productos_data = []
             
             for producto in productos:
-                stock_obj = producto.stock_set.first()
+                stock_obj = producto.stock
                 stock_cantidad = stock_obj.cantidad if stock_obj else 0
                 
                 productos_data.append({
