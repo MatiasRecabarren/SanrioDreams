@@ -45,6 +45,11 @@ def verificar_rol(roles_permitidos):
 def panel_contador(request):
     return render(request, 'panel_contador.html')
 
+@verificar_rol(['admin']) 
+def gestion_productos(request):
+    productos = Producto.objects.all().order_by('-id_producto') 
+    return render(request, 'gestion_productos.html', {'productos': productos})
+
 @verificar_rol(['admin']) # <-- Agregamos el decorador correcto
 def crear_producto(request):
     if request.method == 'POST':
